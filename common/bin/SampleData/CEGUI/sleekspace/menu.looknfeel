@@ -1,0 +1,209 @@
+<?xml version="1.0" ?>
+<Falagard>
+	<!--
+	***************************************************
+		SleekSpace/PopupMenu
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/PopupMenu">
+		<NamedArea name="ItemRenderArea">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="PopupMenuFrameLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="PopupMenuFrameTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="PopupMenuFrameRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="PopupMenuFrameBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="PopupMenuFrameTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="PopupMenuFrameTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="PopupMenuFrameBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="PopupMenuFrameBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="PopupMenuFrameLeft" />
+				<Image type="RightEdge" imageset="SleekSpace" image="PopupMenuFrameRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="PopupMenuFrameTop" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="PopupMenuFrameBottom" />
+				<Image type="Background" imageset="SleekSpace" image="PopupMenuMiddle" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/MenuItem
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/MenuItem">
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MenuLeft" dimension="Width" /></Dim>
+					<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="MenuTop" dimension="Height" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="MenuRight" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge" >
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="MenuBottom" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="LeftAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="MenuTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="MenuTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="MenuBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="MenuBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="MenuLeft" />
+				<Image type="RightEdge" imageset="SleekSpace" image="MenuRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="MenuTop" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="MenuBottom" />
+				<Image type="Background" imageset="SleekSpace" image="MenuMiddle" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="popup_arrow_right">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="PopupMenuArrowRight" />
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="popup_arrow_left">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="PopupMenuArrowLeft" />
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="EnabledNormal">
+			<Layer>
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="EnabledHover">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="EnabledPushed">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="EnabledPopupOpen">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledNormal">
+			<Layer>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledHover">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledPushed">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledPopupOpen">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="PopupClosedIcon">
+			<Layer>
+				<Section section="popup_arrow_right" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="PopupOpenIcon">
+			<Layer>
+				<Section section="popup_arrow_left" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+</Falagard>
+

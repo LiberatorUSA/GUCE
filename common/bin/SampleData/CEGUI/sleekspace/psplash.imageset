@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Imageset Name="PrecursorsSplash" Imagefile="splash1.png" NativeHorzRes="2048" NativeVertRes="2048" AutoScaled="true">
+<Image Name="Splash" XPos="0" YPos="0" Width="1400" Height="1050" />
+</Imageset>

@@ -1,0 +1,741 @@
+<?xml version="1.0" ?>
+<Falagard>
+	<!--
+	***************************************************
+		SleekSpace/Titlebar
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/Titlebar">
+		<PropertyDefinition name="CaptionColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+		<ImagerySection name="main">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="TitlebarLeft" />
+				<VertFormat type="Stretched" />
+			</ImageryComponent>
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="SysAreaRight" dimension="Width">
+									<DimOperator op="Add">
+										<ImageDim imageset="SleekSpace" image="SysAreaMiddle" dimension="Width" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="TitlebarRight" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="SysAreaRight" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="SysAreaMiddle" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="SysAreaRight" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="TitlebarLeft" dimension="Width" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="SysAreaRight" dimension="Width">
+									<DimOperator op="Add">
+										<ImageDim imageset="SleekSpace" image="SysAreaMiddle" dimension="Width">
+											<DimOperator op="Add">
+												<ImageDim imageset="SleekSpace" image="TitlebarRight" dimension="Width" />
+											</DimOperator>
+										</ImageDim>
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="TitlebarMiddle" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="caption">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="TitlebarLeft" dimension="Width" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" offset="-75" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<ColourProperty name="CaptionColour" />
+				<VertFormat type="CentreAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Active">
+			<Layer>
+				<Section section="main" />
+				<Section section="caption" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Inactive">
+			<Layer>
+				<Section section="main" />
+				<Section section="caption" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="caption">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/FrameWindow
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/FrameWindow">
+		<PropertyLinkDefinition name="CaptionColour" widget="__auto_titlebar__" targetProperty="CaptionColour" initialValue="FFFFFFFF" />
+		<PropertyLinkDefinition name="TitlebarFont" widget="__auto_titlebar__" targetProperty="Font" />
+		<Property name="NSSizingCursorImage" value="set:SleekSpace image:MouseNoSoCursor" />
+		<Property name="EWSizingCursorImage" value="set:SleekSpace image:MouseEsWeCursor" />
+		<Property name="NWSESizingCursorImage" value="set:SleekSpace image:MouseNwSeCursor" />
+		<Property name="NESWSizingCursorImage" value="set:SleekSpace image:MouseNeSwCursor" />
+		<NamedArea name="ClientWithTitleWithFrame">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ClientWithTitleNoFrame">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ClientNoTitleWithFrame">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ClientNoTitleNoFrame">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</NamedArea>
+		<Child type="SleekSpace/Titlebar" nameSuffix="__auto_titlebar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><FontDim type="LineSpacing" padding="8" /></Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="False" />
+		</Child>
+		<Child type="DefaultWindow" nameSuffix="__auto_content_pane_with_title_with_frame__">
+			<Area>
+				<Dim type="LeftEdge" >
+					<ImageDim imageset="SleekSpace" image="WindowTopLeft" dimension="Width">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="TopEdge" >
+					<WidgetDim widget="__auto_titlebar__" dimension="BottomEdge">
+						<DimOperator op="Add">
+							<AbsoluteDim value="8" />
+						</DimOperator>
+					</WidgetDim>
+				</Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="WindowTopRight" dimension="Width">
+								<DimOperator op="Subtract">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="WindowBottomEdge" dimension="Height">
+								<DimOperator op="Subtract">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+			<Property name="MousePassThroughEnabled" value="true" />
+		</Child>
+		<Child type="DefaultWindow" nameSuffix="__auto_content_pane_with_title_no_frame__">
+			<Area>
+				<Dim type="LeftEdge" >
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge" >
+					<WidgetDim widget="__auto_titlebar__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="Width" >
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="BottomEdge" >
+					<WidgetDim dimension="BottomEdge" />
+				</Dim>
+			</Area>
+			<Property name="MousePassThroughEnabled" value="true" />
+		</Child>
+		<Child type="DefaultWindow" nameSuffix="__auto_content_pane_no_title_with_frame__">
+			<Area>
+				<Dim type="LeftEdge" >
+					<ImageDim imageset="SleekSpace" image="WindowTopLeft" dimension="Width">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="TopEdge" >
+					<ImageDim imageset="SleekSpace" image="WindowTopEdge" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="WindowTopRight" dimension="Width">
+								<DimOperator op="Subtract">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="WindowBottomEdge" dimension="Height">
+								<DimOperator op="Subtract">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+			<Property name="MousePassThroughEnabled" value="true" />
+		</Child>
+		<Child type="DefaultWindow" nameSuffix="__auto_content_pane_no_title_no_frame__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+			<Property name="MousePassThroughEnabled" value="true" />
+		</Child>
+		<Child type="SleekSpace/SystemButton" nameSuffix="__auto_closebutton__">
+			<Area>
+				<Dim type="LeftEdge" >
+					<UnifiedDim scale="1" type="LeftEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="SysAreaRight" dimension="Width">
+								<DimOperator op="Add">
+									<ImageDim imageset="SleekSpace" image="SysAreaMiddle" dimension="Width" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge" >
+					<AbsoluteDim value="1">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0.5">
+								<DimOperator op="Multiply">
+									<WidgetDim widget="__auto_titlebar__" dimension="Height">
+										<DimOperator op="Subtract">
+											<ImageDim imageset="SleekSpace" image="CloseButtonNormal" dimension="Height" />
+										</DimOperator>
+									</WidgetDim>
+								</DimOperator>
+							</AbsoluteDim>
+						</DimOperator>
+					</AbsoluteDim>
+				</Dim>
+				<Dim type="Width" ><ImageDim imageset="SleekSpace" image="CloseButtonNormal" dimension="Width" /></Dim>
+				<Dim type="Height" ><ImageDim imageset="SleekSpace" image="CloseButtonNormal" dimension="Width" /></Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="NormalImage" value="set:SleekSpace image:CloseButtonNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:CloseButtonHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:CloseButtonPressed" />
+		</Child>
+		<ImagerySection name="withtitle_frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><WidgetDim widget="__auto_titlebar__" dimension="BottomEdge" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="BottomEdge" ><UnifiedDim scale="1" type="BottomEdge" /></Dim>
+				</Area>
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="WindowBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="WindowBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="WindowLeftEdge" />
+				<Image type="RightEdge" imageset="SleekSpace" image="WindowRightEdge" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="WindowBottomEdge" />
+				<Image type="Background" imageset="SleekSpace" image="ClientBrush" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="notitle_frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="WindowTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="WindowTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="WindowBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="WindowBottomRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="WindowTopEdge" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="WindowLeftEdge" />
+				<Image type="RightEdge" imageset="SleekSpace" image="WindowRightEdge" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="WindowBottomEdge" />
+				<Image type="Background" imageset="SleekSpace" image="WindowBackdrop" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="withtitle_noframe_client_area">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><WidgetDim widget="__auto_titlebar__" dimension="Height" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="BottomEdge" ><UnifiedDim scale="1" type="BottomEdge" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="ClientBrush" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="notitle_noframe_client_area">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="ClientBrush" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="ActiveWithTitleWithFrame">
+			<Layer>
+				<Section section="withtitle_frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveWithTitleWithFrame">
+			<Layer>
+				<Section section="withtitle_frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledWithTitleWithFrame">
+			<Layer>
+				<Section section="withtitle_frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveWithTitleNoFrame">
+			<Layer>
+				<Section section="withtitle_noframe_client_area" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveWithTitleNoFrame">
+			<Layer>
+				<Section section="withtitle_noframe_client_area" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledWithTitleNoFrame">
+			<Layer>
+				<Section section="withtitle_noframe_client_area">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveNoTitleWithFrame">
+			<Layer>
+				<Section section="notitle_frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveNoTitleWithFrame">
+			<Layer>
+				<Section section="notitle_frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledNoTitleWithFrame">
+			<Layer>
+				<Section section="notitle_frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveNoTitleNoFrame">
+			<Layer>
+				<Section section="notitle_noframe_client_area" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveNoTitleNoFrame">
+			<Layer>
+				<Section section="notitle_noframe_client_area" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledNoTitleNoFrame">
+			<Layer>
+				<Section section="notitle_noframe_client_area">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/ReticleWindow
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/ReticleWindow">
+		<NamedArea name="ClientNoTitleWithFrame">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="notitle_frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="ReticleTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="ReticleTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="ReticleBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="ReticleBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="ReticleLeftEdge" />
+				<Image type="RightEdge" imageset="SleekSpace" image="ReticleRightEdge" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="ReticleBottomEdge" />
+				<Image type="Background" imageset="SleekSpace" image="ReticleBackdrop" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="ActiveNoTitleWithFrame">
+			<Layer>
+				<Section section="notitle_frame" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/ScrollablePane
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/ScrollablePane">
+		<NamedArea name="ViewableArea">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+				<Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ViewableAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ViewableAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ViewableAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/HorizontalScrollbar" nameSuffix="__auto_hscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" offset="-12" type="Width" /></Dim>
+				<Dim type="Height" ><AbsoluteDim value="12" /></Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+		</Child>
+		<Child  type="SleekSpace/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><AbsoluteDim value="12" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" offset="-12" type="Height" /></Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/TabButton
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/TabButton">
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="CentreAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="TabButtonUpperLeftNormal" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="TabButtonUpperRightNormal" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="TabButtonLowerLeftNormal" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="TabButtonLowerRightNormal" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="TabButtonLeftNormal" />
+				<Image type="RightEdge" imageset="SleekSpace" image="TabButtonRightNormal" />
+				<Image type="TopEdge" imageset="SleekSpace" image="TabButtonUpperNormal" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="TabButtonLowerNormal" />
+				<Image type="Background" imageset="SleekSpace" image="TabButtonMiddleNormal" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="selected">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="TabButtonUpperLeftSelected" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="TabButtonUpperRightSelected" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="TabButtonLowerLeftSelected" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="TabButtonLowerRightSelected" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="TabButtonLeftSelected" />
+				<Image type="RightEdge" imageset="SleekSpace" image="TabButtonRightSelected" />
+				<Image type="TopEdge" imageset="SleekSpace" image="TabButtonUpperSelected" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="TabButtonLowerSelected" />
+				<Image type="Background" imageset="SleekSpace" image="TabButtonMiddleSelected" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="selected" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Selected">
+			<Layer>
+				<Section section="selected" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/TabPane
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/TabPane">
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="TabPaneLowerLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="TabPaneLowerRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="TabPaneLeft" />
+				<Image type="RightEdge" imageset="SleekSpace" image="TabPaneRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="TabControlButtonPaneFiller" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="TabPaneLower" />
+				<Image type="Background" imageset="SleekSpace" image="TabPaneMiddle" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/TabControl
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/TabControl">
+		<Property name="TabButtonType" value="SleekSpace/TabButton" />
+		<Child  type="SleekSpace/TabPane" nameSuffix="__auto_TabPane__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</Child>
+		<Child  type="DefaultWindow" nameSuffix="__auto_TabPane__Buttons">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+</Falagard>
+

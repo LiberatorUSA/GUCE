@@ -1,0 +1,771 @@
+<?xml version="1.0" ?>
+<Falagard>
+	<!--
+	***************************************************
+		SleekSpace/Listbox
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/Listbox">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ListboxLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ListboxTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ListboxRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ListboxBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ListboxLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ListboxTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ListboxRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ListboxLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ListboxTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ListboxBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ListboxLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ListboxTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/HorizontalScrollbar" nameSuffix="__auto_hscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" offset="-12" type="Width" /></Dim>
+				<Dim type="Height" ><AbsoluteDim value="12" /></Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+		</Child>
+		<Child  type="SleekSpace/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><AbsoluteDim value="12" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" offset="-12" type="Height" /></Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="ListboxTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="ListboxTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="ListboxBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="ListboxBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="ListboxLeft" />
+				<Image type="RightEdge" imageset="SleekSpace" image="ListboxRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="ListboxTop" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="ListboxBottom" />
+				<Image type="Background" imageset="SleekSpace" image="ListboxBackdrop" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/ListHeader
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/ListHeader">
+		<Property name="SegmentWidgetType" value="SleekSpace/ListHeaderSegment" />
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/ListHeaderSegment
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/ListHeaderSegment">
+		<Property name="SizingCursorImage" value="set:SleekSpace image:MouseEsWeCursor" />
+		<Property name="MovingCursorImage" value="set:SleekSpace image:MouseMoveCursor" />
+		<ImagerySection name="segment_normal">
+			<Colours topLeft="FFDDDDDD" topRight="FFDDDDDD" bottomLeft="FFDDDDDD" bottomRight="FFDDDDDD" />
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="HeaderBarSplitterNormal" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="HeaderBarBackdropNormal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="segment_hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="HeaderBarSplitterNormal" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="HeaderBarBackdropHover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="splitter_normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="HeaderBarSplitterNormal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="splitter_hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="HeaderBarSplitterHover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="ascend_icon">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="3" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="3" /></Dim>
+					<Dim type="Width" ><ImageDim imageset="SleekSpace" image="HeaderBarSortUp" dimension="Width" /></Dim>
+					<Dim type="Height" ><ImageDim imageset="SleekSpace" image="HeaderBarSortUp" dimension="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="HeaderBarSortUp" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="descend_icon">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="3" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="3" /></Dim>
+					<Dim type="Width" ><ImageDim imageset="SleekSpace" image="HeaderBarSortDown" dimension="Width" /></Dim>
+					<Dim type="Height" ><ImageDim imageset="SleekSpace" image="HeaderBarSortDown" dimension="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="HeaderBarSortDown" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge" >
+						<ImageDim imageset="SleekSpace" image="HeaderBarSortUp" dimension="Width">
+							<DimOperator op="Add">
+								<AbsoluteDim value="5" />
+							</DimOperator>
+						</ImageDim>
+					</Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" ><UnifiedDim scale="1" type="RightEdge" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<VertFormat type="CentreAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="segment_normal" />
+				<Section section="splitter_normal" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="segment_hover" />
+				<Section section="splitter_normal" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="SplitterHover">
+			<Layer>
+				<Section section="segment_normal" />
+				<Section section="splitter_hover" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DragGhost" clipped="false" >
+			<Layer priority="1" >
+				<Section section="segment_normal">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+				<Section section="splitter_normal">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="AscendingSortIcon">
+			<Layer>
+				<Section section="ascend_icon" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DescendingSortIcon">
+			<Layer>
+				<Section section="descend_icon" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="GhostAscendingSortIcon" clipped="false">
+			<Layer priority="1" >
+				<Section section="ascend_icon">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="GhostDescendingSortIcon" clipped="false">
+			<Layer priority="1" >
+				<Section section="descend_icon">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="segment_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="splitter_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/Combobox
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/Combobox">
+		<Child  type="SleekSpace/ComboEditbox" nameSuffix="__auto_editbox__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<FontDim type="LineSpacing">
+								<DimOperator op="Multiply">
+									<AbsoluteDim value="1.5" />
+								</DimOperator>
+							</FontDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Height" >
+					<FontDim type="LineSpacing">
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="1.5" />
+						</DimOperator>
+					</FontDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child  type="SleekSpace/ComboDropList" nameSuffix="__auto_droplist__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><WidgetDim widget="__auto_editbox__" dimension="BottomEdge" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="BottomEdge" ><UnifiedDim scale="1" type="BottomEdge" /></Dim>
+			</Area>
+		</Child>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_button__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><WidgetDim widget="__auto_editbox__" dimension="Height" /></Dim>
+				<Dim type="Height" ><WidgetDim widget="__auto_editbox__" dimension="Height" /></Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:ComboboxListButtonNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:ComboboxListButtonHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:ComboboxListButtonNormal" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/ComboEditbox
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/ComboEditbox">
+		<PropertyDefinition name="NormalTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+		<PropertyDefinition name="SelectedTextColour" initialValue="FF000000" redrawOnWrite="true" />
+		<PropertyDefinition name="ActiveSelectionColour" initialValue="FF607FFF" redrawOnWrite="true" />
+		<PropertyDefinition name="InactiveSelectionColour" initialValue="FF808080" redrawOnWrite="true" />
+		<Property name="MouseCursorImage" value="set:SleekSpace image:MouseTextBar" />
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="5" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="5" /></Dim>
+				<Dim type="RightEdge" ><UnifiedDim scale="1.0" offset="-5" type="RightEdge" /></Dim>
+				<Dim type="BottomEdge" ><UnifiedDim scale="1.0" offset="-5" type="BottomEdge" /></Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="container_normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image type="LeftEdge" imageset="SleekSpace" image="ComboboxEditLeft" />
+				<Image type="Background" imageset="SleekSpace" image="ComboboxEditMiddle" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="selection">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+					<Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="TextSelectionBrush" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="Carat">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><ImageDim imageset="SleekSpace" image="EditBoxCarat" dimension="Width" /></Dim>
+					<Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="EditBoxCarat" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="container_normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ReadOnly">
+			<Layer>
+				<Section section="container_normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="container_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveSelection">
+			<Layer>
+				<Section section="selection">
+					<ColourProperty name="ActiveSelectionColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveSelection">
+			<Layer>
+				<Section section="selection">
+					<ColourProperty name="InactiveSelectionColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/ComboDropList
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/ComboDropList">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ComboboxListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ComboboxListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ComboboxListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="ComboboxListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="ComboboxListTop" dimension="Height" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/HorizontalScrollbar" nameSuffix="__auto_hscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" offset="-12" type="Width" /></Dim>
+				<Dim type="Height" ><AbsoluteDim value="12" /></Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+		</Child>
+		<Child  type="SleekSpace/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><AbsoluteDim value="12" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" offset="-12" type="Height" /></Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="ComboboxListTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="ComboboxListTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="ComboboxListBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="ComboboxListBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="ComboboxListLeft" />
+				<Image type="RightEdge" imageset="SleekSpace" image="ComboboxListRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="ComboboxListTop" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="ComboboxListBottom" />
+				<Image type="Background" imageset="SleekSpace" image="ComboboxListBackdrop" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="7FFFFFFF" topRight="7FFFFFFF" bottomLeft="7FFFFFFF" bottomRight="7FFFFFFF" />
+		</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/MultiColumnList
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/MultiColumnList">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MultiListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><WidgetDim widget="__auto_listheader__" dimension="BottomEdge" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="MultiListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="MultiListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MultiListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><WidgetDim widget="__auto_listheader__" dimension="BottomEdge" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="MultiListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MultiListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><WidgetDim widget="__auto_listheader__" dimension="BottomEdge" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="MultiListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MultiListLeft" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><WidgetDim widget="__auto_listheader__" dimension="BottomEdge" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/ListHeader" nameSuffix="__auto_listheader__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="2" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="2" /></Dim>
+				<Dim type="RightEdge" ><UnifiedDim scale="1" offset="-2" type="RightEdge" /></Dim>
+				<Dim type="Height" >
+					<FontDim type="LineSpacing">
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="1.5" />
+						</DimOperator>
+					</FontDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child  type="SleekSpace/HorizontalScrollbar" nameSuffix="__auto_hscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" offset="-12" type="Width" /></Dim>
+				<Dim type="Height" ><AbsoluteDim value="12" /></Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+		</Child>
+		<Child  type="SleekSpace/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><WidgetDim widget="__auto_listheader__" dimension="BottomEdge" /></Dim>
+				<Dim type="Width" ><AbsoluteDim value="12" /></Dim>
+				<Dim type="BottomEdge" ><UnifiedDim scale="1" offset="-12" type="BottomEdge" /></Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="SleekSpace" image="MultiListTopLeft" />
+				<Image type="TopRightCorner" imageset="SleekSpace" image="MultiListTopRight" />
+				<Image type="BottomLeftCorner" imageset="SleekSpace" image="MultiListBottomLeft" />
+				<Image type="BottomRightCorner" imageset="SleekSpace" image="MultiListBottomRight" />
+				<Image type="LeftEdge" imageset="SleekSpace" image="MultiListLeft" />
+				<Image type="RightEdge" imageset="SleekSpace" image="MultiListRight" />
+				<Image type="TopEdge" imageset="SleekSpace" image="MultiListTop" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="MultiListBottom" />
+				<Image type="Background" imageset="SleekSpace" image="MultiListBackdrop" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+</Falagard>
+
