@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><Imageset Name="PrecursorsHud" Imagefile="hud.png" NativeHorzRes="256" NativeVertRes="256" AutoScaled="true">
+<Image Name="AngleCrosshair" XPos="0" YPos="0" Width="32" Height="32" />
+<Image Name="TripodCrosshair" XPos="32" YPos="0" Width="32" Height="32" />
+<Image Name="RabbitEarsCrosshair" XPos="64" YPos="0" Width="32" Height="32" />
+<Image Name="ForksCrosshair" XPos="96" YPos="0" Width="32" Height="32" />
+<Image Name="XCrosshair" XPos="128" YPos="0" Width="32" Height="32" />
+<Image Name="CrossBoxCrosshair" XPos="160" YPos="0" Width="32" Height="32" />
+</Imageset>

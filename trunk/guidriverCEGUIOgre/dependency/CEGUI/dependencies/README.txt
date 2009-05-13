@@ -1,0 +1,1 @@
+CEGUI 1.6.1 requires PCRE 7.0 which is in the include folder

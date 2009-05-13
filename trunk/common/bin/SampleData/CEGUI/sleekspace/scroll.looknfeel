@@ -1,0 +1,526 @@
+<?xml version="1.0" ?>
+<Falagard>
+	<!--
+	***************************************************
+		SleekSpace/HorizontalScrollbarThumb
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/HorizontalScrollbarThumb">
+		<Property name="HorzFree" value="True" />
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image type="LeftEdge" imageset="SleekSpace" image="MiniHorzScrollThumbLeftNormal" />
+				<Image type="RightEdge" imageset="SleekSpace" image="MiniHorzScrollThumbRightNormal" />
+				<Image type="Background" imageset="SleekSpace" image="MiniHorzScrollThumbMiddleNormal" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image type="LeftEdge" imageset="SleekSpace" image="MiniHorzScrollThumbLeftHover" />
+				<Image type="RightEdge" imageset="SleekSpace" image="MiniHorzScrollThumbRightHover" />
+				<Image type="Background" imageset="SleekSpace" image="MiniHorzScrollThumbMiddleHover" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/HorizontalScrollbar
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/HorizontalScrollbar">
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MiniHorzScrollLeftNormal" dimension="Width" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="RightEdge" >
+					<UnifiedDim scale="1.0" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="MiniHorzScrollRightNormal" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><ImageDim imageset="SleekSpace" image="MiniHorzScrollRightNormal" dimension="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:MiniHorzScrollRightNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:MiniHorzScrollRightHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:MiniHorzScrollRightNormal" />
+		</Child>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><ImageDim imageset="SleekSpace" image="MiniHorzScrollLeftNormal" dimension="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:MiniHorzScrollLeftNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:MiniHorzScrollLeftHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:MiniHorzScrollLeftNormal" />
+		</Child>
+		<Child  type="SleekSpace/HorizontalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="0.1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><ImageDim imageset="SleekSpace" image="MiniHorzScrollLeftNormal" dimension="Width" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="RightEdge" >
+						<UnifiedDim scale="1.0" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="MiniHorzScrollRightNormal" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="MiniHorzScrollBarSegment" />
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/VerticalScrollbarThumb
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/VerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image type="TopEdge" imageset="SleekSpace" image="MiniVertScrollThumbTopNormal" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="MiniVertScrollThumbBottomNormal" />
+				<Image type="Background" imageset="SleekSpace" image="MiniVertScrollThumbMiddleNormal" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image type="TopEdge" imageset="SleekSpace" image="MiniVertScrollThumbTopHover" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="MiniVertScrollThumbBottomHover" />
+				<Image type="Background" imageset="SleekSpace" image="MiniVertScrollThumbMiddleHover" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/VerticalScrollbar
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/VerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="MiniVertScrollUpNormal" dimension="Height" /></Dim>
+				<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="SleekSpace" image="MiniVertScrollDownNormal" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><ImageDim imageset="SleekSpace" image="MiniVertScrollDownNormal" dimension="Height" /></Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:MiniVertScrollDownNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:MiniVertScrollDownHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:MiniVertScrollDownNormal" />
+		</Child>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><ImageDim imageset="SleekSpace" image="MiniVertScrollUpNormal" dimension="Height" /></Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:MiniVertScrollUpNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:MiniVertScrollUpHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:MiniVertScrollUpNormal" />
+		</Child>
+		<Child  type="SleekSpace/VerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+				<Dim type="Height" ><UnifiedDim scale="0.1" type="Height" /></Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><ImageDim imageset="SleekSpace" image="MiniVertScrollUpNormal" dimension="Height" /></Dim>
+					<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+					<Dim type="BottomEdge" >
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="SleekSpace" image="MiniVertScrollDownNormal" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="MiniVertScrollBarSegment" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="CentreAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/LargeVerticalScrollbarThumb
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/LargeVerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="VertScrollThumbNormal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="VertScrollThumbHover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+	***************************************************
+		SleekSpace/LargeVerticalScrollbar
+	***************************************************
+	-->
+	<WidgetLook name="SleekSpace/LargeVerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge" ><UnifiedDim scale="0.325" type="LeftEdge" /></Dim>
+				<Dim type="TopEdge" >
+					<WidgetDim widget="__auto_decbtn__" dimension="Height">
+						<DimOperator op="Add">
+							<ImageDim imageset="SleekSpace" image="VertScrollTop" dimension="Height">
+								<DimOperator op="Multiply">
+									<AbsoluteDim value="0.5" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</WidgetDim>
+				</Dim>
+				<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+				<Dim type="BottomEdge" >
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_decbtn__" dimension="Height">
+								<DimOperator op="Add">
+									<ImageDim imageset="SleekSpace" image="VertScrollTop" dimension="Height">
+										<DimOperator op="Multiply">
+											<AbsoluteDim value="0.5" />
+										</DimOperator>
+									</ImageDim>
+								</DimOperator>
+							</WidgetDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge" ><UnifiedDim scale="0.25" type="LeftEdge" /></Dim>
+				<Dim type="TopEdge" >
+					<AbsoluteDim value="-1">
+						<DimOperator op="Multiply">
+							<ImageDim imageset="SleekSpace" image="VertScrollTop" dimension="Height">
+								<DimOperator op="Multiply">
+									<AbsoluteDim value="0.5" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</AbsoluteDim>
+				</Dim>
+				<Dim type="Width" ><UnifiedDim scale="0.6" type="Width" /></Dim>
+				<Dim type="Height" >
+					<UnifiedDim scale="0.6" type="Width">
+						<DimOperator op="Multiply">
+							<ImageDim imageset="SleekSpace" image="VertScrollUpNormal" dimension="Width">
+								<DimOperator op="Divide">
+									<ImageDim imageset="SleekSpace" image="VertScrollUpNormal" dimension="Height"/>
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:VertScrollDownNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:VertScrollDownHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:VertScrollDownNormal" />
+		</Child>
+		<Child  type="SleekSpace/Button" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge" ><UnifiedDim scale="0.25" type="LeftEdge" /></Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="SleekSpace" image="VertScrollTop" dimension="Height">
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="0.5" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Width" ><UnifiedDim scale="0.6" type="Width" /></Dim>
+				<Dim type="Height" >
+					<UnifiedDim scale="0.6" type="Width">
+						<DimOperator op="Multiply">
+							<ImageDim imageset="SleekSpace" image="VertScrollUpNormal" dimension="Width">
+								<DimOperator op="Divide">
+									<ImageDim imageset="SleekSpace" image="VertScrollUpNormal" dimension="Height"/>
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:SleekSpace image:VertScrollUpNormal" />
+			<Property name="HoverImage" value="set:SleekSpace image:VertScrollUpHover" />
+			<Property name="PushedImage" value="set:SleekSpace image:VertScrollUpNormal" />
+		</Child>
+		<Child  type="SleekSpace/LargeVerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+				<Dim type="Width" ><UnifiedDim scale="0.4" type="Width" /></Dim>
+				<Dim type="Height" >
+					<UnifiedDim scale="0.4" type="Width">
+						<DimOperator op="Multiply">
+							<ImageDim imageset="SleekSpace" image="VertScrollThumbNormal" dimension="Height">
+								<DimOperator op="Divide">
+									<ImageDim imageset="SleekSpace" image="VertScrollThumbNormal" dimension="Width"/>
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+					<Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+					<Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				<Image type="TopEdge" imageset="SleekSpace" image="VertScrollTop" />
+				<Image type="BottomEdge" imageset="SleekSpace" image="VertScrollBottom" />
+				<Image type="Background" imageset="SleekSpace" image="VertScrollMiddle" />
+			</FrameComponent>
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge" ><UnifiedDim scale="0.45" type="LeftEdge" /></Dim>
+					<Dim type="TopEdge" >
+						<WidgetDim widget="__auto_decbtn__" dimension="Height">
+							<DimOperator op="Add">
+								<ImageDim imageset="SleekSpace" image="VertScrollTop" dimension="Height">
+									<DimOperator op="Multiply">
+										<AbsoluteDim value="0.5" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</WidgetDim>
+					</Dim>
+					<Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+					<Dim type="BottomEdge" >
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<WidgetDim widget="__auto_decbtn__" dimension="Height">
+									<DimOperator op="Add">
+										<ImageDim imageset="SleekSpace" image="VertScrollTop" dimension="Height">
+											<DimOperator op="Multiply">
+												<AbsoluteDim value="0.5" />
+											</DimOperator>
+										</ImageDim>
+									</DimOperator>
+								</WidgetDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image imageset="SleekSpace" image="VertScrollBarSegment" />
+				<VertFormat type="Tiled" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+</Falagard>
+

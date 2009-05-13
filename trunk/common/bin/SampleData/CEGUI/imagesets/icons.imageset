@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Imageset Name="Icons" Imagefile="icons.bmp" NativeHorzRes="800" NativeVertRes="600" AutoScaled="true">
+	<Image Name="Folder" XPos="3" YPos="3" Width="16" Height="16" />
+	<Image Name="Picture" XPos="32" YPos="0" Width="16" Height="16" />
+	<Image Name="Note" XPos="64" YPos="0" Width="16" Height="16" />
+	<Image Name="Package" XPos="96" YPos="0" Width="16" Height="16" />
+	<Image Name="Unknown" XPos="68" YPos="1" Width="16" Height="32" />
+	<Image Name="InstallBlack" XPos="0" YPos="32" Width="16" Height="16" />
+	<Image Name="Markup" XPos="32" YPos="32" Width="16" Height="16" />
+	<Image Name="Media" XPos="64" YPos="32" Width="16" Height="16" />
+	<Image Name="Module" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Document" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="InstallBlue" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Image" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Webpage" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Config" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Executable" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Movie" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Graph" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="Script" XPos="96" YPos="32" Width="16" Height="16" />
+	<Image Name="FolderUp" XPos="96" YPos="32" Width="32" Height="32" />
+</Imageset>

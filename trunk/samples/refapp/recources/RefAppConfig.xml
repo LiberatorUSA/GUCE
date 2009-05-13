@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<!-- Generated using dstorepluginXMLPARSIFAL (v1.0.0.0) for the GUCEF platform - Copyright (C) Dinand Vanvelzen. All rights reserved -->
+<REFAPPCONFIG>
+	<GUCEF>
+		<CORE>
+			<CGUCEFApplication appdir="$CURWORKDIR$" />
+			<CSysConsole>
+				<ConsoleAliasList>
+					<Alias name="bind" path="\GUCEF\CORE\CSysConsole" function="RegisterAlias" />
+					<Alias name="exit" path="\GUCEF\CORE\CGUCEFApplication" function="Stop" />
+					<Alias name="quit" path="\GUCEF\CORE\CGUCEFApplication" function="Stop" />
+					<Alias name="guiedit" path="\GUCE\GUI\CGUIEditor" function="Show" />
+				</ConsoleAliasList>
+			</CSysConsole>
+		</CORE>
+		<VFS>
+			<CFPCodecPluginManager plugincount="0" />
+			<CVFS maxmemload="1024000" >
+				<vfsroot path="$CURWORKDIR$\data" writeable="false" />
+				<vfsroot path="$CURWORKDIR$\data\tmp" writeable="true" />
+				<vfsroot path="$CURWORKDIR$\$UPDIR$\SampleData" writeable="false" />
+			</CVFS>
+		</VFS>
+		<CVFS maxmemload="1024" >
+			<vfsroot path="$CURWORKDIR$\data" writeable="false" />
+		</CVFS>
+		<INPUT>
+			<CInputProfileManager ActionMapCount="1" ProfileCount="1" >
+				<InputActionMap name="default" MouseButtonMapCount="8" KeyboardKeyMapCount="127" DeviceBoolMapCount="8" DeviceVarMapCount="8" >
+					<MouseButtonUp ButtonIndex="0" ActionIndex="1" ActionName="MouseButtonUp(1)" />
+					<MouseButtonUp ButtonIndex="1" ActionIndex="2" ActionName="MouseButtonUp(2)" />
+					<MouseButtonUp ButtonIndex="2" ActionIndex="3" ActionName="MouseButtonUp(3)" />
+					<MouseButtonUp ButtonIndex="3" ActionIndex="4" ActionName="MouseButtonUp(4)" />
+					<MouseButtonUp ButtonIndex="4" ActionIndex="5" ActionName="MouseButtonUp(5)" />
+					<MouseButtonUp ButtonIndex="5" ActionIndex="6" ActionName="MouseButtonUp(6)" />
+					<MouseButtonUp ButtonIndex="6" ActionIndex="7" ActionName="MouseButtonUp(7)" />
+					<MouseButtonUp ButtonIndex="7" ActionIndex="8" ActionName="MouseButtonUp(8)" />
+					<MouseButtonDown ButtonIndex="0" ActionIndex="9" ActionName="MouseButtonDown(1)" />
+					<MouseButtonDown ButtonIndex="1" ActionIndex="10" ActionName="MouseButtonDown(2)" />
+					<MouseButtonDown ButtonIndex="2" ActionIndex="11" ActionName="MouseButtonDown(3)" />
+					<MouseButtonDown ButtonIndex="3" ActionIndex="12" ActionName="MouseButtonDown(4)" />
+					<MouseButtonDown ButtonIndex="4" ActionIndex="13" ActionName="MouseButtonDown(5)" />
+					<MouseButtonDown ButtonIndex="5" ActionIndex="14" ActionName="MouseButtonDown(6)" />
+					<MouseButtonDown ButtonIndex="6" ActionIndex="15" ActionName="MouseButtonDown(7)" />
+					<MouseButtonDown ButtonIndex="7" ActionIndex="16" ActionName="MouseButtonDown(8)" />
+					<KeyboardKeyUp KeyIndex="1" ActionIndex="1" ActionName="KeyboardKeyUp(1)" />
+					<KeyboardKeyUp KeyIndex="2" ActionIndex="2" ActionName="KeyboardKeyUp(2)" />
+					<KeyboardKeyUp KeyIndex="3" ActionIndex="3" ActionName="KeyboardKeyUp(3)" />
+					<KeyboardKeyUp KeyIndex="4" ActionIndex="4" ActionName="KeyboardKeyUp(4)" />
+					<KeyboardKeyUp KeyIndex="5" ActionIndex="5" ActionName="KeyboardKeyUp(5)" />
+					<KeyboardKeyUp KeyIndex="6" ActionIndex="6" ActionName="KeyboardKeyUp(6)" />
+					<KeyboardKeyUp KeyIndex="7" ActionIndex="7" ActionName="KeyboardKeyUp(7)" />
+					<KeyboardKeyUp KeyIndex="8" ActionIndex="8" ActionName="KeyboardKeyUp(8)" />
+					<KeyboardKeyUp KeyIndex="9" ActionIndex="9" ActionName="KeyboardKeyUp(9)" />
+					<KeyboardKeyUp KeyIndex="10" ActionIndex="10" ActionName="KeyboardKeyUp(10)" />
+					<KeyboardKeyUp KeyIndex="11" ActionIndex="11" ActionName="KeyboardKeyUp(11)" />
+					<KeyboardKeyUp KeyIndex="12" ActionIndex="12" ActionName="KeyboardKeyUp(12)" />
+					<KeyboardKeyUp KeyIndex="13" ActionIndex="13" ActionName="KeyboardKeyUp(13)" />
+					<KeyboardKeyUp KeyIndex="14" ActionIndex="14" ActionName="KeyboardKeyUp(14)" />
+					<KeyboardKeyUp KeyIndex="15" ActionIndex="15" ActionName="KeyboardKeyUp(15)" />
+					<KeyboardKeyUp KeyIndex="16" ActionIndex="16" ActionName="KeyboardKeyUp(16)" />
+					<KeyboardKeyUp KeyIndex="17" ActionIndex="17" ActionName="KeyboardKeyUp(17)" />
+					<KeyboardKeyUp KeyIndex="18" ActionIndex="18" ActionName="KeyboardKeyUp(18)" />
+					<KeyboardKeyUp KeyIndex="19" ActionIndex="19" ActionName="KeyboardKeyUp(19)" />
+					<KeyboardKeyUp KeyIndex="20" ActionIndex="20" ActionName="KeyboardKeyUp(20)" />
+					<KeyboardKeyUp KeyIndex="21" ActionIndex="21" ActionName="KeyboardKeyUp(21)" />
+					<KeyboardKeyUp KeyIndex="22" ActionIndex="22" ActionName="KeyboardKeyUp(22)" />
+					<KeyboardKeyUp KeyIndex="23" ActionIndex="23" ActionName="KeyboardKeyUp(23)" />
+					<KeyboardKeyUp KeyIndex="24" ActionIndex="24" ActionName="KeyboardKeyUp(24)" />
+					<KeyboardKeyUp KeyIndex="25" ActionIndex="25" ActionName="KeyboardKeyUp(25)" />
+					<KeyboardKeyUp KeyIndex="26" ActionIndex="26" ActionName="KeyboardKeyUp(26)" />
+					<KeyboardKeyUp KeyIndex="27" ActionIndex="27" ActionName="KeyboardKeyUp(27)" />
+					<KeyboardKeyUp KeyIndex="28" ActionIndex="28" ActionName="KeyboardKeyUp(28)" />
+					<KeyboardKeyUp KeyIndex="29" ActionIndex="29" ActionName="KeyboardKeyUp(29)" />
+					<KeyboardKeyUp KeyIndex="30" ActionIndex="30" ActionName="KeyboardKeyUp(30)" />
+					<KeyboardKeyUp KeyIndex="31" ActionIndex="31" ActionName="KeyboardKeyUp(31)" />
+					<KeyboardKeyUp KeyIndex="32" ActionIndex="32" ActionName="KeyboardKeyUp(32)" />
+					<KeyboardKeyUp KeyIndex="33" ActionIndex="33" ActionName="KeyboardKeyUp(33)" />
+					<KeyboardKeyUp KeyIndex="34" ActionIndex="34" ActionName="KeyboardKeyUp(34)" />
+					<KeyboardKeyUp KeyIndex="35" ActionIndex="35" ActionName="KeyboardKeyUp(35)" />
+					<KeyboardKeyUp KeyIndex="36" ActionIndex="36" ActionName="KeyboardKeyUp(36)" />
+					<KeyboardKeyUp KeyIndex="37" ActionIndex="37" ActionName="KeyboardKeyUp(37)" />
+					<KeyboardKeyUp KeyIndex="38" ActionIndex="38" ActionName="KeyboardKeyUp(38)" />
+					<KeyboardKeyUp KeyIndex="39" ActionIndex="39" ActionName="KeyboardKeyUp(39)" />
+					<KeyboardKeyUp KeyIndex="40" ActionIndex="40" ActionName="KeyboardKeyUp(40)" />
+					<KeyboardKeyUp KeyIndex="41" ActionIndex="41" ActionName="KeyboardKeyUp(41)" />
+					<KeyboardKeyUp KeyIndex="42" ActionIndex="42" ActionName="KeyboardKeyUp(42)" />
+					<KeyboardKeyUp KeyIndex="43" ActionIndex="43" ActionName="KeyboardKeyUp(43)" />
+					<KeyboardKeyUp KeyIndex="44" ActionIndex="44" ActionName="KeyboardKeyUp(44)" />
+					<KeyboardKeyUp KeyIndex="45" ActionIndex="45" ActionName="KeyboardKeyUp(45)" />
+					<KeyboardKeyUp KeyIndex="46" ActionIndex="46" ActionName="KeyboardKeyUp(46)" />
+					<KeyboardKeyUp KeyIndex="47" ActionIndex="47" ActionName="KeyboardKeyUp(47)" />
+					<KeyboardKeyUp KeyIndex="48" ActionIndex="48" ActionName="KeyboardKeyUp(48)" />
+					<KeyboardKeyUp KeyIndex="49" ActionIndex="49" ActionName="KeyboardKeyUp(49)" />
+					<KeyboardKeyUp KeyIndex="50" ActionIndex="50" ActionName="KeyboardKeyUp(50)" />
+					<KeyboardKeyUp KeyIndex="51" ActionIndex="51" ActionName="KeyboardKeyUp(51)" />
+					<KeyboardKeyUp KeyIndex="52" ActionIndex="52" ActionName="KeyboardKeyUp(52)" />
+					<KeyboardKeyUp KeyIndex="53" ActionIndex="53" ActionName="KeyboardKeyUp(53)" />
+					<KeyboardKeyUp KeyIndex="54" ActionIndex="54" ActionName="KeyboardKeyUp(54)" />
+					<KeyboardKeyUp KeyIndex="55" ActionIndex="55" ActionName="KeyboardKeyUp(55)" />
+					<KeyboardKeyUp KeyIndex="56" ActionIndex="56" ActionName="KeyboardKeyUp(56)" />
+					<KeyboardKeyUp KeyIndex="57" ActionIndex="57" ActionName="KeyboardKeyUp(57)" />
+					<KeyboardKeyUp KeyIndex="58" ActionIndex="58" ActionName="KeyboardKeyUp(58)" />
+					<KeyboardKeyUp KeyIndex="59" ActionIndex="59" ActionName="KeyboardKeyUp(59)" />
+					<KeyboardKeyUp KeyIndex="60" ActionIndex="60" ActionName="KeyboardKeyUp(60)" />
+					<KeyboardKeyUp KeyIndex="61" ActionIndex="61" ActionName="KeyboardKeyUp(61)" />
+					<KeyboardKeyUp KeyIndex="62" ActionIndex="62" ActionName="KeyboardKeyUp(62)" />
+					<KeyboardKeyUp KeyIndex="63" ActionIndex="63" ActionName="KeyboardKeyUp(63)" />
+					<KeyboardKeyUp KeyIndex="64" ActionIndex="64" ActionName="KeyboardKeyUp(64)" />
+					<KeyboardKeyUp KeyIndex="65" ActionIndex="65" ActionName="KeyboardKeyUp(65)" />
+					<KeyboardKeyUp KeyIndex="66" ActionIndex="66" ActionName="KeyboardKeyUp(66)" />
+					<KeyboardKeyUp KeyIndex="67" ActionIndex="67" ActionName="KeyboardKeyUp(67)" />
+					<KeyboardKeyUp KeyIndex="68" ActionIndex="68" ActionName="KeyboardKeyUp(68)" />
+					<KeyboardKeyUp KeyIndex="69" ActionIndex="69" ActionName="KeyboardKeyUp(69)" />
+					<KeyboardKeyUp KeyIndex="70" ActionIndex="70" ActionName="KeyboardKeyUp(70)" />
+					<KeyboardKeyUp KeyIndex="71" ActionIndex="71" ActionName="KeyboardKeyUp(71)" />
+					<KeyboardKeyUp KeyIndex="72" ActionIndex="72" ActionName="KeyboardKeyUp(72)" />
+					<KeyboardKeyUp KeyIndex="73" ActionIndex="73" ActionName="KeyboardKeyUp(73)" />
+					<KeyboardKeyUp KeyIndex="74" ActionIndex="74" ActionName="KeyboardKeyUp(74)" />
+					<KeyboardKeyUp KeyIndex="75" ActionIndex="75" ActionName="KeyboardKeyUp(75)" />
+					<KeyboardKeyUp KeyIndex="76" ActionIndex="76" ActionName="KeyboardKeyUp(76)" />
+					<KeyboardKeyUp KeyIndex="77" ActionIndex="77" ActionName="KeyboardKeyUp(77)" />
+					<KeyboardKeyUp KeyIndex="78" ActionIndex="78" ActionName="KeyboardKeyUp(78)" />
+					<KeyboardKeyUp KeyIndex="79" ActionIndex="79" ActionName="KeyboardKeyUp(79)" />
+					<KeyboardKeyUp KeyIndex="80" ActionIndex="80" ActionName="KeyboardKeyUp(80)" />
+					<KeyboardKeyUp KeyIndex="81" ActionIndex="81" ActionName="KeyboardKeyUp(81)" />
+					<KeyboardKeyUp KeyIndex="82" ActionIndex="82" ActionName="KeyboardKeyUp(82)" />
+					<KeyboardKeyUp KeyIndex="83" ActionIndex="83" ActionName="KeyboardKeyUp(83)" />
+					<KeyboardKeyUp KeyIndex="84" ActionIndex="84" ActionName="KeyboardKeyUp(84)" />
+					<KeyboardKeyUp KeyIndex="85" ActionIndex="85" ActionName="KeyboardKeyUp(85)" />
+					<KeyboardKeyUp KeyIndex="86" ActionIndex="86" ActionName="KeyboardKeyUp(86)" />
+					<KeyboardKeyUp KeyIndex="87" ActionIndex="87" ActionName="KeyboardKeyUp(87)" />
+					<KeyboardKeyUp KeyIndex="88" ActionIndex="88" ActionName="KeyboardKeyUp(88)" />
+					<KeyboardKeyUp KeyIndex="89" ActionIndex="89" ActionName="KeyboardKeyUp(89)" />
+					<KeyboardKeyUp KeyIndex="90" ActionIndex="90" ActionName="KeyboardKeyUp(90)" />
+					<KeyboardKeyUp KeyIndex="91" ActionIndex="91" ActionName="KeyboardKeyUp(91)" />
+					<KeyboardKeyUp KeyIndex="92" ActionIndex="92" ActionName="KeyboardKeyUp(92)" />
+					<KeyboardKeyUp KeyIndex="93" ActionIndex="93" ActionName="KeyboardKeyUp(93)" />
+					<KeyboardKeyUp KeyIndex="94" ActionIndex="94" ActionName="KeyboardKeyUp(94)" />
+					<KeyboardKeyUp KeyIndex="95" ActionIndex="95" ActionName="KeyboardKeyUp(95)" />
+					<KeyboardKeyUp KeyIndex="96" ActionIndex="96" ActionName="KeyboardKeyUp(96)" />
+					<KeyboardKeyUp KeyIndex="97" ActionIndex="97" ActionName="KeyboardKeyUp(97)" />
+					<KeyboardKeyUp KeyIndex="98" ActionIndex="98" ActionName="KeyboardKeyUp(98)" />
+					<KeyboardKeyUp KeyIndex="99" ActionIndex="99" ActionName="KeyboardKeyUp(99)" />
+					<KeyboardKeyUp KeyIndex="100" ActionIndex="100" ActionName="KeyboardKeyUp(100)" />
+					<KeyboardKeyUp KeyIndex="101" ActionIndex="101" ActionName="KeyboardKeyUp(101)" />
+					<KeyboardKeyUp KeyIndex="102" ActionIndex="102" ActionName="KeyboardKeyUp(102)" />
+					<KeyboardKeyUp KeyIndex="103" ActionIndex="103" ActionName="KeyboardKeyUp(103)" />
+					<KeyboardKeyUp KeyIndex="104" ActionIndex="104" ActionName="KeyboardKeyUp(104)" />
+					<KeyboardKeyUp KeyIndex="105" ActionIndex="105" ActionName="KeyboardKeyUp(105)" />
+					<KeyboardKeyUp KeyIndex="106" ActionIndex="106" ActionName="KeyboardKeyUp(106)" />
+					<KeyboardKeyUp KeyIndex="107" ActionIndex="107" ActionName="KeyboardKeyUp(107)" />
+					<KeyboardKeyUp KeyIndex="108" ActionIndex="108" ActionName="KeyboardKeyUp(108)" />
+					<KeyboardKeyUp KeyIndex="109" ActionIndex="109" ActionName="KeyboardKeyUp(109)" />
+					<KeyboardKeyUp KeyIndex="110" ActionIndex="110" ActionName="KeyboardKeyUp(110)" />
+					<KeyboardKeyUp KeyIndex="111" ActionIndex="111" ActionName="KeyboardKeyUp(111)" />
+					<KeyboardKeyUp KeyIndex="112" ActionIndex="112" ActionName="KeyboardKeyUp(112)" />
+					<KeyboardKeyUp KeyIndex="113" ActionIndex="113" ActionName="KeyboardKeyUp(113)" />
+					<KeyboardKeyUp KeyIndex="114" ActionIndex="114" ActionName="KeyboardKeyUp(114)" />
+					<KeyboardKeyUp KeyIndex="115" ActionIndex="115" ActionName="KeyboardKeyUp(115)" />
+					<KeyboardKeyUp KeyIndex="116" ActionIndex="116" ActionName="KeyboardKeyUp(116)" />
+					<KeyboardKeyUp KeyIndex="117" ActionIndex="117" ActionName="KeyboardKeyUp(117)" />
+					<KeyboardKeyUp KeyIndex="118" ActionIndex="118" ActionName="KeyboardKeyUp(118)" />
+					<KeyboardKeyUp KeyIndex="119" ActionIndex="119" ActionName="KeyboardKeyUp(119)" />
+					<KeyboardKeyUp KeyIndex="120" ActionIndex="120" ActionName="KeyboardKeyUp(120)" />
+					<KeyboardKeyUp KeyIndex="121" ActionIndex="121" ActionName="KeyboardKeyUp(121)" />
+					<KeyboardKeyUp KeyIndex="122" ActionIndex="122" ActionName="KeyboardKeyUp(122)" />
+					<KeyboardKeyUp KeyIndex="123" ActionIndex="123" ActionName="KeyboardKeyUp(123)" />
+					<KeyboardKeyUp KeyIndex="124" ActionIndex="124" ActionName="KeyboardKeyUp(124)" />
+					<KeyboardKeyUp KeyIndex="125" ActionIndex="125" ActionName="KeyboardKeyUp(125)" />
+					<KeyboardKeyUp KeyIndex="126" ActionIndex="126" ActionName="KeyboardKeyUp(126)" />
+					<KeyboardKeyUp KeyIndex="127" ActionIndex="127" ActionName="KeyboardKeyUp(127)" />
+				</InputActionMap>
+				<InputProfile name="default">
+					<ActionMap name="default" >
+						<Manipulator name="GUCE::GUI::CInputCEGUIManipulator" />
+						<Manipulator name="GUCE::CORE::CInputBasedOgreMObjectManipulator" />
+					</ActionMap>
+				</InputProfile>
+			</CInputProfileManager>
+		</INPUT>
+	</GUCEF>
+	<GUCE>
+		<CORE>
+			<CGUCEApplication>
+				<INPUTDRIVER module="$CURWORKDIR$\plugins\inputdriverOIS_d" >
+					<INPUTDRIVERPARAM key="HINSTANCE" value="$ENVVAR:HINSTANCE$" />
+					<INPUTDRIVERPARAM key="HWND" value="$ENVVAR:HWND$" />
+				</INPUTDRIVER>
+				<OGRE>
+					<OGREPlugins plugindir="$CURWORKDIR$" >
+						<OGREPlugin filename="RenderSystem_GL" />
+						<OGREPlugin filename="Plugin_OctreeSceneManager" />
+					</OGREPlugins>
+					<OgreRecourceGroups>
+						<OgreRecourceGroup name="Bootstrap" path="$CURWORKDIR$\$UPDIR$\SampleData\Ogre\OgreCore.zip" type="Zip" />
+				                <OgreRecourceGroup name="GUI" path="CEGUI/configs" type="gucefVFS" />
+						<OgreRecourceGroup name="GUI" path="CEGUI/fonts" type="gucefVFS" />
+						<OgreRecourceGroup name="GUI" path="CEGUI/imagesets" type="gucefVFS" />
+						<OgreRecourceGroup name="GUI" path="CEGUI/layouts" type="gucefVFS" />
+						<OgreRecourceGroup name="GUI" path="CEGUI/looknfeel" type="gucefVFS" />
+						<OgreRecourceGroup name="GUI" path="CEGUI/lua_scripts" type="gucefVFS" />
+						<OgreRecourceGroup name="GUI" path="CEGUI/schemes" type="gucefVFS" />
+					</OgreRecourceGroups>
+				</OGRE>
+				<VideoSettings>
+					<WindowSettings width="640" height="480" fullscreen="false" windowInputProfile="default" >
+						<WindowSetting name="colourDepth" value="32" /> 
+						<WindowSetting name="FSAA" value="0" />
+						<WindowSetting name="displayFrequency" value="75" />
+						<WindowSetting name="vsync" value="0" />
+					</WindowSettings>
+					<RenderSystem name="OpenGL Rendering Subsystem" />
+				</VideoSettings>
+			</CGUCEApplication>
+		</CORE>
+		<GUI>
+			<CGUIManager>
+				<LoadScheme name="TaharezLook.scheme" resourceGroup="GUI" />
+				<LoadImageSet name="icons.imageset" resourceGroup="GUI" />
+				<!-- <LoadLookNFeel name="" resourceGroup="GUI" /> -->
+				<!-- <LoadLayout name="" resourceGroup="GUIlayouts" namePrefix="" /> -->
+				<LoadFont name="tahoma-12.font" resourceGroup="GUI" />
+				<DefaultFont name="tahoma-12" />
+				<DefaultMouseCursor imageSet="TaharezLook" imageName="MouseArrow" />
+			</CGUIManager>
+		</GUI>
+	</GUCE>
+</REFAPPCONFIG>
