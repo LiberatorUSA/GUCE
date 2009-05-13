@@ -17,8 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
 
-#ifndef GUCE_MYGUIOGRE_CGUIDRIVER_H
-#define GUCE_MYGUIOGRE_CGUIDRIVER_H 
+#ifndef GUCE_MYGUIOGRE_CGUICONTEXT_H
+#define GUCE_MYGUIOGRE_CGUICONTEXT_H 
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -26,38 +26,15 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#ifndef GUCEF_GUI_CWIDGETFACTORY_H
-#include "gucefGUI_CWidgetFactory.h"
-#define GUCEF_GUI_CWIDGETFACTORY_H
-#endif /* GUCEF_GUI_CWIDGETFACTORY_H ? */
-
-#ifndef GUCEF_GUI_CFORMFACTORY_H
-#include "gucefGUI_CFormFactory.h"
-#define GUCEF_GUI_CFORMFACTORY_H
-#endif /* GUCEF_GUI_CFORMFACTORY_H ? */
-
-#ifndef GUCE_GUI_CIGUIDRIVER_H
-#include "guceGUI_CIGUIDriver.h"
-#define GUCE_GUI_CIGUIDRIVER_H
-#endif /* GUCE_GUI_CIGUIDRIVER_H ? */
+#ifndef GUCEF_GUI_CIGUICONTEXT_H
+#include "gucefGUI_CIGUIContext.h"
+#define GUCEF_GUI_CIGUICONTEXT_H
+#endif /* GUCEF_GUI_CIGUICONTEXT_H ? */
 
 #ifndef GUCE_MYGUIOGRE_MACROS_H
 #include "guceMyGUIOgre_macros.h"     /* often used guceMYGUIOGRE macros */
 #define GUCE_MYGUIOGRE_MACROS_H
 #endif /* GUCE_MYGUIOGRE_MACROS_H ? */
-
-/*-------------------------------------------------------------------------//
-//                                                                         //
-//      CLASSES                                                            //
-//                                                                         //
-//-------------------------------------------------------------------------*/
-
-/*
- *      Forward declarations of classes used here 
- */
-namespace Ogre { class RenderWindow; class RenderTexture; class Root; }
-namespace MyGUI { class GUI; }
-namespace GUCEF { namespace CORE { class CDataNode; } }
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -74,80 +51,53 @@ namespace MYGUIOGRE {
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-class CModule;
-class CMyGUIInputAdapter;
+class CGUIDriver;
 
 /*-------------------------------------------------------------------------*/
 
 /**
- *  Implementation of the GUI driver for the CEGUI&Ogre combo
+ *  Implementation of the GUI context for the MyGUI&Ogre combo
  */
-class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
+class GUCE_MYGUIOGRE_EXPORT_CPP CGUIContext : public GUCEF::GUI::CGUIContext
 {
     public:    
     
-    static CGUIDriver* Instance( void );
+    CGUIContext( CGUIDriver& myGuiDriver );
     
-    virtual bool Initialize( CORE::CWindowManager::TWindowContextPtr windowContext );
+    virtual ~CGUIContext();
     
-    virtual bool Shutdown( void );
+    virtual GUCEF::GUI::CWidget* CreateWidget( const CString& widgetName );
     
-    virtual GUCEF::GUI::CIGUIContext* CreateGUIContext();
+    virtual void DestroyWidget( GUCEF::GUI::CWidget* widget );
     
-    virtual void DestroyGUIContext( GUCEF::GUI::CIGUIContext* context );
+    virtual GUCEF::GUI::CForm* CreateForm( const CString& formName );
     
-    virtual TGUIContextSet GetContextList( void );
-    
-    virtual UInt32 GetContextCount( void );
-    
-    virtual CString GetDriverName( void );
-    
+    virtual void DestroyForm( GUCEF::GUI::CForm* form );   
+
     virtual TStringSet GetAvailableFormTypes( void );
     
     virtual TStringSet GetAvailableWidgetTypes( void );
     
-    virtual bool LoadConfig( const GUCEF::CORE::CDataNode& rootNode );
+    virtual GUCEF::GUI::CFormBackend* CreateFormBackend( void );
     
-    virtual bool SaveConfig( GUCEF::CORE::CDataNode& tree );
+    virtual void DestroyFormBackend( GUCEF::GUI::CFormBackend* formBackend );
+    
+    virtual GUCEF::GUI::CGUIDriver* GetDriver( void );
+    
+    virtual TWidgetSet GetOwnedWidgets( void );
+    
+    virtual TFormSet GetOwnedForms( void );
+    
+    private:
+    
+    CGUIContext( const CGUIContext& src );            
+    CGUIContext& operator=( const CGUIContext& src );
+    
+    private:
 
-    GUCEF::GUI::CWidget* CreateWidget( const CString& widgetName );
-    
-    void DestroyWidget( GUCEF::GUI::CWidget* widget );
-    
-    GUCEF::GUI::CForm* CreateForm( const CString& formName );
-    
-    void DestroyForm( GUCEF::GUI::CForm* form );
-    
-    GUCEF::GUI::CFormBackend* CreateFormBackend( void );
-    
-    void DestroyFormBackend( GUCEF::GUI::CFormBackend* formBackend );
-    
-    virtual const CString& GetClassTypeName( void ) const;
-    
-    private:
-    friend class CModule;
-    
-    static void Deinstance( void );
-    
-    private:
-    
-    CGUIDriver( void );
-    CGUIDriver( const CGUIDriver& src );        
-    virtual ~CGUIDriver();    
-    CGUIDriver& operator=( const CGUIDriver& src );
-    
-    private:
-    
-    static CGUIDriver* g_instance;
-    
-    bool m_initialized;                         /**< flag for manager initialization */    
-    Ogre::RenderWindow* m_window;               /**< window displaying our GUI */
-    MyGUI::Gui* m_guiSystem;                    /**< main GUI system class */
-    CMyGUIInputAdapter* m_inputAdapter;         /**< binding between the input system and MyGUI */
-    GUCEF::CORE::CDataNode m_guiConfig;    
-    GUCEF::GUI::CFormFactory m_formFactory;
-    GUCEF::GUI::CWidgetFactory m_widgetFactory;
-    TGUIContextSet m_contextList;
+    CGUIDriver* m_driver;
+    TWidgetSet m_widgetSet;
+    TFormSet m_formSet;
 };
 
 /*-------------------------------------------------------------------------//
@@ -161,7 +111,7 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
 
 /*-------------------------------------------------------------------------*/
 
-#endif /* GUCE_MYGUIOGRE_CGUIDRIVER_H ? */
+#endif /* GUCE_MYGUIOGRE_CGUICONTEXT_H ? */
 
 /*-------------------------------------------------------------------------//
 //                                                                         //

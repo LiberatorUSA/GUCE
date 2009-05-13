@@ -31,15 +31,15 @@
 #define GUCE_CORE_CWINDOWMANAGER_H
 #endif /* GUCE_CORE_CWINDOWMANAGER_H ? */
 
-#ifndef GUCEF_CORE_CICONFIGURABLE_H
-#include "CIConfigurable.h"
-#define GUCEF_CORE_CICONFIGURABLE_H
-#endif /* GUCEF_CORE_CICONFIGURABLE_H ? */
-
 #ifndef GUCEF_CORE_CDATANODE_H
 #include "CDataNode.h"
 #define GUCEF_CORE_CDATANODE_H
 #endif /* GUCEF_CORE_CDATANODE_H ? */
+
+#ifndef GUCEF_GUI_CGUIDRIVER_H
+#include "gucefGUI_CGUIDriver.h"
+#define GUCEF_GUI_CGUIDRIVER_H
+#endif /* GUCEF_GUI_CGUIDRIVER_H ? */
 
 #ifndef GUCE_GUI_MACROS_H
 #include "guceGUI_macros.h"              /* often used guceGUI macros */
@@ -64,7 +64,8 @@ namespace GUI {
 /**
  *  Interface class for GUI drivers that interact with the GUCE GUI manager
  */
-class GUCE_GUI_EXPORT_CPP CIGUIDriver : public GUCEF::CORE::CIConfigurable
+class GUCE_GUI_EXPORT_CPP CIGUIDriver : public GUCEF::GUI::CGUIDriver
+                                        
 {
     public:    
     

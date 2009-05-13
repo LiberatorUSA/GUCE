@@ -230,6 +230,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\guceMyGUIOgre_CGUIContext.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\guceMyGUIOgre_CGUIDriver.cpp"
 				>
 			</File>
@@ -353,6 +357,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\guceMyGUIOgre_CGridViewImp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\guceMyGUIOgre_CGUIContext.h"
 				>
 			</File>
 			<File

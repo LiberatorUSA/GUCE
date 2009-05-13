@@ -35,6 +35,11 @@
 #define GUCE_CORE_CGUCEAPPLICATION_H
 #endif /* GUCE_CORE_CGUCEAPPLICATION_H ? */
 
+#ifndef GUCEF_GUI_CGUIMANAGER_H
+#include "gucefGUI_CGUIManager.h"
+#define GUCEF_GUI_CGUIMANAGER_H
+#endif /* GUCEF_GUI_CGUIMANAGER_H ? */
+
 #ifndef GUCEF_CORE_CDATANODE_H
 #include "CDataNode.h"
 #define GUCEF_CORE_CDATANODE_H
@@ -49,6 +54,11 @@
 #include "CWindowManager.h"
 #define GUCE_CORE_CWINDOWMANAGER_H
 #endif /* GUCE_CORE_CWINDOWMANAGER_H ? */
+
+#ifndef GUCE_MYGUIOGRE_CFORMBACKENDIMP_H
+#include "guceMyGUIOgre_CFormBackendImp.h"
+#define GUCE_MYGUIOGRE_CFORMBACKENDIMP_H
+#endif /* GUCE_MYGUIOGRE_CFORMBACKENDIMP_H ? */
 
 #ifndef GUCE_MYGUIOGRE_CMYGUIINPUTADAPTER_H
 #include "guceMyGUIOgre_CMyGUIInputAdapter.h"
@@ -86,7 +96,10 @@ CGUIDriver::CGUIDriver( void )
       m_window( NULL )        ,
       m_guiSystem( NULL )     ,
       m_inputAdapter( NULL )  ,
-      m_guiConfig()
+      m_guiConfig()           ,
+      m_formFactory()         ,
+      m_widgetFactory()       ,
+      m_contextList()
 {GUCE_TRACE;
 
 }
@@ -129,7 +142,7 @@ CGUIDriver::Shutdown( void )
 
     if ( m_initialized )
     {   
-        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutting down CEGUI system" );
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutting down MyGUI system" );
         
         delete m_guiSystem;
         m_guiSystem = NULL;
@@ -137,7 +150,7 @@ CGUIDriver::Shutdown( void )
         m_window = NULL;        
         m_initialized = false;
         
-        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutdown of CEGUI system complete" );
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutdown of MyGUI system complete" );
     }
     return true;
 }
@@ -233,6 +246,144 @@ CGUIDriver::SaveConfig( GUCEF::CORE::CDataNode& tree )
 {GUCE_TRACE;
 
     return false;
+}
+
+/*-------------------------------------------------------------------------*/
+
+GUCEF::GUI::CIGUIContext*
+CGUIDriver::CreateGUIContext()
+{GUCE_TRACE;
+
+    GUCEF::GUI::CIGUIContext* context = new CGUIContext( *this );
+    m_contextList.insert( context );
+    return context;
+}
+
+/*-------------------------------------------------------------------------*/
+    
+void
+CGUIDriver::DestroyGUIContext( GUCEF::GUI::CIGUIContext* context )
+{GUCE_TRACE;
+    
+    m_contextList.erase( context );
+    delete context;
+}
+
+/*-------------------------------------------------------------------------*/
+
+CGUIDriver::TGUIContextSet
+CGUIDriver::GetContextList( void )
+{GUCE_TRACE;
+
+    return m_contextList;
+}
+
+/*-------------------------------------------------------------------------*/
+    
+UInt32
+CGUIDriver::GetContextCount( void )
+{GUCE_TRACE;
+
+    return (UInt32) m_contextList.size();
+}
+
+/*-------------------------------------------------------------------------*/
+    
+CString
+CGUIDriver::GetDriverName( void )
+{GUCE_TRACE;
+
+    return "guceMyGUIOgre";
+}
+
+/*-------------------------------------------------------------------------*/
+
+GUCEF::GUI::CWidget*
+CGUIDriver::CreateWidget( const CString& widgetName )
+{GUCE_TRACE;
+
+    return m_widgetFactory.Create( widgetName );
+}
+    
+/*-------------------------------------------------------------------------*/
+    
+void
+CGUIDriver::DestroyWidget( GUCEF::GUI::CWidget* widget )
+{GUCE_TRACE;
+
+    m_widgetFactory.Destroy( widget );
+}
+    
+/*-------------------------------------------------------------------------*/
+    
+GUCEF::GUI::CForm*
+CGUIDriver::CreateForm( const CString& formName )
+{GUCE_TRACE;
+
+    return m_formFactory.Create( formName );
+}
+    
+/*-------------------------------------------------------------------------*/
+    
+void
+CGUIDriver::DestroyForm( GUCEF::GUI::CForm* form )
+{GUCE_TRACE;
+
+    return m_formFactory.Destroy( form );
+}
+    
+/*-------------------------------------------------------------------------*/
+
+CGUIDriver::TStringSet
+CGUIDriver::GetAvailableFormTypes( void )
+{GUCE_TRACE;
+
+    // Get all the generic forms
+    TStringSet formTypes = GUCEF::GUI::CGUIManager::Instance()->GetGenericFormTypes();
+    
+    // Add/overwrite with the driver specific forms
+    m_formFactory.ObtainKeySet( formTypes );
+}
+    
+/*-------------------------------------------------------------------------*/
+    
+CGUIDriver::TStringSet
+CGUIDriver::GetAvailableWidgetTypes( void )
+{GUCE_TRACE;
+
+    // Get all the generic forms
+    TStringSet widgetTypes = GUCEF::GUI::CGUIManager::Instance()->GetGenericWidgetTypes();
+    
+    // Add/overwrite with the driver specific forms
+    m_widgetFactory.ObtainKeySet( widgetTypes );
+}
+    
+/*-------------------------------------------------------------------------*/
+    
+GUCEF::GUI::CFormBackend*
+CGUIDriver::CreateFormBackend( void )
+{GUCE_TRACE;
+
+    return new CFormBackendImp();
+}
+    
+/*-------------------------------------------------------------------------*/
+    
+void
+CGUIDriver::DestroyFormBackend( GUCEF::GUI::CFormBackend* formBackend )
+{GUCE_TRACE;
+
+    delete formBackend;
+}
+
+/*-------------------------------------------------------------------------*/
+
+const CString&
+CGUIDriver::GetClassTypeName( void ) const
+{GUCE_TRACE;
+
+    static CString classTypeName = "GUCE::MYGUIOGRE::CGUIDriver";
+    return classTypeName;
 }
 
 /*-------------------------------------------------------------------------//

@@ -41,14 +41,14 @@ namespace GUI {
 //-------------------------------------------------------------------------*/
 
 CIGUIDriver::CIGUIDriver( void )
-    : CIConfigurable()
+    : GUCEF::GUI::CGUIDriver()
 {GUCE_TRACE;
 }
 
 /*-------------------------------------------------------------------------*/
 
 CIGUIDriver::CIGUIDriver( const CIGUIDriver& src )
-    : CIConfigurable( src )
+    : GUCEF::GUI::CGUIDriver( src )
 {GUCE_TRACE;
 
 }
