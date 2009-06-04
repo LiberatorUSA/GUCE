@@ -517,7 +517,7 @@ CWidgetImp< BaseClass >::GetChildWidget( const CString& widgetName )
         MyGUI::WidgetPtr childWidget = m_widget->findWidget( widgetName );
         if ( NULL != childWidget )
         {
-            return childWidget->getUserData< GUCEF::GUI::CWidget >( false );
+            return *childWidget->getUserData< GUCEF::GUI::CWidget* >( false );
         }    
     }
     catch ( Ogre::Exception& )
@@ -709,7 +709,7 @@ CWidgetImp< BaseClass >::GetParentWidget( void )
     MyGUI::Widget* parent = m_widget->getParent();
     if ( NULL != parent )
     {
-        return parent->getUserData< CWidget >( false );
+        return *parent->getUserData< CWidget* >( false );
     }
     return NULL;
 }
@@ -725,7 +725,7 @@ CWidgetImp< BaseClass >::GetChildWidgetSet( TWidgetSet& childSet )
     while ( childrenEnumerator.next() )
     {
         MyGUI::WidgetPtr child = childrenEnumerator.current();
-        GUCEF::GUI::CWidget* wrapWindow = child->getUserData< CWidget >( false );
+        GUCEF::GUI::CWidget* wrapWindow = *child->getUserData< CWidget* >( false );
         if ( NULL != wrapWindow )
         {
             childSet.insert( wrapWindow );

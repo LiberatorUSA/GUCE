@@ -27,6 +27,11 @@
 
 #include <MyGUI.h>
 
+#ifndef GUCEF_CORE_CLOGMANAGER_H
+#include "CLogManager.h"
+#define GUCEF_CORE_CLOGMANAGER_H
+#endif /* GUCEF_CORE_CLOGMANAGER_H ? */
+
 #ifndef GUCEF_INPUT_CINPUTCONTROLLER_H
 #include "CInputController.h"
 #define GUCEF_INPUT_CINPUTCONTROLLER_H
@@ -110,6 +115,30 @@ CMyGUIInputAdapter::GetClassTypeName( void ) const
 
 /*-------------------------------------------------------------------------*/
 
+MyGUI::MouseButton
+CMyGUIInputAdapter::ConvertMouseButtonIdex( const UInt32 buttonIndex )
+{GUCE_TRACE;
+
+    switch ( buttonIndex )
+    {
+        case 0: return MyGUI::MouseButton( MyGUI::MouseButton::Button0 );
+        case 1: return MyGUI::MouseButton( MyGUI::MouseButton::Button1 );
+        case 2: return MyGUI::MouseButton( MyGUI::MouseButton::Button2 );
+        case 3: return MyGUI::MouseButton( MyGUI::MouseButton::Button3 );
+        case 4: return MyGUI::MouseButton( MyGUI::MouseButton::Button4 );
+        case 5: return MyGUI::MouseButton( MyGUI::MouseButton::Button5 );
+        case 6: return MyGUI::MouseButton( MyGUI::MouseButton::Button6 );
+        case 7: return MyGUI::MouseButton( MyGUI::MouseButton::Button7 );
+        default:
+        {
+            GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_IMPORTANT, "CMyGUIInputAdapter(" + GUCEF::CORE::PointerToString( this ) + "): Unable to convert mouse button with index " + GUCEF::CORE::UInt32ToString( buttonIndex ) + " to a MyGUI equivalant" );
+            return MyGUI::MouseButton( MyGUI::MouseButton::None );
+        }
+    }
+}
+
+/*-------------------------------------------------------------------------*/
+
 void
 CMyGUIInputAdapter::OnNotify( GUCEF::CORE::CNotifier* notifier                 ,
                               const GUCEF::CORE::CEvent& eventid               ,
@@ -123,15 +152,15 @@ CMyGUIInputAdapter::OnNotify( GUCEF::CORE::CNotifier* notifier                 ,
             GUCEF::INPUT::CMouseButtonEventData* eData = static_cast< GUCEF::INPUT::CMouseButtonEventData* >( eventdata );
             if ( eData->GetPressedState() )
             {
-                m_guiSystem->injectMousePress( (int)eData->GetXPos()                        , 
-                                               (int)eData->GetYPos()                        , 
-                                               (MyGUI::MouseButton) eData->GetButtonIndex() );
+                m_guiSystem->injectMousePress( (int)eData->GetXPos()                             , 
+                                               (int)eData->GetYPos()                             , 
+                                               ConvertMouseButtonIdex( eData->GetButtonIndex() ) );
             }
             else
             {
-                m_guiSystem->injectMouseRelease( (int)eData->GetXPos()                        ,
-                                                 (int)eData->GetYPos()                        ,
-                                                 (MyGUI::MouseButton) eData->GetButtonIndex() );
+                m_guiSystem->injectMouseRelease( (int)eData->GetXPos()                           ,
+                                                 (int)eData->GetYPos()                           ,
+                                                 ConvertMouseButtonIdex( eData->GetButtonIndex() ) );
             }
             return;
         }
