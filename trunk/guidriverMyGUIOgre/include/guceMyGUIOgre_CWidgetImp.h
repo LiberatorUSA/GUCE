@@ -231,7 +231,7 @@ CWidgetImp< BaseClass >::ShowModal( void )
 {GUCE_TRACE;
 
     //m_widget->setModalState( true );
-    m_widget->show();
+    m_widget->setVisible( true );
     return true;
 }
 
@@ -514,31 +514,11 @@ CWidgetImp< BaseClass >::GetChildWidget( const CString& widgetName )
 
     try
     {
-        // Search the immediate children
-        MyGUI::VectorWidgetPtr childWidgets = m_widget->getChilds();
-        MyGUI::VectorWidgetPtr::iterator i = childWidgets.begin();
-        while ( i != childWidgets.end() )
+        MyGUI::WidgetPtr childWidget = m_widget->findWidget( widgetName );
+        if ( NULL != childWidget )
         {
-            if ( widgetName == (*i)->getName() )
-            {
-                return static_cast< CWidget* >( (*i)->getUserData() );
-            }
-            ++i;
-        }
-        
-        // Search the childrens children etc (recursive)
-        i = childWidgets.begin();
-        while ( i != childWidgets.end() )
-        {
-            GUCEF::GUI::CWidget* childWrapper = static_cast< CWidget* >( (*i)->getUserData() );
-            GUCEF::GUI::CWidget* searchResult = childWrapper->GetChildWidget( widgetName );
-            
-            if ( NULL != searchResult )
-            {
-                return searchResult;
-            }
-            ++i;
-        }        
+            return childWidget->getUserData< GUCEF::GUI::CWidget >( false );
+        }    
     }
     catch ( Ogre::Exception& )
     {
@@ -569,7 +549,7 @@ bool
 CWidgetImp< BaseClass >::SetVisibility( const bool isVisible )
 {GUCE_TRACE;
 
-    isVisible ? m_widget->show() : m_widget->hide();
+    m_widget->setVisible( isVisible );
     return true;
 }
 
@@ -580,7 +560,7 @@ bool
 CWidgetImp< BaseClass >::IsVisible( void ) const
 {GUCE_TRACE;
 
-    return m_widget->isShow();
+    return m_widget->isVisible();
 }
 
 /*-------------------------------------------------------------------------*/
@@ -699,10 +679,6 @@ bool
 CWidgetImp< BaseClass >::SetParentWidget( GUCEF::GUI::CWidget* parentWidget )
 {GUCE_TRACE;
 
-    // First make sure we are no longer attached to another parent window
-    m_widget->_setOwner( NULL );
-    // @TODO: also remove from parent administration somehow
-
     // Check if we have received a new parent
     if ( NULL != parentWidget )
     {
@@ -711,11 +687,16 @@ CWidgetImp< BaseClass >::SetParentWidget( GUCEF::GUI::CWidget* parentWidget )
         if ( NULL != newParent )
         {
             // Set the new parent
-            m_widget->_setOwner( newParent );
+            m_widget->attachToWidget( newParent );
             return true;
         }
+        return false;
     }
-    return false;
+    else
+    {
+        m_widget->detachFromWidget();
+        return true;
+    }
 }
 
 /*-------------------------------------------------------------------------*/
@@ -728,7 +709,7 @@ CWidgetImp< BaseClass >::GetParentWidget( void )
     MyGUI::Widget* parent = m_widget->getParent();
     if ( NULL != parent )
     {
-        return static_cast< CWidget* >( parent->getUserData() );
+        return parent->getUserData< CWidget >( false );
     }
     return NULL;
 }
@@ -740,16 +721,15 @@ bool
 CWidgetImp< BaseClass >::GetChildWidgetSet( TWidgetSet& childSet )
 {GUCE_TRACE;
 
-    MyGUI::VectorWidgetPtr children = m_widget->getChilds();
-    MyGUI::VectorWidgetPtr::iterator i = children.begin();
-    while ( i != children.end() )
+    MyGUI::EnumeratorWidgetPtr childrenEnumerator = m_widget->getEnumerator();
+    while ( childrenEnumerator.next() )
     {
-        GUCEF::GUI::CWidget* wrapWindow = static_cast< CWidget* >( (*i)->getUserData() );
+        MyGUI::WidgetPtr child = childrenEnumerator.current();
+        GUCEF::GUI::CWidget* wrapWindow = child->getUserData< CWidget >( false );
         if ( NULL != wrapWindow )
         {
             childSet.insert( wrapWindow );
         }
-        ++i;
     }
     return true;
 }
