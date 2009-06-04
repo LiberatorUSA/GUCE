@@ -165,7 +165,7 @@ CFormBackendImp::CreateAndHookWrapperForWindow( MyGUI::Widget* widget )
 {GUCE_TRACE;
 
     GUCEF::GUI::CWidget* widgetWrapper = NULL;
-    CString typeName( CString( widget->getWidgetType().c_str() ).SubstrToChar( '/', false ) );
+    CString typeName( CString( widget->getTypeName().c_str() ).SubstrToChar( '/', false ) );
 
     if ( "Widget" == typeName )
     {

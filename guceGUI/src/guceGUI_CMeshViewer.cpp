@@ -219,29 +219,29 @@ CMeshViewer::OnGUIBackendChange( GUCEF::CORE::CNotifier* notifier    ,
 
     if ( NULL == m_fileOpenDialog )
     {
-        // Check if we want to act based on this event
-        if ( GUCEF::GUI::CGUIManager::FormFactoryRegisteredEvent == eventid )
-        {
-            const CString& formType = static_cast< GUCEF::GUI::CGUIManager::TKeyContainer* >( eventdata )->GetData();
-            if ( formType != "FileOpenDialog" )
-            {
-                return;
-            }
-        }
-        
-        // Try to create the form        
-        GUCEF::GUI::CFormFactory& formFactory = GUCEF::GUI::CGUIManager::Instance()->GetFormFactory();
-        m_fileOpenDialog = static_cast< GUCEF::GUI::CFileSystemDialog* >( formFactory.Create( "FileOpenDialog" ) );
-        
-        if ( NULL != m_fileOpenDialog )
-        {
-            SubscribeTo( m_fileOpenDialog                                                    ,
-                         GUCEF::GUI::CForm::LayoutLoadedEvent                                ,
-                         &TEventCallback( this, &CMeshViewer::OnFileOpenDialogLayoutLoaded ) );
-                         
-            m_fileOpenDialog->SetAllowedSelection( false, true );        
-            m_fileOpenDialog->SetAllowMultiSelect( false );
-        }
+        //// Check if we want to act based on this event
+        //if ( GUCEF::GUI::CGUIManager::FormFactoryRegisteredEvent == eventid )
+        //{
+        //    const CString& formType = static_cast< GUCEF::GUI::CGUIManager::TKeyContainer* >( eventdata )->GetData();
+        //    if ( formType != "FileOpenDialog" )
+        //    {
+        //        return;
+        //    }
+        //}
+        //
+        //// Try to create the form        
+        //GUCEF::GUI::CFormFactory& formFactory = GUCEF::GUI::CGUIManager::Instance()->GetFormFactory();
+        //m_fileOpenDialog = static_cast< GUCEF::GUI::CFileSystemDialog* >( formFactory.Create( "FileOpenDialog" ) );
+        //
+        //if ( NULL != m_fileOpenDialog )
+        //{
+        //    SubscribeTo( m_fileOpenDialog                                                    ,
+        //                 GUCEF::GUI::CForm::LayoutLoadedEvent                                ,
+        //                 &TEventCallback( this, &CMeshViewer::OnFileOpenDialogLayoutLoaded ) );
+        //                 
+        //    m_fileOpenDialog->SetAllowedSelection( false, true );        
+        //    m_fileOpenDialog->SetAllowMultiSelect( false );
+        //}
     }
 }
 

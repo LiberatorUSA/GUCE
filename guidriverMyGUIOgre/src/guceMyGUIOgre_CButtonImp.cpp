@@ -81,7 +81,7 @@ CButtonImp::GetButtonText( CString& text ) const
 
     if ( NULL != m_button )
     {
-       text = m_button->getCaption()->asUTF8();
+       text = m_button->getCaption().asUTF8();
     }
     return true;
 }
