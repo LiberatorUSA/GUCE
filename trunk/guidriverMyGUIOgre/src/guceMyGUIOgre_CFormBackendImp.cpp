@@ -272,11 +272,10 @@ CFormBackendImp::WrapAndHookChildWindows( MyGUI::Widget* widget )
     GUCEF::GUI::CWidget* wrappedWidget = NULL;
     MyGUI::Widget* childWidget = NULL;
     
-    MyGUI::VectorWidgetPtr childWidgets = widget->getChilds();
-    MyGUI::VectorWidgetPtr::iterator i = childWidgets.begin();
-    while ( i != childWidgets.end() )
+    MyGUI::EnumeratorWidgetPtr childWidgets = widget->getEnumerator();
+    while ( childWidgets.next() )
     {
-        childWidget = (*i);
+        childWidget = childWidgets.current();
         wrappedWidget = CreateAndHookWrapperForWindow( childWidget );
         if ( NULL != widget )
         {
@@ -284,9 +283,7 @@ CFormBackendImp::WrapAndHookChildWindows( MyGUI::Widget* widget )
             m_widgetMap[ localWidgetName ] = wrappedWidget;
         }
         
-        WrapAndHookChildWindows( childWidget );
-        
-        ++i;                       
+        WrapAndHookChildWindows( childWidget );                     
     }
 }
 
@@ -311,6 +308,7 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
         // clean up this mess !!!
         rootWidgets = lmgr->loadLayout( "currentFile"       , 
                                         m_widgetNamePrefix  ,
+                                        0                   ,
                                         m_resourceGroupName );     
         m_dummyArchive->ClearResourceList();
     }
@@ -333,7 +331,7 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
             m_widgetMap[ localWidgetName ] = wrappedRootWidget;
             WrapAndHookChildWindows( rootWidget );
         }
-        rootWidget->hide();
+        rootWidget->setVisible( false );
         ++i;        
     }
     

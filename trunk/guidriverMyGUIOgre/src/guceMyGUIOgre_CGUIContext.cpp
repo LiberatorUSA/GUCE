@@ -45,7 +45,8 @@ namespace MYGUIOGRE {
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CGUIContext::CGUIContext()
+CGUIContext::CGUIContext( CGUIDriver& myGuiDriver )
+    : GUCEF::GUI::CIGUIContext()
 {GUCE_TRACE;
 
 }

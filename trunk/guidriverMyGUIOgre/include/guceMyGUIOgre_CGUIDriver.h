@@ -56,7 +56,7 @@
  *      Forward declarations of classes used here 
  */
 namespace Ogre { class RenderWindow; class RenderTexture; class Root; }
-namespace MyGUI { class GUI; }
+namespace MyGUI { class Gui; }
 namespace GUCEF { namespace CORE { class CDataNode; } }
 
 /*-------------------------------------------------------------------------//

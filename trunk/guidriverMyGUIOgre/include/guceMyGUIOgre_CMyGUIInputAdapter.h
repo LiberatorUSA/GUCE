@@ -26,6 +26,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
+#include <MyGUI.h>
+
 #ifndef GUCEF_CORE_COBSERVER_H
 #include "CObserver.h"
 #define GUCEF_CORE_COBSERVER_H
@@ -35,14 +37,6 @@
 #include "guceMyGUIOgre_macros.h"      /* often used macros */
 #define GUCE_MYGUIOGRE_MACROS_H
 #endif /* GUCE_MYGUIOGRE_MACROS_H ? */
-
-/*-------------------------------------------------------------------------//
-//                                                                         //
-//      CLASSES                                                            //
-//                                                                         //
-//-------------------------------------------------------------------------*/
-
-namespace MyGUI { class Gui; }
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -80,6 +74,8 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CMyGUIInputAdapter : public GUCEF::CORE::CObserv
     CMyGUIInputAdapter( void );
     CMyGUIInputAdapter( const CMyGUIInputAdapter& src );    
     CMyGUIInputAdapter& operator=( const CMyGUIInputAdapter& src );
+
+    MyGUI::MouseButton ConvertMouseButtonIdex( const UInt32 buttonIndex );
     
     private:
     

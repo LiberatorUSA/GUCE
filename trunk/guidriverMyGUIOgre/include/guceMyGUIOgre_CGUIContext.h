@@ -58,7 +58,7 @@ class CGUIDriver;
 /**
  *  Implementation of the GUI context for the MyGUI&Ogre combo
  */
-class GUCE_MYGUIOGRE_EXPORT_CPP CGUIContext : public GUCEF::GUI::CGUIContext
+class GUCE_MYGUIOGRE_EXPORT_CPP CGUIContext : public GUCEF::GUI::CIGUIContext
 {
     public:    
     
