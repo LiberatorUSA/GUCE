@@ -72,8 +72,8 @@ void
 CGUIContext::DestroyWidget( GUCEF::GUI::CWidget* widget )
 {GUCE_TRACE;
 
-    m_formSet.erase( form );
-    m_driver->DestroyForm( form );
+    m_widgetSet.erase( widget );
+    m_driver->DestroyWidget( widget );
 }
 
 /*-------------------------------------------------------------------------*/
@@ -148,7 +148,7 @@ CGUIContext::GetDriver( void )
 
 /*-------------------------------------------------------------------------*/
 
-TWidgetSet
+CGUIContext::TWidgetSet
 CGUIContext::GetOwnedWidgets( void )
 {GUCE_TRACE;
     
@@ -157,7 +157,7 @@ CGUIContext::GetOwnedWidgets( void )
 
 /*-------------------------------------------------------------------------*/
     
-TFormSet
+CGUIContext::TFormSet
 CGUIContext::GetOwnedForms( void )
 {GUCE_TRACE;
 
