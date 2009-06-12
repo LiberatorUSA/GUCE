@@ -42,8 +42,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="include;..\Dependencies\include"
-				PreprocessorDefinitions="WIN32; _DEBUG; _WINDOWS; _USRDLL; MYGUI_BUILD;"
+				AdditionalIncludeDirectories="include;..\Dependencies\include;&quot;$(OGRE_HOME)\OgreMain\include&quot;;..\..\..\..\dependencies\freetype\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MYGUI_BUILD;MYGUI_NO_OIS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -64,11 +64,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain_d.lib freetype235_D.lib"
+				AdditionalDependencies="OgreMain_d.lib freetype237_D.lib"
 				ShowProgress="0"
 				OutputFile="$(OutDir)\MyGUI_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\Dependencies\lib\Debug"
+				AdditionalLibraryDirectories="..\Dependencies\lib\Debug;&quot;$(OGRE_HOME)\lib&quot;;..\..\..\..\dependencies\freetype\objs"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				SubSystem="0"
@@ -126,8 +126,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200"
-				AdditionalIncludeDirectories="include;..\Dependencies\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MYGUI_BUILD"
+				AdditionalIncludeDirectories="include;..\Dependencies\include;&quot;$(OGRE_HOME)\OgreMain\include&quot;;..\..\..\..\dependencies\freetype\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MYGUI_BUILD;MYGUI_NO_OIS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="MyGUI_Precompiled.h"
@@ -145,10 +145,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain.lib freetype235.lib"
+				AdditionalDependencies="OgreMain.lib freetype237.lib"
 				OutputFile="$(OutDir)\MyGUI.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\Dependencies\lib\Release"
+				AdditionalLibraryDirectories="..\Dependencies\lib\Release;&quot;$(OGRE_HOME)\lib&quot;;..\..\..\..\dependencies\freetype\objs"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
