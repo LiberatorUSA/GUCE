@@ -492,7 +492,10 @@ namespace MyGUI
 #    endif
 		}
 #else
-		if (_key.toValue() < 58) {
+		int code = (int) _key.getValue();
+		
+		if ( code < 58) {
+		
 			result = mCurrentLanguage->second[code + (mIsShiftPressed ? 58 : 0)];
 		}
 		else if (code < 84) {

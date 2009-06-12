@@ -382,7 +382,12 @@ namespace MyGUI
 
 		friend bool operator == (KeyCode const & a, KeyCode const & b) { return a.value == b.value; }
 		friend bool operator != (KeyCode const & a, KeyCode const & b) { return a.value != b.value; }
-
+        
+        Enum getValue() const
+        {
+            return value;
+        }
+        
 	private:
 		Enum value;
 	};
