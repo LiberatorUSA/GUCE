@@ -53,6 +53,13 @@ CGUIContext::CGUIContext( CGUIDriver& myGuiDriver )
 
 /*-------------------------------------------------------------------------*/
 
+CGUIContext::~CGUIContext()
+{GUCE_TRACE;
+
+}
+
+/*-------------------------------------------------------------------------*/
+
 GUCEF::GUI::CWidget*
 CGUIContext::CreateWidget( const CString& widgetName )
 {GUCE_TRACE;

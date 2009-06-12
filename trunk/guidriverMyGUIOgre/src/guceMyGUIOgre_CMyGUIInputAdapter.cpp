@@ -179,13 +179,13 @@ CMyGUIInputAdapter::OnNotify( GUCEF::CORE::CNotifier* notifier                 ,
             {   
                 // The MyGUI scancode values are the same as those used by gucefINPUT
                 // as such a simple cast is sufficient to perform the translation
-                m_guiSystem->injectKeyPress( (MyGUI::KeyCode) eData->GetKeyCode() );
+                m_guiSystem->injectKeyPress( (MyGUI::KeyCode::Enum) eData->GetKeyCode() );
             }
             else
             {
                 // The MyGUI scancode values are the same as those used by gucefINPUT
                 // as such a simple cast is sufficient to perform the translation
-                m_guiSystem->injectKeyRelease( (MyGUI::KeyCode) eData->GetKeyCode() );
+                m_guiSystem->injectKeyRelease( (MyGUI::KeyCode::Enum) eData->GetKeyCode() );
             }                
             return;
         }

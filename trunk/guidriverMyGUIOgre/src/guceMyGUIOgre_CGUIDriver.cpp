@@ -65,6 +65,11 @@
 #define GUCE_MYGUIOGRE_CMYGUIINPUTADAPTER_H
 #endif /* GUCE_MYGUIOGRE_CMYGUIINPUTADAPTER_H ? */
 
+#ifndef GUCE_MYGUIOGRE_CGUICONTEXT_H
+#include "guceMyGUIOgre_CGUIContext.h"
+#define GUCE_MYGUIOGRE_CGUICONTEXT_H
+#endif /* GUCE_MYGUIOGRE_CGUICONTEXT_H ? */
+
 #include "guceMyGUIOgre_CGUIDriver.h"
 
 /*-------------------------------------------------------------------------//
@@ -86,6 +91,33 @@ CGUIDriver* CGUIDriver::g_instance = NULL;
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
+//      TYPES                                                              //
+//                                                                         //
+//-------------------------------------------------------------------------*/
+
+typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CFormBackend, CFormBackendImp > TFormBackendFactory;
+
+typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, TBasicWidgetImp >    TWidgetFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CWindowImp >         TWindowFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CButtonImp >         TButtonFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CPushButtonImp >     TPushButtonFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CEditboxImp >        TEditboxFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CListboxImp >        TListboxFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CImageFrameImp >     TImageFrameFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CCheckboxImp >       TCheckboxFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CLabelImp >          TLabelFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CComboboxImp >       TComboboxFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CTabControlImp >     TTabControlFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CTabContentPaneImp > TTabContentPaneFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CGridViewImp >       TGridViewFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CSpinnerImp >        TSpinnerFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CRenderContextImp >  TRenderContextFactory;
+//
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CForm, CFileOpenDialogImp >   TFileOpenDialogFactory;
+//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CForm, CFileSaveDialogImp >   TFileSaveDialogFactory;
+
+/*-------------------------------------------------------------------------//
+//                                                                         //
 //      UTILITIES                                                          //
 //                                                                         //
 //-------------------------------------------------------------------------*/
@@ -102,6 +134,24 @@ CGUIDriver::CGUIDriver( void )
       m_contextList()
 {GUCE_TRACE;
 
+    m_widgetFactory.RegisterConcreteFactory( "Widget", new TWidgetFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Window", new TWindowFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Button", new TButtonFactory() );
+    //widgetFactory.RegisterConcreteFactory( "PushButton", new TPushButtonFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Editbox", new TEditboxFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Listbox", new TListboxFactory() );
+    //widgetFactory.RegisterConcreteFactory( "ImageFrame", new TImageFrameFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Checkbox", new TCheckboxFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Label", new TLabelFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Combobox", new TComboboxFactory() );
+    //widgetFactory.RegisterConcreteFactory( "TabControl", new TTabControlFactory() );
+    //widgetFactory.RegisterConcreteFactory( "TabContentPane", new TTabContentPaneFactory() );
+    //widgetFactory.RegisterConcreteFactory( "GridView", new TGridViewFactory() );
+    //widgetFactory.RegisterConcreteFactory( "Spinner", new TSpinnerFactory() );
+    //widgetFactory.RegisterConcreteFactory( "RenderContext", new TRenderContextFactory() );
+    //
+    //formFactory.RegisterConcreteFactory( "FileOpenDialog", new TFileOpenDialogFactory );
+    //formFactory.RegisterConcreteFactory( "FileSaveDialog", new TFileSaveDialogFactory );
 }
 
 /*-------------------------------------------------------------------------*/
@@ -109,8 +159,25 @@ CGUIDriver::CGUIDriver( void )
 CGUIDriver::~CGUIDriver()
 {GUCE_TRACE;
 
-}
+    m_widgetFactory.UnregisterConcreteFactory( "Widget" );
+    //widgetFactory.UnregisterConcreteFactory( "Window" );
+    //widgetFactory.UnregisterConcreteFactory( "Button" );
+    //widgetFactory.UnregisterConcreteFactory( "PushButton" );
+    //widgetFactory.UnregisterConcreteFactory( "Editbox" );
+    //widgetFactory.UnregisterConcreteFactory( "Listbox" );
+    //widgetFactory.UnregisterConcreteFactory( "ImageFrame" );
+    //widgetFactory.UnregisterConcreteFactory( "Checkbox" );
+    //widgetFactory.UnregisterConcreteFactory( "Label" );
+    //widgetFactory.UnregisterConcreteFactory( "Combobox" );
+    //widgetFactory.UnregisterConcreteFactory( "TabControl" );
+    //widgetFactory.UnregisterConcreteFactory( "TabContentPane" );
+    //widgetFactory.UnregisterConcreteFactory( "GridView" );
+    //widgetFactory.UnregisterConcreteFactory( "Spinner" );
+    //widgetFactory.UnregisterConcreteFactory( "RenderContext" );
 
+    //formFactory.UnregisterConcreteFactory( "FileOpenDialog" );
+    //formFactory.UnregisterConcreteFactory( "FileSaveDialog" );
+}
 /*-------------------------------------------------------------------------*/
 
 CGUIDriver* 
@@ -343,6 +410,8 @@ CGUIDriver::GetAvailableFormTypes( void )
     
     // Add/overwrite with the driver specific forms
     m_formFactory.ObtainKeySet( formTypes );
+    
+    return formTypes;
 }
     
 /*-------------------------------------------------------------------------*/
@@ -352,10 +421,12 @@ CGUIDriver::GetAvailableWidgetTypes( void )
 {GUCE_TRACE;
 
     // Get all the generic forms
-    TStringSet widgetTypes = GUCEF::GUI::CGUIManager::Instance()->GetGenericWidgetTypes();
+//    TStringSet widgetTypes = GUCEF::GUI::CGUIManager::Instance()->GetGenericWidgetTypes();
+    TStringSet widgetTypes;
     
     // Add/overwrite with the driver specific forms
     m_widgetFactory.ObtainKeySet( widgetTypes );
+    return widgetTypes;
 }
     
 /*-------------------------------------------------------------------------*/
