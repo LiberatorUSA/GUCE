@@ -29,10 +29,10 @@
 #define GUCE_CORE_MACROS_H
 #endif /* GUCE_CORE_MACROS_H ? */
 
-#ifndef GUCEF_CORE_CGUCEFAPPSUBSYSTEM_H
-#include "CGUCEFAppSubSystem.h"
-#define GUCEF_CORE_CGUCEFAPPSUBSYSTEM_H
-#endif /* GUCEF_CORE_CGUCEFAPPSUBSYSTEM_H ? */
+#ifndef GUCEF_CORE_COBSERVINGNOTIFIER_H
+#include "CObservingNotifier.h"
+#define GUCEF_CORE_COBSERVINGNOTIFIER_H
+#endif /* GUCEF_CORE_COBSERVINGNOTIFIER_H ? */
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -40,13 +40,12 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-namespace GUCE { namespace GUI { class CGUIConsole; } }
 namespace Ogre { class Overlay; }
 class COgreDebugOverlay;
 
 /*-------------------------------------------------------------------------*/
 
-class CRefAppSubSystem : public GUCEF::CORE::CGUCEFAppSubSystem
+class CRefAppSubSystem : public GUCEF::CORE::CObservingNotifier
 {
     public:
     
@@ -77,7 +76,7 @@ class CRefAppSubSystem : public GUCEF::CORE::CGUCEFAppSubSystem
     
     private:
     
-    GUCE::GUI::CGUIConsole* m_console;
+    //GUCE::GUI::CGUIConsole* m_console;
     COgreDebugOverlay* m_debugOverlay;
 };
 

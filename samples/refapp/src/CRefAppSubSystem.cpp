@@ -31,15 +31,15 @@
 #define GUCE_CORE_CGUCEAPPLICATION_H
 #endif /* GUCE_CORE_CGUCEAPPLICATION_H ? */
 
-#ifndef GUCE_GUI_CGUICONSOLE_H
-#include "guceGUI_CGUIConsole.h"
-#define GUCE_GUI_CGUICONSOLE_H
-#endif /* GUCE_GUI_CGUICONSOLE_H ? */
+//#ifndef GUCE_GUI_CGUICONSOLE_H
+//#include "guceGUI_CGUIConsole.h"
+//#define GUCE_GUI_CGUICONSOLE_H
+//#endif /* GUCE_GUI_CGUICONSOLE_H ? */
 
-#ifndef GUCE_GUI_CGUIEDITOR_H
-#include "guceGUI_CGUIEditor.h"              // temp for testing
-#define GUCE_GUI_CGUIEDITOR_H
-#endif /* GUCE_GUI_CGUIEDITOR_H ? */
+//#ifndef GUCE_GUI_CGUIEDITOR_H
+//#include "guceGUI_CGUIEditor.h"              // temp for testing
+//#define GUCE_GUI_CGUIEDITOR_H
+//#endif /* GUCE_GUI_CGUIEDITOR_H ? */
 
 #ifndef GUCE_GUI_CGUIMANAGER_H
 #include "CGUIManager.h"
@@ -60,8 +60,8 @@
 //-------------------------------------------------------------------------*/
 
 CRefAppSubSystem::CRefAppSubSystem( void )
-    : CGUCEFAppSubSystem( true ) ,
-      m_console( NULL )          ,
+    : CObservingNotifier() ,
+      //m_console( NULL )          ,
       m_debugOverlay( NULL )
 {GUCE_TRACE;
 
@@ -73,8 +73,8 @@ CRefAppSubSystem::CRefAppSubSystem( void )
 CRefAppSubSystem::~CRefAppSubSystem()
 {GUCE_TRACE;
 
-    delete m_console;
-    m_console = NULL;
+    //delete m_console;
+    //m_console = NULL;
     
     delete m_debugOverlay;
     m_debugOverlay = NULL;
@@ -90,13 +90,13 @@ CRefAppSubSystem::OnNotify( GUCEF::CORE::CNotifier* notifier                  ,
 
     if ( GUCE::GUI::CGUIManager::GUIInitializedEvent == eventid )
     {
-        m_console = new GUCE::GUI::CGUIConsole();
-        m_console->Show();
+        //m_console = new GUCE::GUI::CGUIConsole();
+        //m_console->Show();
         
         m_debugOverlay = new COgreDebugOverlay();
         m_debugOverlay->Show();
 
-        GUCE::GUI::CGUIEditor::Instance()->Show();
+        //GUCE::GUI::CGUIEditor::Instance()->Show();
     }
 }
 
@@ -117,7 +117,7 @@ CRefAppSubSystem::OnUpdate( const GUCEF::CORE::UInt64 tickCount               ,
     }
     catch ( Ogre::Exception& /* e */ )
     {
-        GUCEF_ERROR_LOG( LOGLEVEL_NORMAL, "CRefAppSubSystem::OnUpdate(): Exception during Ogre frame rendering" );
+        GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CRefAppSubSystem::OnUpdate(): Exception during Ogre frame rendering" );
     }
 }    
     
