@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\bin\Debug_MVC8"
-			IntermediateDirectory="..\..\bin\Debug_MVC8"
+			OutputDirectory="..\..\bin\Debug_MVC9"
+			IntermediateDirectory="..\..\bin\Debug_MVC9"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -63,10 +63,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain_d.lib CEGUIBase_d.lib guceCORE_MVC8_d.lib guceGUI_MVC8_d.lib gucefCORE_MVC8_d.lib gucefMT_MVC8_d.lib gucefVFS_MVC8_d.lib gucefINPUT_MVC8_d.lib"
-				OutputFile="$(OutDir)\RefApp_MVC8_d.exe"
+				AdditionalDependencies="OgreMain_d.lib CEGUIBase_d.lib guceCORE_MVC9_d.lib guceGUI_MVC9_d.lib gucefCORE_MVC9_d.lib gucefMT_MVC9_d.lib gucefVFS_MVC9_d.lib gucefINPUT_MVC9_d.lib"
+				OutputFile="$(OutDir)\RefApp_MVC9_d.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\OgreMain\lib\Debug&quot;;&quot;$(CEGUI_HOME)\lib&quot;;&quot;$(GUCEF_HOME)\gucefCORE\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefIMAGE\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefMT\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefVFS\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefINPUT\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefCOMCORE\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefCOM\bin\Debug_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefPATCHER\bin\Debug_MVC8&quot;;..\..\..\..\guceCORE\bin\Debug_MVC8;..\..\..\..\guceGUI\bin\Debug_MVC8"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\OgreMain\lib\Debug&quot;;&quot;$(CEGUI_HOME)\lib&quot;;&quot;$(GUCEF_HOME)\gucefCORE\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefIMAGE\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefMT\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefVFS\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefINPUT\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefCOMCORE\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefCOM\bin\Debug_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefPATCHER\bin\Debug_MVC9&quot;;..\..\..\..\guceCORE\bin\Debug_MVC9;..\..\..\..\guceGUI\bin\Debug_MVC9"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -95,14 +95,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir ..\..\..\..\common\bin\Debug_MVC8&#x0D;&#x0A;mkdir ..\..\..\..\common\bin\Debug_MVC8\plugins&#x0D;&#x0A;copy ..\..\recources\*.* ..\..\..\..\common\bin\Debug_MVC8&#x0D;&#x0A;copy $(TargetPath) ..\..\..\..\common\bin\Debug_MVC8&#x0D;&#x0A;"
+				CommandLine="mkdir ..\..\..\..\common\bin\Debug_MVC9&#x0D;&#x0A;mkdir ..\..\..\..\common\bin\Debug_MVC9\plugins&#x0D;&#x0A;copy ..\..\recources\*.* ..\..\..\..\common\bin\Debug_MVC9&#x0D;&#x0A;copy $(TargetPath) ..\..\..\..\common\bin\Debug_MVC9&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="..\..\bin\Release_MVC9"
+			IntermediateDirectory="..\..\bin\Release_MVC9"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -144,10 +144,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain.lib CEGUIBase.lib guceCORE_MVC8.lib guceGUI_MVC8.lib gucefCORE_MVC8.lib gucefMT_MVC8.lib gucefVFS_MVC8.lib gucefINPUT_MVC8.lib guidriverCEGUIOgre"
-				OutputFile="$(OutDir)\RefApp_MVC8.exe"
+				AdditionalDependencies="OgreMain.lib CEGUIBase.lib guceCORE_MVC9.lib guceGUI_MVC9.lib gucefCORE_MVC9.lib gucefMT_MVC9.lib gucefVFS_MVC9.lib gucefINPUT_MVC9.lib guidriverCEGUIOgre"
+				OutputFile="$(OutDir)\RefApp_MVC9.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\OgreMain\lib\Release&quot;;&quot;$(CEGUI_HOME)\lib&quot;;&quot;$(GUCEF_HOME)\gucefCORE\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefIMAGE\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefMT\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefVFS\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefINPUT\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefCOMCORE\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefCOM\bin\Release_MVC8&quot;;&quot;$(GUCEF_HOME)\gucefPATCHER\bin\Release_MVC8&quot;;..\..\..\..\guceCORE\bin\Release_MVC8;..\..\..\..\guceGUI\bin\Release_MVC8"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\OgreMain\lib\Release&quot;;&quot;$(CEGUI_HOME)\lib&quot;;&quot;$(GUCEF_HOME)\gucefCORE\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefIMAGE\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefMT\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefVFS\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefINPUT\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefCOMCORE\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefCOM\bin\Release_MVC9&quot;;&quot;$(GUCEF_HOME)\gucefPATCHER\bin\Release_MVC9&quot;;..\..\..\..\guceCORE\bin\Release_MVC9;..\..\..\..\guceGUI\bin\Release_MVC9"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -178,7 +178,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir ..\..\..\..\common\bin\Release_MVC8&#x0D;&#x0A;mkdir ..\..\..\..\common\bin\Release_MVC8\plugins&#x0D;&#x0A;copy ..\..\recources\*.* ..\..\..\..\common\bin\Release_MVC8&#x0D;&#x0A;copy $(TargetPath) ..\..\..\..\common\bin\Release_MVC8&#x0D;&#x0A;"
+				CommandLine="mkdir ..\..\..\..\common\bin\Release_MVC9&#x0D;&#x0A;mkdir ..\..\..\..\common\bin\Release_MVC9\plugins&#x0D;&#x0A;copy ..\..\recources\*.* ..\..\..\..\common\bin\Release_MVC9&#x0D;&#x0A;copy $(TargetPath) ..\..\..\..\common\bin\Release_MVC9&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
