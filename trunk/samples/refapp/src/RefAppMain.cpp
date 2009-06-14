@@ -172,19 +172,6 @@ main( const char* argv[] ,
         GUCEF::CORE::ShowErrorMessage( "Unhandled GUCEF exception" ,
                                        msg.C_String()              );                  
     }    
-    catch ( CEGUI::Exception& e )
-    {
-        #ifdef GUCE_CORE_DEBUG_MODE
-        GUCEF::CORE::GUCEF_PrintCallstack();
-        GUCEF::CORE::GUCEF_DumpCallstack( "CallstackDump.txt" );
-        #endif /* GUCE_CORE_DEBUG_MODE ? */
-            
-        GUCEF::CORE::CString msg( "CEGUI exception during program execution\n\n" );
-        msg += e.getMessage().c_str();
-        
-        GUCEF::CORE::ShowErrorMessage( "Unhandled CEGUI exception" ,
-                                       msg.C_String()              );                  
-    }
     catch( Ogre::Exception& e )
     {
         #ifdef GUCE_CORE_DEBUG_MODE
