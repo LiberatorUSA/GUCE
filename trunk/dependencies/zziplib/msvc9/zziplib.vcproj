@@ -66,9 +66,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="zlibd.lib"
+				AdditionalDependencies="zlib1d.lib"
 				OutputFile="zziplib-$(ConfigurationName).lib"
-				AdditionalLibraryDirectories="../../zlib/lib;../../zlib/projects/visualc6/Win32_LIB_Debug"
+				AdditionalLibraryDirectories="../../zlib/lib;../../zlib/projects/visualc6/Win32_DLL_Debug"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -118,7 +118,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..;../msvc/zlib/include"
+				AdditionalIncludeDirectories="..;../msvc/zlib/include;../../zlib/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -140,9 +140,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="zdll.lib"
+				AdditionalDependencies="zlib1d.lib"
 				OutputFile="zziplib-$(ConfigurationName).lib"
-				AdditionalLibraryDirectories="../msvc/zlib/lib"
+				AdditionalLibraryDirectories="../../zlib/lib;../../zlib/projects/visualc6/Win32_DLL_Debug"
 			/>
 			<Tool
 				Name="VCALinkTool"
