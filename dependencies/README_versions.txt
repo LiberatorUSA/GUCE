@@ -8,3 +8,6 @@ The dependency requirements for those dependancies are dictated by those librari
 into account when updating to a new version of a dependency to avoid conflicts.
 
 FreeType2 is not itself a dependency for GUCE libraries but rather for most GUI plugins and is as such located in this folder.
+
+zzlib version is: 0.13.49
+zlib version is: 1.2.3
