@@ -46,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\include;..\..\..\common\include;&quot;$(GUCEF_HOME)\common\include&quot;;&quot;$(GUCEF_HOME)\gucefCOMCORE\include&quot;;&quot;$(GUCEF_HOME)\gucefMT\include&quot;;&quot;$(GUCEF_HOME)\gucefIMAGE\include&quot;;&quot;$(GUCEF_HOME)\gucefCORE\include&quot;;&quot;$(GUCEF_HOME)\gucefCORE\include\mswin&quot;;&quot;$(GUCEF_HOME)\gucefVFS\include&quot;;&quot;$(GUCEF_HOME)\gucefINPUT\include&quot;;&quot;$(OGRE_HOME)\OgreMain\include&quot;;..\..\..\dependencies\Ogre\OgreMain\include"
+				AdditionalIncludeDirectories="..\..\include;..\..\..\common\include;&quot;$(GUCEF_HOME)\common\include&quot;;&quot;$(GUCEF_HOME)\gucefCOMCORE\include&quot;;&quot;$(GUCEF_HOME)\gucefMT\include&quot;;&quot;$(GUCEF_HOME)\gucefIMAGE\include&quot;;&quot;$(GUCEF_HOME)\gucefCORE\include&quot;;&quot;$(GUCEF_HOME)\gucefCORE\include\mswin&quot;;&quot;$(GUCEF_HOME)\gucefVFS\include&quot;;&quot;$(GUCEF_HOME)\gucefINPUT\include&quot;;&quot;$(OGRE_HOME)\OgreMain\include&quot;;..\..\..\dependencies\Ogre\OgreMain\include;..\..\..\..\GUCEF\trunk\common\include;..\..\..\..\GUCEF\trunk\gucefCOMCORE\include;..\..\..\..\GUCEF\trunk\gucefCORE\include;..\..\..\..\GUCEF\trunk\gucefINPUT\include;..\..\..\..\GUCEF\trunk\gucefCOM\include;..\..\..\..\GUCEF\trunk\gucefDRN\include;..\..\..\..\GUCEF\trunk\gucefIMAGE\include;..\..\..\..\GUCEF\trunk\gucefMT\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;GUCE_CORE_BUILD_MODULE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
