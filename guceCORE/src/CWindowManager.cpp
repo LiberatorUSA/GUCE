@@ -25,8 +25,6 @@
 
 #include <assert.h>
 
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
-
 #ifndef __ROOT__
 #include <OgreRoot.h>           /* most basic Ogre class */ 
 #define __ROOT__
@@ -46,8 +44,6 @@
 #include <OgreRenderWindow.h>   /* Ogre rendering window */
 #define __RenderWindow_H__
 #endif /* __RenderWindow_H__ ? */
-
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
 
 #ifndef CINPUTCONTROLLER_H
 #include "CInputController.h"   /* platform input context controller */

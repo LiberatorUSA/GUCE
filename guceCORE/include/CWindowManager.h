@@ -26,14 +26,10 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
-
 #ifndef __ROOT__
 #include <OgreRoot.h>           /* needed for Ogre::NameValuePairList */
 #define __ROOT__
 #endif /* __ROOT__ ? */
-
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
 
 #ifndef GUCEF_CORE_CTSHAREDPTR_H
 #include "CTSharedPtr.h"
