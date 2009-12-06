@@ -30,8 +30,6 @@
 #define _ArchiveManager_H__
 #endif /* _ArchiveManager_H__ ? */
 
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
-
 #include "CIOAccessArchiveFactory.h" /* definition of the class implemented here */
 
 /*-------------------------------------------------------------------------//

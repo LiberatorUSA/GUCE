@@ -48,8 +48,6 @@
 #define __RenderWindow_H__
 #endif /* __RenderWindow_H__ ? */
 
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
-
 #ifndef GUCEF_CORE_CTRACER_H
 #include "CTracer.h"
 #define GUCEF_CORE_CTRACER_H
