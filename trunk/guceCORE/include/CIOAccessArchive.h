@@ -97,6 +97,8 @@ class GUCE_CORE_EXPORT_CPP CIOAccessArchive : public Ogre::Archive
 
 	virtual bool exists( const Ogre::String& filename );
 	
+	virtual time_t getModifiedTime( const Ogre::String& filename );
+	
 	private:
 	typedef std::map< CString, GUCEF::CORE::CIOAccess* > TResourceMap;
 	
