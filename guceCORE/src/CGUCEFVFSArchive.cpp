@@ -221,6 +221,16 @@ CGUCEFVFSArchive::exists( const Ogre::String& filename )
     return _vfs->FileExists( filename.c_str() );
 }
 
+/*-------------------------------------------------------------------------*/
+
+time_t
+CGUCEFVFSArchive::getModifiedTime( const Ogre::String& filename )
+{GUCE_TRACE;
+
+    GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEFVFSArchive: request for file modification time: " +  filename );    
+    return _vfs->GetFileModificationTime( filename.c_str() );
+}
+
 /*-------------------------------------------------------------------------//
 //                                                                         //
 //      NAMESPACE                                                          //

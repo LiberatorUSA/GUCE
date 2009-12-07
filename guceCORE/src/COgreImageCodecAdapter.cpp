@@ -318,6 +318,17 @@ COgreImageCodecAdapter::GetCodecPtr( void )
     return m_gucefCodecPtr;
 }
 
+/*-------------------------------------------------------------------------*/
+
+Ogre::String
+COgreImageCodecAdapter::magicNumberToFileExt( const char *magicNumberPtr , 
+                                              size_t maxbytes            ) const
+{GUCE_TRACE;
+
+    // We not support header reading atm
+    return Ogre::String();
+}
+
 /*-------------------------------------------------------------------------//
 //                                                                         //
 //      NAMESPACE                                                          //

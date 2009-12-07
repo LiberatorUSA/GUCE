@@ -96,6 +96,9 @@ class GUCE_CORE_EXPORT_CPP COgreImageCodecAdapter : public Ogre::ImageCodec
 
     virtual Ogre::String getType() const;
     
+    virtual Ogre::String magicNumberToFileExt( const char *magicNumberPtr , 
+                                               size_t maxbytes            ) const;
+    
     CGUCEFCodecPtr GetCodecPtr( void );        
     
     private:

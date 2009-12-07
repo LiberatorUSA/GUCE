@@ -224,6 +224,16 @@ CIOAccessArchive::exists( const Ogre::String& filename )
     return m_resourceMap.end() != m_resourceMap.find( filename.c_str() );
 }
 
+/*-------------------------------------------------------------------------*/
+
+time_t
+CIOAccessArchive::getModifiedTime( const Ogre::String& filename )
+{GUCE_TRACE;
+
+    // not supported
+    return -1;
+}
+
 /*-------------------------------------------------------------------------//
 //                                                                         //
 //      NAMESPACE                                                          //
