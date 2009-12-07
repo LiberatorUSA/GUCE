@@ -362,11 +362,11 @@ CWindowManager::CreateWindowContext( const CString& title                  ,
         {
                 ogreroot->initialise( false );                                                
         }                                
-        window = ogreroot->getRenderSystem()->createRenderWindow( title.C_String() , 
-                                                                  width            ,
-                                                                  height           ,
-                                                                  fullscreen       ,
-                                                                  &params          );    
+        window = ogreroot->getRenderSystem()->_createRenderWindow( title.C_String() , 
+                                                                   width            ,
+                                                                   height           ,
+                                                                   fullscreen       ,
+                                                                   &params          );    
         window->setAutoUpdated( true );                               
         
         /*
