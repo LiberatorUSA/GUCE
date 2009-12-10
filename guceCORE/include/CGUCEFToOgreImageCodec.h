@@ -32,8 +32,6 @@
 #define _ImageCodec_H__
 #endif /* _ImageCodec_H__ ? */
 
-#include "OgreNoMemoryMacros.h" /* Don't use the Ogre memory manager */
-
 #ifndef GUCECORE_MACROS_H
 #include "guceCORE_macros.h"    /* guceCORE build config and macros */
 #define GUCECORE_MACROS_H
