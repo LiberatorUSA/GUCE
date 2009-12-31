@@ -16,14 +16,8 @@ ECHO *** Locating GUCEF ***
 
 IF NOT DEFINED GUCEF_HOME (
   ECHO GUCEF_HOME not defined, defaulting to local trunk copy
-  cd..
-  cd..
-  cd..  
-  cd..
-  cd GUCEF
-  cd trunk
-  SET GUCEF_HOME=%cd%
-  ECHO GUCEF_HOME=%GUCEF_HOME%
+  SET GUCEF_HOME=%CD%\..\..\..\..\GUCEF\trunk
+  ECHO GUCEF_HOME="%GUCEF_HOME%"
   cd "%BATCHSTARTDIR%"
 )
 
