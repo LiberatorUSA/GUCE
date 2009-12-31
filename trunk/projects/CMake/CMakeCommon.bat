@@ -12,6 +12,21 @@ IF ERRORLEVEL 1 (
 )
 ENDLOCAL
 
+ECHO *** Locating GUCEF ***
+
+IF NOT DEFINED GUCEF_HOME (
+  ECHO GUCEF_HOME not defined, defaulting to local trunk copy
+  cd..
+  cd..
+  cd..  
+  cd..
+  cd GUCEF
+  cd trunk
+  SET GUCEF_HOME=%cd%
+  ECHO GUCEF_HOME=%GUCEF_HOME%
+  cd "%BATCHSTARTDIR%"
+)
+
 ECHO *** Generate CMakeLists.txt files ***
 
 CALL GenerateCMakeLists.bat
@@ -23,36 +38,77 @@ ECHO *** Perform common CMake environment variable setup ***
 cd..
 cd..
 
-SET GUCEF_HOME=%CD%
+SET GUCE_HOME=%CD%
 SET SRCROOTDIR=%CD%
-SET OUTPUTDIR=%GUCEF_HOME%\common\bin
+SET OUTPUTDIR=%GUCE_HOME%\common\bin
 
-IF NOT DEFINED OIS_HOME (
-  ECHO OIS environment variable not found, setting it
-  SET OIS_HOME=%GUCEF_HOME%\gucefINPUT\plugins\inputdriverOIS\dependency\OIS
-)
-ECHO OIS_HOME = %OIS_HOME%
+CALL %GUCEF_HOME%\projects\common\CMake\CMakeCommon.bat
 
-IF NOT DEFINED FREEIMAGE_HOME (
-  ECHO FreeImage environment variable not found, setting it
-  SET FREEIMAGE_HOME=%GUCEF_HOME%\gucefIMAGE\plugins\imgpluginFreeImage\dependencies\FreeImage
+IF NOT DEFINED FREETYPE_HOME (
+  ECHO FREETYPE_HOME environment variable not found, setting it
+  SET FREETYPE_HOME=%GUCE_HOME%\dependencies\freetype
 )
-ECHO FREEIMAGE_HOME = %FREEIMAGE_HOME%
-  
-IF NOT DEFINED DEVIL_HOME (
-  ECHO DevIL environment variable not found, setting it
-  SET DEVIL_HOME=%GUCEF_HOME%\gucefIMAGE\plugins\imgpluginDEVIL\dependancy\Devil
+
+IF NOT DEFINED OGRE_HOME (
+  ECHO OGRE_HOME environment variable not found, setting it
+  SET OGRE_HOME=%GUCE_HOME%\dependencies\Ogre
 )
-ECHO DEVIL_HOME = %DEVIL_HOME%
 
 IF NOT DEFINED ZLIB_HOME (
-  ECHO ZLib environment variable not found, setting it
-  SET ZLIB_HOME=%GUCEF_HOME%\gucefVFS\plugins\vfspluginZIP\dependencies\zlib
+  ECHO ZLIB_HOME environment variable not found, setting it
+  SET ZLIB_HOME=%GUCE_HOME%\dependencies\zlib
 )
-ECHO ZLIB_HOME = %ZLIB_HOME%
 
-IF NOT DEFINED ZZIPLIB_HOME (
-  ECHO zzipLib environment variable not found, setting it
-  SET ZZIPLIB_HOME=%GUCEF_HOME%\gucefVFS\plugins\vfspluginZIP\dependencies\zziplib
+IF NOT DEFINED ZZZIP_HOME (
+  ECHO ZZZIP_HOME environment variable not found, setting it
+  SET ZZZIP_HOME=%GUCE_HOME%\dependencies\zziplib
 )
-ECHO ZZIPLIB_HOME = %ZZIPLIB_HOME%
+
+IF NOT DEFINED CEGUI_HOME (
+  ECHO CEGUI_HOME environment variable not found, setting it
+  SET CEGUI_HOME=%GUCE_HOME%\guidriverCEGUIOgre\dependency\CEGUI
+)
+
+IF NOT DEFINED MYGUI_HOME (
+  ECHO MYGUI_HOME environment variable not found, setting it
+  SET MYGUI_HOME=%MYGUI_HOME%\guidriverMyGUIOgre\dependencies\MyGUI
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
