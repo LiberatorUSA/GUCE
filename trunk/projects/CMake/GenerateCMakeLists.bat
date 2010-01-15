@@ -2,7 +2,7 @@
 SET THEBATCHDIR=%CD%
 
 IF DEFINED GUCEF_HOME (
-  ECHO GUCEF environment variable found, using it's CMake
+  ECHO GUCEF environment variable found, using it's CMakeListGenerator
   SET GENERATORPATH=%GUCEF_HOME%\common\bin\Debug_MVC9
   SET GENERATOREXE=CMakeListGenerator_d.exe
   SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
