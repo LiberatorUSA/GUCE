@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------
-# This file is part of the CMake build system for GUCEF
-#     (Galaxy Unlimited Framework)
+# This file is part of the CMake build system for GUCE
+#     (Galaxy Unlimited Engine)
 # For the latest info, see http://www.VanvelzenSoftware.com/
 #
 # The contents of this file are placed in the public domain. Feel
@@ -14,20 +14,20 @@
 #############################################################
 
 if(WIN32)
-	set(GUCEF_CMAKE_DIR "CMake")
+	set(GUCE_CMAKE_DIR "CMake")
 else(WIN32)
-	set(GUCEF_CMAKE_DIR "lib/GUCEF/cmake")
+	set(GUCE_CMAKE_DIR "lib/GUCE/cmake")
 endif(WIN32)
 
 set(INST_FILES
   Packages/FindCEGUI.cmake
   Packages/FindOIS.cmake
-  Packages/FindGUCEF.cmake
+  Packages/FindGUCE.cmake
   Utils/FindPkgMacros.cmake
   Utils/PreprocessorUtils.cmake
-  Utils/GUCEFConfigTargets.cmake
-  Utils/GUCEFGetVersion.cmake
-  Utils/GUCEFFindFrameworks.cmake
+  Utils/GUCEConfigTargets.cmake
+  Utils/GUCEGetVersion.cmake
+  Utils/GUCEFindFrameworks.cmake
 ) 
 set(STATIC_INST_FILES
   Packages/FindCg.cmake
@@ -57,7 +57,7 @@ if (APPLE)
   )
 endif ()
 
-install(FILES ${INST_FILES} DESTINATION ${GUCEF_CMAKE_DIR})
-if (GUCEF_STATIC)
-  install(FILES ${STATIC_INST_FILES} DESTINATION ${GUCEF_CMAKE_DIR})
+install(FILES ${INST_FILES} DESTINATION ${GUCE_CMAKE_DIR})
+if (GUCE_STATIC)
+  install(FILES ${STATIC_INST_FILES} DESTINATION ${GUCE_CMAKE_DIR})
 endif ()

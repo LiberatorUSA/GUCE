@@ -23,6 +23,7 @@ IF NOT DEFINED GUCEF_HOME (
 
 ECHO *** Generate CMakeLists.txt files ***
 
+SET NOPAUSE=TRUE
 CALL GenerateCMakeLists.bat
 
 cd "%BATCHSTARTDIR%"
