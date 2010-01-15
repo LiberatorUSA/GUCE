@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------
-# This file is part of the CMake build system for GUCEF
-#     (Galaxy Unlimited Framework)
+# This file is part of the CMake build system for GUCE
+#     (Galaxy Unlimited Engine)
 # For the latest info, see http://www.VanvelzenSoftware.com/
 #
 # The contents of this file are placed in the public domain. Feel

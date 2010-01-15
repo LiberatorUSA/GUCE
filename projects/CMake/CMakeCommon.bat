@@ -28,6 +28,14 @@ CALL GenerateCMakeLists.bat
 
 cd "%BATCHSTARTDIR%"
 
+ECHO *** Invoking GUCEF's CMakeCommon ***
+
+cd %GUCEF_HOME%\projects\CMake\
+CALL %GUCEF_HOME%\projects\CMake\CMakeCommon.bat
+
+cd "%BATCHSTARTDIR%"
+
+
 ECHO *** Perform common CMake environment variable setup ***
 
 cd..
@@ -37,7 +45,6 @@ SET GUCE_HOME=%CD%
 SET SRCROOTDIR=%CD%
 SET OUTPUTDIR=%GUCE_HOME%\common\bin
 
-CALL %GUCEF_HOME%\projects\common\CMake\CMakeCommon.bat
 
 IF NOT DEFINED FREETYPE_HOME (
   ECHO FREETYPE_HOME environment variable not found, setting it
@@ -70,7 +77,7 @@ IF NOT DEFINED MYGUI_HOME (
 )
 
 
-
+cd "%BATCHSTARTDIR%"
 
 
 
