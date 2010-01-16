@@ -26,10 +26,13 @@ set(CMAKE_MODULE_PATH
   "${GUCE_SOURCE_DIR}/projects/CMake/Utils" 
   "${GUCE_SOURCE_DIR}/projects/CMake/Packages"
 )
+
 include(CMakeDependentOption)
 include(MacroLogFeature)
 include(GUCEConfigTargets)
 include(PreprocessorUtils)
+include(GUCEFFuncRedirect)
+
 set(GUCE_TEMPLATES_DIR "${GUCE_SOURCE_DIR}/projects/CMake/Templates")
 set(GUCE_WORK_DIR ${GUCE_BINARY_DIR})
 
@@ -180,6 +183,63 @@ include(ConfigureBuild)
 ##################################################################
 # Now setup targets
 ##################################################################
+
+
+message(STATUS "gucefMT=${ENV_${GUCEF_HOME}}/gucefMT")
+message(STATUS "gucefMT=" )
+message(STATUS "bindir=${GUCE_BINARY_DIR}" )
+set( CMAKE_GUCEF_HOME getenv_path( GUCEF_HOME ) )
+message(STATUS "gucefdir=${CMAKE_GUCEF_HOME}" )
+
+
+# Setup GUCEF modules
+#add_subdirectory( ${ENV_${GUCEF_HOME}}/gucefMT ${GUCE_BINARY_DIR} )
+add_subdirectory( ../../GUCEF/trunk/gucefMT ${GUCE_BINARY_DIR} )
+add_subdirectory( ../../GUCEF/trunk/gucefCORE ${GUCE_BINARY_DIR} )
+#add_subdirectory( gucefVFS )
+#add_subdirectory( gucefCOMCORE )
+#add_subdirectory( gucefGUI )
+#add_subdirectory( gucefIMAGE )
+#add_subdirectory( gucefMATH )
+#add_subdirectory( gucefINPUT )
+#add_subdirectory( gucefAUDIO )
+#add_subdirectory( gucefCOM )
+#add_subdirectory( gucefMULTIPLAY )
+#add_subdirectory( gucefDRN )
+#add_subdirectory( gucefPATCHER )
+
+# Setup GUCEF plugin dependencies
+#add_subdirectory( gucefCORE/plugins/dstorepluginPARSIFALXML/dependancy/libparsifal )
+#add_subdirectory( gucefINPUT/plugins/inputdriverOIS/dependency/OIS )
+#add_subdirectory( gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage )
+#add_subdirectory( gucefVFS/plugins/vfspluginZIP/dependencies/zlib )
+#add_subdirectory( gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip )
+#add_subdirectory( gucefVFS/plugins/vfspluginDVP/dependencies/DVPACKSYS )
+
+# Setup GUCEF Plugin modules
+#add_subdirectory( gucefCORE/plugins/dstorepluginPARSIFALXML )
+#add_subdirectory( gucefVFS/plugins/vfspluginDVP )
+#add_subdirectory( gucefVFS/plugins/vfspluginVP )
+#add_subdirectory( gucefVFS/plugins/vfspluginZIP )
+#add_subdirectory( gucefIMAGE/plugins/imgpluginFreeImage )
+#add_subdirectory( gucefIMAGE/plugins/imgpluginDEVIL )
+#add_subdirectory( gucefINPUT/plugins/inputdriverOIS )
+#add_subdirectory( gucefINPUT/plugins/inputdriverMSWINMSG )
+#add_subdirectory( gucefINPUT/plugins/inputdriverDIRECTINPUT8 )
+
+# Setup GUCEF Test applications
+#add_subdirectory( gucefVFS_TestApp )
+#add_subdirectory( gucefCOM_TestApp )
+#add_subdirectory( gucefCOMCORE_TestApp )
+#add_subdirectory( gucefMT_TestApp )
+#add_subdirectory( gucefCORE_TestApp )
+#add_subdirectory( gucefGUI_TestApp )
+#add_subdirectory( gucefIMAGE_TestApp )
+#add_subdirectory( gucefMULTIPLAY_TestApp )
+#add_subdirectory( gucefMATH_TestApp )
+#add_subdirectory( gucefINPUT_TestApp )
+#add_subdirectory( gucefAUDIO_TestApp )
+#add_subdirectory( gucefDRN_TestApp )
 
 # Setup GUCE modules
 add_subdirectory( guceCORE )
