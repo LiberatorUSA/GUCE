@@ -1,6 +1,6 @@
 @echo off
 
-SET BATCHSTARTDIR=%CD%
+SET GUCE_BATCHSTARTDIR=%CD%
 
 ECHO *** Enable command extensions ***
 
@@ -18,7 +18,7 @@ IF NOT DEFINED GUCEF_HOME (
   ECHO GUCEF_HOME not defined, defaulting to local trunk copy
   SET GUCEF_HOME=%CD%\..\..\..\..\GUCEF\trunk
   ECHO GUCEF_HOME="%GUCEF_HOME%"
-  cd "%BATCHSTARTDIR%"
+  cd "%GUCE_BATCHSTARTDIR%"
 )
 
 ECHO *** Generate CMakeLists.txt files ***
@@ -26,14 +26,14 @@ ECHO *** Generate CMakeLists.txt files ***
 SET NOPAUSE=TRUE
 CALL GenerateCMakeLists.bat
 
-cd "%BATCHSTARTDIR%"
+cd "%GUCE_BATCHSTARTDIR%"
 
 ECHO *** Invoking GUCEF's CMakeCommon ***
 
 cd %GUCEF_HOME%\projects\CMake\
 CALL %GUCEF_HOME%\projects\CMake\CMakeCommon.bat
 
-cd "%BATCHSTARTDIR%"
+cd "%GUCE_BATCHSTARTDIR%"
 
 
 ECHO *** Perform common CMake environment variable setup ***
@@ -77,7 +77,7 @@ IF NOT DEFINED MYGUI_HOME (
 )
 
 
-cd "%BATCHSTARTDIR%"
+cd "%GUCE_BATCHSTARTDIR%"
 
 
 
