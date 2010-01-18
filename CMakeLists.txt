@@ -187,14 +187,17 @@ include(ConfigureBuild)
 getenv_path( GUCEF_HOME )
 message( STATUS "GUCEF_HOME=${ENV_GUCEF_HOME}" )
 
+# Add GUCEF's common include path
+include_directories("${ENV_GUCEF_HOME}/common/include")
+
 # Setup GUCEF modules
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefMT ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefCORE ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefVFS ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefCOMCORE ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefGUI ${GUCE_BINARY_DIR} )
-#add_subdirectory( ${ENV_GUCEF_HOME}/gucefIMAGE ${GUCE_BINARY_DIR} )
-add_subdirectory( ${ENV_GUCEF_HOME}/gucefMATH ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/gucefIMAGE ${GUCE_BINARY_DIR} )
+#add_subdirectory( ${ENV_GUCEF_HOME}/gucefMATH ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefINPUT ${GUCE_BINARY_DIR} )
 #add_subdirectory( ${ENV_GUCEF_HOME}/gucefAUDIO ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefCOM ${GUCE_BINARY_DIR} )
@@ -234,6 +237,17 @@ add_subdirectory( ${ENV_GUCEF_HOME}/gucefIMAGE_TestApp ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefINPUT_TestApp ${GUCE_BINARY_DIR} )
 #add_subdirectory( ${ENV_GUCEF_HOME}/gucefAUDIO_TestApp ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefDRN_TestApp ${GUCE_BINARY_DIR} )
+
+# Setup GUCEF Tools
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/DuplicateFileFinder ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/DVPPackTool ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/FileReplacer ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/HDFiller ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/PatcherGUI ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/PatchSetGenerator ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/ServerPortExtender ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/CMakeListGenerator ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR} )
 
 # Setup GUCE modules
 add_subdirectory( guceCORE )

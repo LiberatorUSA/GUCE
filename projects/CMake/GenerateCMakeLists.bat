@@ -11,8 +11,8 @@ IF DEFINED GUCEF_HOME (
 )
 
   IF NOT EXIST %EXETEST% (
-    ECHO Development version of CMakeListGenerator not found, using released version
-    SET GENERATORPATH=%GUCEF_HOME%\tools\CMakeListGenerator\bin\ReleasedBins\15Jan2010\CMakeListGenerator\
+    ECHO Development version of CMakeListGenerator not found, using released version of 18'th Jan 2010
+    SET GENERATORPATH=%GUCEF_HOME%\tools\CMakeListGenerator\bin\ReleasedBins\18Jan2010\CMakeListGenerator\
     SET GENERATOREXE=CMakeListGenerator.exe
   )
 
