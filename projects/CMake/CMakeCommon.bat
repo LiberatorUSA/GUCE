@@ -21,29 +21,13 @@ IF NOT DEFINED GUCEF_HOME (
   cd "%GUCE_BATCHSTARTDIR%"
 )
 
-ECHO *** Generate CMakeLists.txt files ***
+ECHO *** Perform GUCE common CMake environment variable setup ***
 
-SET NOPAUSE=TRUE
-CALL GenerateCMakeLists.bat
-
-cd "%GUCE_BATCHSTARTDIR%"
-
-ECHO *** Invoking GUCEF's CMakeCommon ***
-
-cd %GUCEF_HOME%\projects\CMake\
-CALL %GUCEF_HOME%\projects\CMake\CMakeCommon.bat
-
-cd "%GUCE_BATCHSTARTDIR%"
-
-
-ECHO *** Perform common CMake environment variable setup ***
-
+cd %GUCE_BATCHSTARTDIR%
 cd..
 cd..
-
 SET GUCE_HOME=%CD%
 SET SRCROOTDIR=%CD%
-SET OUTPUTDIR=%GUCE_HOME%\common\bin
 
 
 IF NOT DEFINED FREETYPE_HOME (
@@ -76,9 +60,23 @@ IF NOT DEFINED MYGUI_HOME (
   SET MYGUI_HOME=%MYGUI_HOME%\guidriverMyGUIOgre\dependencies\MyGUI
 )
 
+cd "%GUCE_BATCHSTARTDIR%"
+
+ECHO *** Invoking GUCEF's CMakeCommon ***
+
+SET SKIP_GUCEF_CMAKELISTSFILEGENERATION=TRUE
+cd %GUCEF_HOME%\projects\CMake\
+CALL %GUCEF_HOME%\projects\CMake\CMakeCommon.bat
 
 cd "%GUCE_BATCHSTARTDIR%"
 
+ECHO *** Generate CMakeLists.txt files ***
+
+SET NOPAUSE=TRUE
+CALL GenerateCMakeLists.bat
+SET OUTPUTDIR=%GUCE_HOME%\common\bin
+
+cd "%GUCE_BATCHSTARTDIR%"
 
 
 
