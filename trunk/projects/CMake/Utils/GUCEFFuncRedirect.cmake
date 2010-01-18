@@ -20,4 +20,4 @@ endfunction(GUCEF_config_plugin)
 
 function(GUCEF_config_tool TOOLNAME)
   GUCE_config_tool( ${TOOLNAME} )
-endfunction(GUCEFF_config_tool)
+endfunction(GUCEF_config_tool)
