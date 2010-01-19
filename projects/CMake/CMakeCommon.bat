@@ -17,9 +17,10 @@ ECHO *** Locating GUCEF ***
 IF NOT DEFINED GUCEF_HOME (
   ECHO GUCEF_HOME not defined, defaulting to local trunk copy
   SET GUCEF_HOME=%CD%\..\..\..\..\GUCEF\trunk
-  ECHO GUCEF_HOME="%GUCEF_HOME%"
   cd "%GUCE_BATCHSTARTDIR%"
 )
+
+ECHO GUCEF_HOME="%GUCEF_HOME%"
 
 ECHO *** Perform GUCE common CMake environment variable setup ***
 
