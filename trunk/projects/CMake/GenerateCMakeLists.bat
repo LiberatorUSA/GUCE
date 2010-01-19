@@ -23,12 +23,9 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_DEBUG_CMAKELISTGENERATOR
 
-IF DEFINED GUCEF_HOME (
-  ECHO GUCEF environment variable found, using it's CMakeListGenerator
-  SET GENERATORPATH=%GUCEF_HOME%\common\bin\Debug_MVC9
-  SET GENERATOREXE=CMakeListGenerator_d.exe
-  SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
-)
+SET GENERATORPATH=%GUCEF_HOME%\common\bin\Debug_MVC9
+SET GENERATOREXE=CMakeListGenerator_d.exe
+SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
 IF EXIST %EXETEST% (
   ECHO Warning: Using debug development version of the CMakeListGenerator
@@ -48,18 +45,19 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_RELEASE_CMAKELISTGENERATOR
 
-IF NOT EXIST %EXETEST% (
+SET GENERATORPATH=%GUCEF_HOME%\tools\CMakeListGenerator\bin\ReleasedBins\18Jan2010\CMakeListGenerator\
+SET GENERATOREXE=CMakeListGenerator.exe
+SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
+
+IF EXIST %EXETEST% (
   ECHO Using released version of CMakeListGenerator dated 18'th Jan 2010
-  SET GENERATORPATH=%GUCEF_HOME%\tools\CMakeListGenerator\bin\ReleasedBins\18Jan2010\CMakeListGenerator\
-  SET GENERATOREXE=CMakeListGenerator.exe
-  SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
+  GOTO RUN_CMAKELISTGENERATOR
 )
 
-REM FIXME TODO
-REM IF NOT EXIST %EXETEST% (
-REM   ECHO Error: Unable to locate a CMakeListGenerator, trying GUCE version
-REM   GOTO FIND_GUCE_CMAKELISTGENERATOR
-REM )
+IF NOT EXIST %EXETEST% (
+  ECHO Error: Unable to locate GUCEF's released CMakeListGenerator, trying GUCE version
+  GOTO FIND_GUCE_CMAKELISTGENERATOR
+)
     
 cd %GUCE_THEBATCHDIR%
 GOTO RUN_CMAKELISTGENERATOR
