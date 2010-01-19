@@ -28,8 +28,6 @@ cd %GUCE_BATCHSTARTDIR%
 cd..
 cd..
 SET GUCE_HOME=%CD%
-SET SRCROOTDIR=%CD%
-
 
 IF NOT DEFINED FREETYPE_HOME (
   ECHO FREETYPE_HOME environment variable not found, setting it
@@ -75,7 +73,12 @@ ECHO *** Generate CMakeLists.txt files ***
 
 SET NOPAUSE=TRUE
 CALL GenerateCMakeLists.bat
+
 SET OUTPUTDIR=%GUCE_HOME%\common\bin
+SET SRCROOTDIR=%GUCE_HOME%
+
+ECHO CMake source dir = %SRCROOTDIR%
+ECHO CMake output root is = %OUTPUTDIR%
 
 cd "%GUCE_BATCHSTARTDIR%"
 
