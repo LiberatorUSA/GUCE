@@ -1,6 +1,6 @@
 
 add_library( guceCORE ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( guceCORE gucefCORE gucefMT )
-target_link_libraries( guceCORE gucefCORE gucefMT )
-set_target_properties( guceCORE PROPERTIES COMPILE_DEFINITIONS GUCECORE_BUILD_MODULE )
+add_dependencies( guceCORE gucefCORE gucefMT gucefGUI gucefIMAGE gucefVFS gucefCOMCORE gucefCOM gucefDRN gucefINPUT gucefPATCHER )
+target_link_libraries( guceCORE gucefCORE gucefMT gucefGUI gucefIMAGE gucefVFS gucefCOMCORE gucefCOM gucefDRN gucefINPUT gucefPATCHER )
+set_target_properties( guceCORE PROPERTIES COMPILE_DEFINITIONS GUCE_CORE_BUILD_MODULE )
 GUCE_config_lib( guceCORE )
