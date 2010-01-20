@@ -253,6 +253,10 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR
 add_subdirectory( guceCORE )
 add_subdirectory( guceGUI )
 
+# Setup GUCE plugin dependencies
+add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
+add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
+
 # Setup GUCE Plugin modules
 add_subdirectory( guidriverCEGUIOgre )
 add_subdirectory( guidriverMyGUIOgre )

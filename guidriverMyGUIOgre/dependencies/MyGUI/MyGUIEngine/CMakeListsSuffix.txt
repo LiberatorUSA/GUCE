@@ -1,0 +1,6 @@
+
+add_library( MyGui ${HEADER_FILES} ${SOURCE_FILES} )
+#add_dependencies( MyGui )
+#target_link_libraries( MyGui guceCORE guceGUI )
+set_target_properties( MyGui PROPERTIES COMPILE_DEFINITIONS GUCE_CEGUIOGRE_BUILD_MODULE )
+#GUCE_config_lib( MyGui )
