@@ -1,0 +1,6 @@
+
+add_library( CEGUI ${HEADER_FILES} ${SOURCE_FILES} )
+#add_dependencies( CEGUI )
+#target_link_libraries( CEGUI guceCORE guceGUI )
+set_target_properties( CEGUI PROPERTIES COMPILE_DEFINITIONS GUCE_CEGUIOGRE_BUILD_MODULE )
+#GUCE_config_lib( CEGUI )
