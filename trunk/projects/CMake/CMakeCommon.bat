@@ -69,10 +69,15 @@ CALL %GUCEF_HOME%\projects\CMake\CMakeCommon.bat
 
 cd "%GUCE_BATCHSTARTDIR%"
 
-ECHO *** Generate CMakeLists.txt files ***
+IF NOT DEFINED SKIP_GUCE_CMAKELISTSFILEGENERATION (
+  ECHO *** Generate CMakeLists.txt files ***
+  SET NOPAUSE=TRUE
+  CALL GenerateCMakeLists.bat
+)
 
-SET NOPAUSE=TRUE
-CALL GenerateCMakeLists.bat
+IF DEFINED SKIP_GUCE_CMAKELISTSFILEGENERATION (
+  ECHO Skipping GUCE's CMakeLists file generation
+)
 
 SET OUTPUTDIR=%GUCE_HOME%\common\bin
 SET SRCROOTDIR=%GUCE_HOME%
