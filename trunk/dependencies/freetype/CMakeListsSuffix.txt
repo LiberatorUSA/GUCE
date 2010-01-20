@@ -1,0 +1,6 @@
+
+add_library( freetype ${HEADER_FILES} ${SOURCE_FILES} )
+#add_dependencies( freetype gucefCORE )
+#target_link_libraries( freetype gucefCORE )
+set_target_properties( freetype PROPERTIES COMPILE_DEFINITIONS GUCE_CORE_BUILD_MODULE )
+GUCE_config_lib( freetype )
