@@ -1,0 +1,6 @@
+
+add_library( guidriverMyGUIOgre ${HEADER_FILES} ${SOURCE_FILES} )
+add_dependencies( guidriverMyGUIOgre guceCORE guceGUI )
+target_link_libraries( guidriverMyGUIOgre guceCORE guceGUI )
+set_target_properties( guidriverMyGUIOgre PROPERTIES COMPILE_DEFINITIONS GUCE_MYGUIOGRE_BUILD_MODULE )
+GUCE_config_lib( guidriverMyGUIOgre )
