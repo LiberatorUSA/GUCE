@@ -18,6 +18,9 @@ cmake_minimum_required(VERSION 2.6)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 cmake_policy(SET CMP0003 NEW)
 
+#set policy not to complain about combining different archives into a single project
+cmake_policy(SET CMP0013 OLD)
+
 project(GUCE)
 
 # Include necessary submodules
