@@ -1,6 +1,6 @@
 
 Version numbers of the supported dependencies are as follows:
-- Ogre 3D: 1.4.5 (Eihort)
+- Ogre 3D: 1.7 RC1 (Cthugha)
 - Freetype2 2.6.3
 
 Note dependencies can have dependencies of their own.
