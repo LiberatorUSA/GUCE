@@ -1,0 +1,7 @@
+# CMake generation dependency list for this directory.
+../../../CMake/CMakeLists.txt
+../../../CMake/InstallResources.cmake
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/resources.xml.in

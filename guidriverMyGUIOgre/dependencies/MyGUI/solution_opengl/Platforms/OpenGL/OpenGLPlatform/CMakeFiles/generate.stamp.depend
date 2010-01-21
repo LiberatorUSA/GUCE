@@ -1,0 +1,3 @@
+# CMake generation dependency list for this directory.
+../../../../../Platforms/OpenGL/OpenGLPlatform/CMakeLists.txt
+../../../../../Platforms/OpenGL/OpenGLPlatform/MyGUI.OpenGLPlatform.list

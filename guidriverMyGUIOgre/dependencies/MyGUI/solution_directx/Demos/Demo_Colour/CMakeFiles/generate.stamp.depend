@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+../../../../Demos/Demo_Colour/CMakeLists.txt
+../../../../Demos/Demo_Colour/Demo_Colour.list
+../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in
