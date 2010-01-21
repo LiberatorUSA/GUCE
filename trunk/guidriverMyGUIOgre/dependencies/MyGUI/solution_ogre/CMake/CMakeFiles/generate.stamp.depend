@@ -1,0 +1,11 @@
+# CMake generation dependency list for this directory.
+../../../CMake/CMakeLists.txt
+../../../CMake/InstallResources.cmake
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/resources.xml.in
+../../../CMake/Templates/plugins_d.cfg.in
+../../../CMake/Templates/plugins.cfg.in
+../../../CMake/Templates/plugins.cfg.in
+../../../CMake/Templates/plugins.cfg.in

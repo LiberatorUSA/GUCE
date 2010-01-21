@@ -1,0 +1,74 @@
+# CMake generation dependency list for this directory.
+../../CMakeLists.txt
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeVS8FindMake.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDetermineSystem.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeSystem.cmake.in
+CMakeSystem.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDetermineCCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeFindBinUtils.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCCompiler.cmake.in
+CMakeCCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDetermineCXXCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeFindBinUtils.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCXXCompiler.cmake.in
+CMakeCXXCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeSystemSpecificInformation.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeGenericSystem.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/gcc.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/Windows.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/WindowsPaths.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCInformation.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/Windows-cl.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/cl.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDetermineRCCompiler.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeRCCompiler.cmake.in
+CMakeRCCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeRCInformation.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeTestRCCompiler.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/Windows-cl.cmake.in
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/Platform/Windows-cl.cmake.in
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCommonLanguageInclude.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeTestCCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDetermineCompilerABI.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCCompilerABI.c
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCCompiler.cmake.in
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCXXInformation.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCommonLanguageInclude.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeTestCXXCompiler.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDetermineCompilerABI.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCXXCompilerABI.cpp
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeCXXCompiler.cmake.in
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CMakeDependentOption.cmake
+../../CMake/Utils/MacroLogFeature.cmake
+../../CMake/Utils/MyGUIConfigTargets.cmake
+../../CMake/Utils/PreprocessorUtils.cmake
+../../CMake/Utils/MyGUIGetVersion.cmake
+../../CMake/Utils/PreprocessorUtils.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/TestBigEndian.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CheckTypeSize.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CheckIncludeFile.cmake
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CheckIncludeFile.c.in
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CheckIncludeFile.c.in
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CheckIncludeFile.c.in
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/CheckTypeSizeC.c.in
+d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/TestEndianess.c.in
+../../CMake/Dependencies.cmake
+../../CMake/Utils/FindPkgMacros.cmake
+../../CMake/MyGUIInstallDependencies.cmake
+../../CMake/Packages/FindFreetype.cmake
+../../CMake/Utils/FindPkgMacros.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindPkgConfig.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindOpenGL.cmake
+../../CMake/Packages/FindOIS.cmake
+../../CMake/Utils/FindPkgMacros.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindPkgConfig.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindDoxygen.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindPackageHandleStandardArgs.cmake
+D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindPackageMessage.cmake
+../../CMake/ConfigureBuild.cmake
+../../CMake/InstallResources.cmake
+../../CMake/Templates/resources.xml.in
+../../CMake/Templates/resources.xml.in
+../../CMake/Templates/resources.xml.in
+../../CMake/Templates/resources.xml.in
+../../CMake/Packaging.cmake

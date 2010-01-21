@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+../../../../UnitTests/UnitTest_TextureAnimations/CMakeLists.txt
+../../../../UnitTests/UnitTest_TextureAnimations/UnitTest_TextureAnimations.list
+../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

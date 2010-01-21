@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+../../../../Plugins/Plugin_StrangeButton/CMakeLists.txt
+../../../../Plugins/Plugin_StrangeButton/Plugin_StrangeButton.list
+../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

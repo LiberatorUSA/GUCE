@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+../../../../Tools/ImageSetViewer/CMakeLists.txt
+../../../../Tools/ImageSetViewer/ImageSetViewer.list
+../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

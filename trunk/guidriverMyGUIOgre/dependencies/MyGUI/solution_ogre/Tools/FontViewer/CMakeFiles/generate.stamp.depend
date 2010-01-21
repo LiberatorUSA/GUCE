@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+../../../../Tools/FontViewer/CMakeLists.txt
+../../../../Tools/FontViewer/FontViewer.list
+../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in
