@@ -1,1 +1,1 @@
-MyGUI version used is 2.2.2
+MyGUI version used is 3.0.0
