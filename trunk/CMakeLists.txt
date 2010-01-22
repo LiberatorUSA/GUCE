@@ -35,6 +35,7 @@ include(MacroLogFeature)
 include(GUCEConfigTargets)
 include(PreprocessorUtils)
 include(GUCEFFuncRedirect)
+include(OgreFuncRedirect)
 
 set(GUCE_TEMPLATES_DIR "${GUCE_SOURCE_DIR}/projects/CMake/Templates")
 set(GUCE_WORK_DIR ${GUCE_BINARY_DIR})
@@ -257,6 +258,13 @@ add_subdirectory( guceCORE )
 add_subdirectory( guceGUI )
 
 # Setup GUCE plugin dependencies
+add_subdirectory( dependencies/Ogre/OgreMain )
+add_subdirectory( dependencies/Ogre/RenderSystems/GL )
+add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D9 )
+add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D10 )
+add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D11 )
+add_subdirectory( dependencies/Ogre/RenderSystems/GLES )
+add_subdirectory( dependencies/Ogre/PlugIns/OctreeSceneManager )
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
 add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
 
