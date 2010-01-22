@@ -253,11 +253,7 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/ServerPortExtender ${GUCE_BINARY_DIR} 
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CMakeListGenerator ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR} )
 
-# Setup GUCE modules
-add_subdirectory( guceCORE )
-add_subdirectory( guceGUI )
-
-# Setup GUCE plugin dependencies
+# Setup GUCE dependencies
 add_subdirectory( dependencies/Ogre/OgreMain )
 add_subdirectory( dependencies/Ogre/RenderSystems/GL )
 add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D9 )
@@ -265,6 +261,12 @@ add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D10 )
 add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D11 )
 add_subdirectory( dependencies/Ogre/RenderSystems/GLES )
 add_subdirectory( dependencies/Ogre/PlugIns/OctreeSceneManager )
+
+# Setup GUCE modules
+add_subdirectory( guceCORE )
+add_subdirectory( guceGUI )
+
+# Setup GUCE plugin dependencies
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
 add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
 
