@@ -253,7 +253,12 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/ServerPortExtender ${GUCE_BINARY_DIR} 
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CMakeListGenerator ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR} )
 
-# Setup GUCE dependencies
+# Setup GUCE Ogre dependency
+
+set( OGRE_BINARY_DIR ${GUCE_BINARY_DIR} )
+set( OGRE_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/Templates )
+include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/ConfigureBuild.cmake )
+
 add_subdirectory( dependencies/Ogre/OgreMain )
 add_subdirectory( dependencies/Ogre/RenderSystems/GL )
 add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D9 )
