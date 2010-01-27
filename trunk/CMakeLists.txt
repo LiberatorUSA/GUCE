@@ -97,7 +97,9 @@ test_big_endian(GUCE_TEST_BIG_ENDIAN)
 
 # Add common include path
 include_directories("${GUCE_SOURCE_DIR}/common/include")
-#include_directories("${GUCE_BINARY_DIR}/include")
+
+# Add bin dir include path: used for buildsettings.h type files
+include_directories("${GUCE_BINARY_DIR}/include")
 if (APPLE)
   include_directories("${CMAKE_SOURCE_DIR}/GUCEMain/include/OSX")
 endif (APPLE)
@@ -258,6 +260,7 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR
 set( OGRE_BINARY_DIR ${GUCE_BINARY_DIR} )
 set( OGRE_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/Templates )
 include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/ConfigureBuild.cmake )
+include_directories("${GUCE_SOURCE_DIR}/dependencies/Ogre/OgreMain/include")
 
 add_subdirectory( dependencies/Ogre/OgreMain )
 add_subdirectory( dependencies/Ogre/RenderSystems/GL )
