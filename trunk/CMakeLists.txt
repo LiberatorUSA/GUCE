@@ -35,7 +35,6 @@ include(MacroLogFeature)
 include(GUCEConfigTargets)
 include(PreprocessorUtils)
 include(GUCEFFuncRedirect)
-include(OgreFuncRedirect)
 
 set(GUCE_TEMPLATES_DIR "${GUCE_SOURCE_DIR}/projects/CMake/Templates")
 set(GUCE_WORK_DIR ${GUCE_BINARY_DIR})
@@ -259,8 +258,9 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR
 
 set( OGRE_BINARY_DIR ${GUCE_BINARY_DIR} )
 set( OGRE_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/Templates )
+include( OgreFuncRedirect )
 include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/ConfigureBuild.cmake )
-include_directories("${GUCE_SOURCE_DIR}/dependencies/Ogre/OgreMain/include")
+include_directories( "${GUCE_SOURCE_DIR}/dependencies/Ogre/OgreMain/include" )
 
 add_subdirectory( dependencies/Ogre/OgreMain )
 add_subdirectory( dependencies/Ogre/RenderSystems/GL )
@@ -274,13 +274,24 @@ add_subdirectory( dependencies/Ogre/PlugIns/OctreeSceneManager )
 add_subdirectory( guceCORE )
 add_subdirectory( guceGUI )
 
-# Setup GUCE plugin dependencies
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
-add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
+# Setup GUCE guidriverMyGUIOgre dependency MyGUI
 
-# Setup GUCE Plugin modules
-add_subdirectory( guidriverCEGUIOgre )
+set( MYGUI_BINARY_DIR ${GUCE_BINARY_DIR} )
+set( MYGUI_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/CMake/Templates )
+include( MyGUIFuncRedirect )
+include( ${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/CMake/ConfigureBuild.cmake )
+#include_directories( "${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine/include" )
+#include_directories( "${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform/include" )
+
+add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
+add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform )
+
+# Setup GUCE guidriverMyGUIOgre Plugin module
 add_subdirectory( guidriverMyGUIOgre )
+
+# Setup GUCE guidriverCEGUIOgre Plugin module
+#add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
+#add_subdirectory( guidriverCEGUIOgre )
 
 # Setup GUCE Sample applications
 add_subdirectory( samples/refapp )
