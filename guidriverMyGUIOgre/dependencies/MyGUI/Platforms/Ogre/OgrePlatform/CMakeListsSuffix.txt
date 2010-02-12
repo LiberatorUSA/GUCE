@@ -1,0 +1,6 @@
+
+add_library( MyGUI.OgrePlatform ${HEADER_FILES} ${SOURCE_FILES} )
+add_dependencies( MyGUI.OgrePlatform MyGUIEngine )
+target_link_libraries( MyGUI.OgrePlatform MyGUIEngine )
+set_target_properties( MyGUI.OgrePlatform PROPERTIES COMPILE_DEFINITIONS "-DMYGUI_BUILD;MYGUI_USE_FREETYPE")
+GUCE_config_lib( MyGUI.OgrePlatform )
