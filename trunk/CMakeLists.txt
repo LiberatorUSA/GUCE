@@ -274,15 +274,7 @@ add_subdirectory( dependencies/Ogre/PlugIns/OctreeSceneManager )
 add_subdirectory( guceCORE )
 add_subdirectory( guceGUI )
 
-# Setup GUCE guidriverMyGUIOgre dependency MyGUI
-
-set( MYGUI_BINARY_DIR ${GUCE_BINARY_DIR} )
-set( MYGUI_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/CMake/Templates )
-include( MyGUIFuncRedirect )
-include( ${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/CMake/ConfigureBuild.cmake )
-#include_directories( "${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine/include" )
-#include_directories( "${GUCE_SOURCE_DIR}/guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform/include" )
-
+# Setup GUCE guidriverMyGUIOgre Plugin dependencies
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform )
 
