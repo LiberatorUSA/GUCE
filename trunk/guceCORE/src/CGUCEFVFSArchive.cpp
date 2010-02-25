@@ -115,7 +115,7 @@ CGUCEFVFSArchive::unload( void )
 /*-------------------------------------------------------------------------*/
 
 Ogre::DataStreamPtr 
-CGUCEFVFSArchive::open( const Ogre::String& filename ) const
+CGUCEFVFSArchive::open( const Ogre::String& filename, bool readOnly ) const
 {GUCE_TRACE;
         
     GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEFVFSArchive: request to open file: " +  filename );
@@ -123,7 +123,8 @@ CGUCEFVFSArchive::open( const Ogre::String& filename ) const
     GUCEF::CORE::CString path( mName.c_str() );
     GUCEF::CORE::AppendToPath( path, filename.c_str() ); 
     
-    GUCEF::VFS::CVFS::CVFSHandlePtr fh = _vfs->GetFile( path );
+    const char* mode = readOnly ? "rb" : "rw";
+    GUCEF::VFS::CVFS::CVFSHandlePtr fh = _vfs->GetFile( path, mode );
     if ( fh != NULL )
     {                                                    
             CVFSHandleToDataStream* stream = new CVFSHandleToDataStream( fh );
