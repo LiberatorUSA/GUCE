@@ -358,8 +358,8 @@ CGUCEApplication::SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode    
                                       Ogre::RenderSystem** selectedRenderSystem /* = NULL */ )
 {GUCE_TRACE;
 
-    Ogre::RenderSystemList* rendersyslist = m_ogreRoot->getAvailableRenderers();
-    if ( rendersyslist->size() == 0 )
+    const Ogre::RenderSystemList& rendersyslist = m_ogreRoot->getAvailableRenderers();
+    if ( rendersyslist.size() == 0 )
     {
         /*
          *      No rendering systems are available
@@ -387,12 +387,12 @@ CGUCEApplication::SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode    
              *      Your wish is my command master,...
              */
             GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Desired render system: " + att->value ); 
-            for ( UInt32 i=0; i<rendersyslist->size(); ++i )
+            for ( UInt32 i=0; i<rendersyslist.size(); ++i )
             {
-                GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Available render system: " + GUCEF::CORE::CString( ((*rendersyslist)[ i ])->getName().c_str() ) );
-                if ( ((*rendersyslist)[ i ])->getName() == att->value.C_String() )
+                GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Available render system: " + GUCEF::CORE::CString( (rendersyslist[ i ])->getName().c_str() ) );
+                if ( (rendersyslist[ i ])->getName() == att->value.C_String() )
                 {
-                    renderSystem = (*rendersyslist)[ i ];
+                    renderSystem = rendersyslist[ i ];
                     break;        
                 }          
             }
@@ -421,7 +421,7 @@ CGUCEApplication::SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode    
     /*
      *      Setup OGRE using hard coded default settings         
      */
-    renderSystem = (*rendersyslist)[ 0 ]; 
+    renderSystem = rendersyslist[ 0 ]; 
     m_ogreRoot->setRenderSystem( renderSystem );
     if ( selectedRenderSystem != NULL )
     {

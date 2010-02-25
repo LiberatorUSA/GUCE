@@ -140,7 +140,7 @@ CIOAccessArchive::unload( void )
 /*-------------------------------------------------------------------------*/
 
 Ogre::DataStreamPtr
-CIOAccessArchive::open( const Ogre::String& filename ) const
+CIOAccessArchive::open( const Ogre::String& filename, bool readOnly ) const
 {GUCE_TRACE;
 
     TResourceMap::const_iterator i = m_resourceMap.find( filename.c_str() );

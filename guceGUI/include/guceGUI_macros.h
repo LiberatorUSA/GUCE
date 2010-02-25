@@ -90,43 +90,48 @@
 
 /*-------------------------------------------------------------------------*/
 
+/* legacy support */
+#ifdef GUCEGUI_BUILD_MODULE
+  #define GUCE_GUI_BUILD_MODULE
+#endif 
+
 /*
  *      Macros for dynamic linking. Use the switches in the
  *      config file to control the export type.
  */
 #ifdef GUCEF_MSWIN_BUILD
-  #ifdef GUCEGUI_BUILD_MODULE
-    #define GUCEGUI_EXPORT __declspec( dllexport )
+  #ifdef GUCE_GUI_BUILD_MODULE
+    #define GUCE_GUI_EXPORT __declspec( dllexport )
   #else
-    #define GUCEGUI_EXPORT __declspec( dllimport )
-  #endif /* GUCEGUI_BUILD_MODULE ? */
+    #define GUCE_GUI_EXPORT __declspec( dllimport )
+  #endif /* GUCE_GUI_BUILD_MODULE ? */
 #else
-  #define GUCEGUI_EXPORT   /* Linux does not need an additional directive */
+  #define GUCE_GUI_EXPORT   /* Linux does not need an additional directive */
 #endif /* GUCEF_MSWIN_BUILD ? */
 
 /*
  *  Are we exporting C++ code ?
  */
-#undef GUCEGUI_EXPORT_CPP
-#ifdef GUCEGUI_EXPORT_CPP_CODE
-  #define GUCEGUI_EXPORT_CPP GUCEGUI_EXPORT
+#undef GUCE_GUI_EXPORT_CPP
+#ifdef GUCE_GUI_EXPORT_CPP_CODE
+  #define GUCE_GUI_EXPORT_CPP GUCE_GUI_EXPORT
 #else
-  #define GUCEGUI_EXPORT_CPP
-#endif /* GUCEGUI_EXPORT_CPP_CODE ? */
+  #define GUCE_GUI_EXPORT_CPP
+#endif /* GUCE_GUI_EXPORT_CPP_CODE ? */
 
-#define GUCE_GUI_EXPORT_CPP GUCEGUI_EXPORT_CPP
+#define GUCE_GUI_EXPORT_CPP GUCE_GUI_EXPORT_CPP
 
 /*
  *  Are we exporting C code ?
  */
-#undef GUCEGUI_EXPORT_C
-#ifdef GUCEGUI_EXPORT_C_CODE
-  #define GUCEGUI_EXPORT_C GUCEGUI_EXPORT
+#undef GUCE_GUI_EXPORT_C
+#ifdef GUCE_GUI_EXPORT_C_CODE
+  #define GUCE_GUI_EXPORT_C GUCE_GUI_EXPORT
 #else
-  #define GUCEGUI_EXPORT_C
-#endif /* GUCEGUI_EXPORT_C_CODE ? */
+  #define GUCE_GUI_EXPORT_C
+#endif /* GUCE_GUI_EXPORT_C_CODE ? */
 
-#define GUCE_GUI_EXPORT_C GUCEGUI_EXPORT_C
+#define GUCE_GUI_EXPORT_C GUCE_GUI_EXPORT_C
 
 /*-------------------------------------------------------------------------*/
 

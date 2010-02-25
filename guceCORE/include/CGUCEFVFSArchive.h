@@ -72,7 +72,7 @@ class GUCE_CORE_EXPORT_CPP CGUCEFVFSArchive : public Ogre::Archive
 
     virtual void unload( void );
 
-    virtual Ogre::DataStreamPtr open( const Ogre::String& filename ) const;
+    virtual Ogre::DataStreamPtr open( const Ogre::String& filename, bool readOnly = true ) const;
 
     virtual Ogre::StringVectorPtr list( bool recursive = true, bool dirs = false );
 

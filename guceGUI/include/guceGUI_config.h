@@ -32,28 +32,8 @@
 #undef GUCE_GUI_DEBUG_MODE     /* do not change this line */ 
 /* #define GUCE_GUI_DEBUG_MODE */
 
-/*
- *      Switch for removing/adding the GUCEF namespace.
- */
-#undef USE_GUCE_NAMESPACE     /* do not change this line */ 
-#define USE_GUCE_NAMESPACE
-
-/*
- *      Switch for removing/adding the CORE namespace.
- */
-#undef USE_GUI_NAMESPACE     /* do not change this line */ 
-#define USE_GUI_NAMESPACE
-
-#define GUCEGUI_EXPORT_CPP_CODE
-#define GUCEGUI_EXPORT_C_CODE
-
-/*
- *      Switch that activates or deactivates the module memory manager.
- *      This is a debugging tool that will allow you to search for
- *      memory leaks and bounds violations. 
- */
-#undef ACTIVATE_MEMORY_MANAGER  /* do not change this line */
-//#define ACTIVATE_MEMORY_MANAGER
+#define GUCE_GUI_EXPORT_CPP_CODE
+#define GUCE_GUI_EXPORT_C_CODE
 
 /*-------------------------------------------------------------------------*/
 
