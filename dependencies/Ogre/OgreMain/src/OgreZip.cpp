@@ -29,6 +29,8 @@ THE SOFTWARE.
 
 #include "OgreZip.h"
 
+#if OGRE_NO_ZIP_ARCHIVE != 0
+
 #include "OgreLogManager.h"
 #include "OgreException.h"
 #include "OgreStringVector.h"
@@ -387,3 +389,5 @@ namespace Ogre {
     }
 
 }
+
+#endif // OGRE_NO_ZIP_ARCHIVE

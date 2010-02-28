@@ -208,6 +208,7 @@ add_subdirectory( ${ENV_GUCEF_HOME}/gucefINPUT ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefCOM ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefMULTIPLAY ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefDRN ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/gucefSMDRN ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefPATCHER ${GUCE_BINARY_DIR} )
 
 # Setup GUCEF plugin dependencies
@@ -259,6 +260,8 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR
 set( OGRE_BINARY_DIR ${GUCE_BINARY_DIR} )
 set( OGRE_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/Templates )
 set( OGRE_CONFIG_ALLOCATOR 4 )
+set( OGRE_CONFIG_DISABLE_FREEIMAGE 1 )
+set( OGRE_CONFIG_DISABLE_ZIP 1 )
 include( OgreFuncRedirect )
 include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/PrepareThreadingOptions.cmake )
 include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/ConfigureBuild.cmake )
