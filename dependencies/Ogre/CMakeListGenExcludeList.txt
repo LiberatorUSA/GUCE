@@ -1,0 +1,9 @@
+Components
+Docs
+Other
+Plugins
+Samples
+Scripts
+SDK
+Tests
+Tools
