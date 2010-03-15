@@ -1,0 +1,4 @@
+
+add_library( OgrePlugin_OctreeSceneManager ${HEADER_FILES} ${SOURCE_FILES} )
+#set_target_properties( OgrePlugin_OctreeSceneManager PROPERTIES COMPILE_DEFINITIONS GUCE_GUI_BUILD_MODULE )
+GUCE_config_lib( OgrePlugin_OctreeSceneManager )
