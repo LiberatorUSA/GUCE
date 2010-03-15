@@ -1,4 +1,6 @@
 
 add_library( RenderSystem_GL ${HEADER_FILES} ${SOURCE_FILES} )
+add_dependencies( RenderSystem_GL OgreMain )
+target_link_libraries( RenderSystem_GL OgreMain )
 #set_target_properties( RenderSystem_GL PROPERTIES COMPILE_DEFINITIONS GUCE_GUI_BUILD_MODULE )
 GUCE_config_lib( RenderSystem_GL )
