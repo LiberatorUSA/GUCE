@@ -1,0 +1,4 @@
+
+add_library( RenderSystem_Direct3D9 ${HEADER_FILES} ${SOURCE_FILES} )
+#set_target_properties( RenderSystem_Direct3D9L PROPERTIES COMPILE_DEFINITIONS GUCE_GUI_BUILD_MODULE )
+GUCE_config_lib( RenderSystem_Direct3D9 )
