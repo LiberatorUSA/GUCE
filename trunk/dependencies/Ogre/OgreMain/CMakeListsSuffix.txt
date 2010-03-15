@@ -1,4 +1,4 @@
 
 add_library( OgreMain ${HEADER_FILES} ${SOURCE_FILES} )
-set_target_properties( OgreMain PROPERTIES COMPILE_DEFINITIONS _OgreExport )
+set_target_properties( OgreMain PROPERTIES COMPILE_DEFINITIONS OGRE_NONCLIENT_BUILD )
 GUCE_config_lib( OgreMain )
