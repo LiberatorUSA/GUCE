@@ -255,17 +255,21 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/ServerPortExtender ${GUCE_BINARY_DIR} 
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CMakeListGenerator ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR} )
 
+# Setup Ogre dependencies
+
+add_subdirectory( dependencies/freetype )
+
 # Setup GUCE Ogre dependency
 
-set( OGRE_BINARY_DIR ${GUCE_BINARY_DIR} )
-set( OGRE_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/Templates )
-set( OGRE_CONFIG_ALLOCATOR 4 )
-set( OGRE_CONFIG_DISABLE_FREEIMAGE 1 )
-set( OGRE_CONFIG_DISABLE_ZIP 1 )
-include( OgreFuncRedirect )
-include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/PrepareThreadingOptions.cmake )
-include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/ConfigureBuild.cmake )
-include_directories( "${GUCE_SOURCE_DIR}/dependencies/Ogre/OgreMain/include" )
+#set( OGRE_BINARY_DIR ${GUCE_BINARY_DIR} )
+#set( OGRE_TEMPLATES_DIR ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/Templates )
+#set( OGRE_CONFIG_ALLOCATOR 4 )
+#set( OGRE_CONFIG_DISABLE_FREEIMAGE 1 )
+#set( OGRE_CONFIG_DISABLE_ZIP 1 )
+#include( OgreFuncRedirect )
+#include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/PrepareThreadingOptions.cmake )
+#include( ${GUCE_SOURCE_DIR}/dependencies/Ogre/CMake/ConfigureBuild.cmake )
+#include_directories( "${GUCE_SOURCE_DIR}/dependencies/Ogre/OgreMain/include" )
 
 add_subdirectory( dependencies/Ogre/OgreMain )
 add_subdirectory( dependencies/Ogre/RenderSystems/GL )
