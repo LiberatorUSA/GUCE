@@ -17,6 +17,9 @@
 
 
 #include "aflatin.h"
+
+#ifdef FT_OPTION_AUTOFIT2
+
 #include "aflatin2.h"
 #include "aferrors.h"
 
@@ -2282,5 +2285,6 @@
     (AF_Script_ApplyHintsFunc)  af_latin2_hints_apply
   };
 
+#endif /* FT_OPTION_AUTOFIT2 */
 
 /* END */

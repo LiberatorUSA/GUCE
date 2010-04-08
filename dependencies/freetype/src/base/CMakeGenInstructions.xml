@@ -3,6 +3,6 @@
     <ITEM NAME="*" />
   </EXCLUDES>
   <INCLUDES PLATFORM="ALL">
-    <ITEM NAME="autofit.c" />
+    <ITEM NAME="ftbase.c" />
   </INCLUDES>
 </CMAKELISTGENERATOR>
