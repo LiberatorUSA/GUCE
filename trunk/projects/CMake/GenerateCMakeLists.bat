@@ -86,13 +86,13 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_RELEASE_CMAKELISTGENERATOR
 
-SET GENERATORPATH=%GUCEF_HOME%\tools\CMakeListGenerator\bin\ReleasedBins\15March2010\CMakeListGenerator\
+SET GENERATORPATH=%GUCEF_HOME%\tools\CMakeListGenerator\bin\ReleasedBins\16April2010\CMakeListGenerator\
 SET GENERATOREXE=CMakeListGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
 ECHO Test path = %EXETEST%
 IF EXIST %EXETEST% (
-  ECHO Using released version of CMakeListGenerator dated 18'th Jan 2010
+  ECHO Using released version of CMakeListGenerator dated 16'th April 2010
   GOTO RUN_CMAKELISTGENERATOR
 )
 
@@ -109,7 +109,7 @@ REM -----------------------------------------------------
 
 :FIND_GUCE_RELEASE_CMAKELISTGENERATOR
 
-SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\tools\CMakeListGenerator\bin\ReleasedBins\15Jan2010
+SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\tools\CMakeListGenerator\bin\ReleasedBins\16April2010
 SET GENERATOREXE=CMakeListGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
