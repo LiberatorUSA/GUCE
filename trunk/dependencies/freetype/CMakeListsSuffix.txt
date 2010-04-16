@@ -1,5 +1,5 @@
 
-add_library( freetype ${HEADER_FILES} ${SOURCE_FILES} )
+add_library( freetype ${ALL_FILES} )
 add_dependencies( freetype zlib )
 target_link_libraries( freetype zlib )
 set_target_properties( freetype PROPERTIES COMPILE_DEFINITIONS "FT2_BUILD_LIBRARY;FT_CONFIG_OPTION_SYSTEM_ZLIB" )

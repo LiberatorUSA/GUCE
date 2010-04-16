@@ -27,7 +27,6 @@ if (OGRE_BUILD_TESTS)
 		OgreMain/include/Suite.h
 		OgreMain/include/UseCustomCapabilitiesTests.h
 		OgreMain/include/VectorTests.h
-		OgreMain/include/ZipArchiveTests.h
 	)
 	set(SOURCE_FILES 
 		OgreMain/src/BitwiseTests.cpp
@@ -42,13 +41,16 @@ if (OGRE_BUILD_TESTS)
 		OgreMain/src/Suite.cpp
 		OgreMain/src/UseCustomCapabilitiesTests.cpp
 		OgreMain/src/VectorTests.cpp
-		OgreMain/src/ZipArchiveTests.cpp
 		src/main.cpp
 	)
+	if (NOT OGRE_CONFIG_DISABLE_ZIP)
+	  set(HEADER_FILES ${HEADER_FILES} OgreMain/include/ZipArchiveTests.h)
+	  set(SOURCE_FILES ${SOURCE_FILES} OgreMain/src/ZipArchiveTests.cpp)
+	endif ()
 
 	if (OGRE_BUILD_COMPONENT_PAGING)
-	  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Components/Paging/include
-	    ${OGRE_SOURCE_DIR}/Components/Paging/include)
+	  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Components/Paging/include)
+	  ogre_add_component_include_dir(Paging)
 	  
 	  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OgrePaging)
 	  set(HEADER_FILES ${HEADER_FILES}
@@ -59,8 +61,8 @@ if (OGRE_BUILD_TESTS)
 	  )
 	endif ()
 	if (OGRE_BUILD_COMPONENT_TERRAIN)
-	  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Components/Terrain/include
-	    ${OGRE_SOURCE_DIR}/Components/Terrain/include)
+	  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Components/Terrain/include)
+	  ogre_add_component_include_dir(Terrain)
 	  
 	  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OgreTerrain)
 	  set(HEADER_FILES ${HEADER_FILES}
@@ -82,7 +84,7 @@ if (OGRE_BUILD_TESTS)
 	    Components/Property/src/PropertyTests.cpp
 	  )
 	endif ()
-
+	
 	add_executable(Test_Ogre WIN32 ${HEADER_FILES} ${SOURCE_FILES} ${RESOURCE_FILES} )
 	ogre_config_sample_exe(Test_Ogre)
 	target_link_libraries(Test_Ogre ${OGRE_LIBRARIES} ${CppUnit_LIBRARIES})

@@ -42,6 +42,7 @@
 #include "BSP.h"
 #include "CameraTrack.h"
 #include "CelShading.h"
+#include "CharacterSample.h"
 #include "CubeMapping.h"
 #include "Dot3Bump.h"
 #include "DynTex.h"
@@ -64,12 +65,20 @@
 #include "Terrain.h"
 #include "TextureFX.h"
 #include "Transparency.h"
+#  if SAMPLES_INCLUDE_PLAYPEN
+#    include "PlayPen.h"
+     PlayPenPlugin* playPenPlugin = 0;
+#  endif
 
 typedef std::map<std::string, OgreBites::SdkSample *> PluginMap;
 
 #endif
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
+#   ifdef __OBJC__
+#       import <UIKit/UIKit.h>
+#   endif
+
 namespace OgreBites
 {
     class SampleBrowser;
@@ -94,7 +103,7 @@ namespace OgreBites
 	{
 	public:
 
-		SampleBrowser()
+		SampleBrowser() : SampleContext()
 		{
 			mTrayMgr = 0;
 			mLastViewCategory = 0;
@@ -519,7 +528,7 @@ namespace OgreBites
 			}
 			else if (evt.key == OIS::KC_RETURN)   // start or stop sample
 			{
-				if (!mLoadedSamples.empty())
+				if (!mLoadedSamples.empty() && (mSamplePaused || mCurrentSample == 0))
 				{
 					Sample* newSample = Ogre::any_cast<Sample*>(mThumbs[mSampleMenu->getSelectionIndex()]->getUserAny());
 					runSample(newSample == mCurrentSample ? 0 : newSample);
@@ -535,6 +544,17 @@ namespace OgreBites
                 mWindow->getViewport(0)->setOrientationMode((Ogre::OrientationMode)orientationMode);                
             }
 #endif
+			else if(evt.key == OIS::KC_F9)   // toggle full screen
+			{
+				// Make sure we use the window size as originally requested, NOT the
+				// current window size (which may have altered to fit desktop)
+				const Ogre::ConfigOptionMap::iterator opti = 
+					mRoot->getRenderSystem()->getConfigOptions().find("Video Mode");
+				Ogre::StringVector vmopts = Ogre::StringUtil::split(opti->second.currentValue, " x");
+				unsigned int w = Ogre::StringConverter::parseUnsignedInt(vmopts[0]);
+				unsigned int h = Ogre::StringConverter::parseUnsignedInt(vmopts[1]);
+				mWindow->setFullscreen(!mWindow->isFullScreen(), w, h);
+			}
 
 			try
 			{
@@ -784,6 +804,7 @@ namespace OgreBites
             mPluginNameMap["Sample_BSP"]                = (OgreBites::SdkSample *) OGRE_NEW Sample_BSP();
             mPluginNameMap["Sample_CameraTrack"]        = (OgreBites::SdkSample *) OGRE_NEW Sample_CameraTrack();
             mPluginNameMap["Sample_CelShading"]         = (OgreBites::SdkSample *) OGRE_NEW Sample_CelShading();
+            mPluginNameMap["Sample_Character"]        = (OgreBites::SdkSample *) OGRE_NEW Sample_Character();
             mPluginNameMap["Sample_CubeMapping"]        = (OgreBites::SdkSample *) OGRE_NEW Sample_CubeMapping();
             mPluginNameMap["Sample_Dot3Bump"]           = (OgreBites::SdkSample *) OGRE_NEW Sample_Dot3Bump();
             mPluginNameMap["Sample_DynTex"]             = (OgreBites::SdkSample *) OGRE_NEW Sample_DynTex();
@@ -900,13 +921,7 @@ namespace OgreBites
 			Ogre::StringVector unloadedSamplePlugins;
 
 			Ogre::ConfigFile cfg;
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-			cfg.load(Ogre::macBundlePath() + "/Contents/Resources/samples.cfg");
-#elif OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-			cfg.load(Ogre::macBundlePath() + "/samples.cfg");
-#else
-			cfg.load("samples.cfg");
-#endif
+			cfg.load(mFSLayer->getConfigFilePath("samples.cfg"));
 
 			Ogre::String sampleDir = cfg.getSetting("SampleFolder");        // Mac OS X just uses Resources/ directory
 			Ogre::StringVector sampleList = cfg.getMultiSetting("SamplePlugin");
@@ -927,13 +942,47 @@ namespace OgreBites
 				#endif
 			}
 
+#ifdef SAMPLES_INCLUDE_PLAYPEN
+#  ifdef OGRE_STATIC_LIB
+			playPenPlugin = OGRE_NEW PlayPenPlugin();
+			mRoot->installPlugin(playPenPlugin);
+			SampleSet newSamples = playPenPlugin->getSamples();
+			for (SampleSet::iterator j = newSamples.begin(); j != newSamples.end(); j++)
+			{
+				Ogre::NameValuePairList& info = (*j)->getInfo();   // acquire custom sample info
+				Ogre::NameValuePairList::iterator k;
+
+				// give sample default title and category if none found
+				k= info.find("Title");
+				if (k == info.end() || k->second.empty()) info["Title"] = "Untitled";
+				k = info.find("Category");
+				if (k == info.end() || k->second.empty()) info["Category"] = "Unsorted";
+				k = info.find("Thumbnail");
+				if (k == info.end() || k->second.empty()) info["Thumbnail"] = "thumb_error.png";
+				mSampleCategories.insert(info["Category"]);   // add sample category
+				if (info["Title"] == startupSampleTitle) startupSample = *j;   // we found the startup sample
+			}
+#  else
+#    if OGRE_DEBUG_MODE
+			sampleList.push_back("PlayPen_d");
+#    else
+			sampleList.push_back("PlayPen");
+#    endif
+#  endif
+#endif
+
 			// loop through all sample plugins...
 			for (Ogre::StringVector::iterator i = sampleList.begin(); i != sampleList.end(); i++)
 			{
 				try   // try to load the plugin
 				{
 #ifdef OGRE_STATIC_LIB
-                    OgreBites::SdkSample *pluginInstance = (OgreBites::SdkSample *) mPluginNameMap[*i];
+					String sampleName = *i;
+					// in debug, remove any suffix
+					if(StringUtil::endsWith(sampleName, "_d"))
+						sampleName = sampleName.substr(0, sampleName.length()-2);
+
+                    OgreBites::SdkSample *pluginInstance = (OgreBites::SdkSample *) mPluginNameMap[sampleName];
                     if(pluginInstance)
                     {
                         OgreBites::SamplePlugin* sp = OGRE_NEW SamplePlugin(pluginInstance->getInfo()["Title"] + " Sample");
@@ -1021,6 +1070,10 @@ namespace OgreBites
                 if(sp)
                     mRoot->uninstallPlugin(pluginList[i]);
             }
+#  ifdef SAMPLES_INCLUDE_PLAYPEN
+			mRoot->uninstallPlugin(playPenPlugin);
+			delete playPenPlugin;
+#  endif
 #else
             for (unsigned int i = 0; i < mLoadedSamplePlugins.size(); i++)
             {

@@ -31,38 +31,51 @@
 #include "Ogre.h"
 #include "OgrePlugin.h"
 #include "Sample.h"
+#include "FileSystemLayerImpl.h"
 
 // Static plugins declaration section
 // Note that every entry in here adds an extra header / library dependency
 #ifdef OGRE_STATIC_LIB
-#  define OGRE_STATIC_GL
+#  ifdef OGRE_BUILD_RENDERSYSTEM_GL
+#    define OGRE_STATIC_GL
+#  endif
+#  ifdef OGRE_BUILD_RENDERSYSTEM_GLES
+#    define OGRE_STATIC_GLES
+#  endif
 #  if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#    define OGRE_STATIC_Direct3D9
+#    ifdef OGRE_BUILD_RENDERSYSTEM_D3D9
+#		define OGRE_STATIC_Direct3D9
+#    endif
 // dx10 will only work on vista, so be careful about statically linking
-#    if OGRE_USE_D3D10
+#    ifdef OGRE_BUILD_RENDERSYSTEM_D3D10
 #      define OGRE_STATIC_Direct3D10
 #    endif
-#    if OGRE_USE_D3D11
+#    ifdef OGRE_BUILD_RENDERSYSTEM_D3D11
 #      define OGRE_STATIC_Direct3D11
 #    endif
 #  endif
-#  define OGRE_STATIC_BSPSceneManager
-#  define OGRE_STATIC_ParticleFX
-#  define OGRE_STATIC_CgProgramManager
+
+#  ifdef OGRE_BUILD_PLUGIN_BSP
+#    define OGRE_STATIC_BSPSceneManager
+#  endif
+#  ifdef OGRE_BUILD_PLUGIN_PFX
+#    define OGRE_STATIC_ParticleFX
+#  endif
+#  ifdef OGRE_BUILD_PLUGIN_CG
+#    define OGRE_STATIC_CgProgramManager
+#  endif
+
 #  ifdef OGRE_USE_PCZ
-#    define OGRE_STATIC_PCZSceneManager
-#    define OGRE_STATIC_OctreeZone
+#    ifdef OGRE_BUILD_PLUGIN_PCZ
+#      define OGRE_STATIC_PCZSceneManager
+#      define OGRE_STATIC_OctreeZone
+#    endif
 #  else
-#    define OGRE_STATIC_OctreeSceneManager
+#    ifdef OGRE_BUILD_PLUGIN_OCTREE
+#      define OGRE_STATIC_OctreeSceneManager
+#    endif
 #  endif
-#  if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-#     undef OGRE_STATIC_CgProgramManager
-#     undef OGRE_STATIC_GL
-#     define OGRE_STATIC_GLES 1
-#     ifdef __OBJC__
-#       import <UIKit/UIKit.h>
-#     endif
-#  endif
+
 #  include "OgreStaticPluginLoader.h"
 #endif
 
@@ -93,6 +106,7 @@ namespace OgreBites
 
 		SampleContext()
 		{
+			mFSLayer = OGRE_NEW_T(FileSystemLayerImpl, Ogre::MEMCATEGORY_GENERAL)(OGRE_VERSION_NAME);
 			mRoot = 0;
 			mWindow = 0;
 			mCurrentSample = 0;
@@ -110,7 +124,10 @@ namespace OgreBites
 #endif
 		}
 
-		virtual ~SampleContext() {}
+		virtual ~SampleContext() 
+		{
+			OGRE_DELETE_T(mFSLayer, FileSystemLayer, Ogre::MEMCATEGORY_GENERAL);
+		}
 
 		virtual Ogre::RenderWindow* getRenderWindow()
 		{
@@ -174,9 +191,9 @@ namespace OgreBites
 				s->testCapabilities(mRoot->getRenderSystem()->getCapabilities());
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-				s->_setup(mWindow, mMouse);   // start new sample
+				s->_setup(mWindow, mMouse, mFSLayer);   // start new sample
 #else
-				s->_setup(mWindow, mKeyboard, mMouse);   // start new sample
+				s->_setup(mWindow, mKeyboard, mMouse, mFSLayer);   // start new sample
 #endif
 			}
 
@@ -191,12 +208,16 @@ namespace OgreBites
 #if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
             createRoot();
 
+			if (!oneTimeConfig()) return;
+
             if (!mFirstRun) mRoot->setRenderSystem(mRoot->getRenderSystemByName(mNextRenderer));
 
             setup();
 
             if (!mFirstRun) recoverLastSample();
             else if (initialSample) runSample(initialSample);
+
+            mRoot->saveConfig();
 #else
 			while (!mLastRun)
 			{
@@ -445,20 +466,12 @@ namespace OgreBites
 		-----------------------------------------------------------------------------*/
 		virtual void createRoot()
 		{
-			// get platform-specific working directory
-			Ogre::String workDir = Ogre::StringUtil::BLANK;
             Ogre::String pluginsPath = Ogre::StringUtil::BLANK;
             #ifndef OGRE_STATIC_LIB
-                #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-                workDir = Ogre::macBundlePath() + "/Contents/Resources/";
-                pluginsPath = workDir;
-                #endif
-            #else
-                #if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-                workDir = Ogre::macBundlePath() + "/";
-                #endif
+				pluginsPath = mFSLayer->getConfigFilePath("plugins.cfg");
             #endif
-			mRoot = OGRE_NEW Ogre::Root(pluginsPath + "plugins.cfg", workDir + "ogre.cfg", workDir + "ogre.log");
+			mRoot = OGRE_NEW Ogre::Root(pluginsPath, mFSLayer->getWritablePath("ogre.cfg"), 
+				mFSLayer->getWritablePath("ogre.log"));
 
 #ifdef OGRE_STATIC_LIB
             mStaticPluginLoader.load();
@@ -534,13 +547,7 @@ namespace OgreBites
 		{
 			// load resource paths from config file
 			Ogre::ConfigFile cf;
-			#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-			cf.load(Ogre::macBundlePath() + "/Contents/Resources/resources.cfg");
-            #elif OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-			cf.load(Ogre::macBundlePath() + "/resources.cfg");
-			#else
-			cf.load("resources.cfg");
-			#endif
+			cf.load(mFSLayer->getConfigFilePath("resources.cfg"));
 
 			Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 			Ogre::String sec, type, arch;
@@ -595,8 +602,25 @@ namespace OgreBites
 			for (Ogre::NameValuePairList::iterator it = options.begin(); it != options.end(); it++)
 			{
 				rs->setConfigOption(it->first, it->second);
+                
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
+                // Change the viewport orientation on the fly if requested
+                if(it->first == "Orientation")
+                {
+                    if (it->second == "Landscape Left")
+                        mWindow->getViewport(0)->setOrientationMode(Ogre::OR_LANDSCAPELEFT, true);
+                    else if (it->second == "Landscape Right")
+                        mWindow->getViewport(0)->setOrientationMode(Ogre::OR_LANDSCAPERIGHT, true);
+                    else if (it->second == "Portrait")
+                        mWindow->getViewport(0)->setOrientationMode(Ogre::OR_PORTRAIT, true);
+                }
+#endif
 			}
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
+            // Need to save the config on iPhone to make sure that changes are kept on disk
+            mRoot->saveConfig();
+#endif
 			mLastRun = false;             // we want to go again with the new settings
 			mRoot->queueEndRendering();   // break from render loop
 		}
@@ -663,6 +687,7 @@ namespace OgreBites
 			mMouse->capture();
 		}
 
+		FileSystemLayer* mFSLayer; 		// File system abstraction layer
 		Ogre::Root* mRoot;              // OGRE root
 		Ogre::RenderWindow* mWindow;    // render window
 		OIS::InputManager* mInputMgr;   // OIS input manager

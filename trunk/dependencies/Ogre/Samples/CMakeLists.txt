@@ -1,8 +1,4 @@
 # Configure Samples build
-if (APPLE)
-  include_directories("${OGRE_SOURCE_DIR}/Mac/Ogre/include")
-endif()
-
 
 if (OGRE_BUILD_SAMPLES AND NOT OIS_FOUND)
   message(STATUS "Could not find dependency: OIS")
@@ -43,16 +39,8 @@ if (OGRE_BUILD_SAMPLES)
   
   if (OGRE_BUILD_COMPONENT_RTSHADERSYSTEM)
 	add_definitions(-DUSE_RTSHADER_SYSTEM)
-	include_directories(${OGRE_SOURCE_DIR}/Components/RTShaderSystem/include)
+	ogre_add_component_include_dir(RTShaderSystem)
   	set(SAMPLE_DEPENDENCIES ${SAMPLE_DEPENDENCIES} OgreRTShaderSystem)
-  	
-  	if (OGRE_BUILD_RTSHADERSYSTEM_CORE_SHADERS)
-		add_definitions(-DRTSHADER_SYSTEM_BUILD_CORE_SHADERS)
-	endif ()
-
-	if (OGRE_BUILD_RTSHADERSYSTEM_EXT_SHADERS)
-		add_definitions(-DRTSHADER_SYSTEM_BUILD_EXT_SHADERS)
-	endif ()
   endif ()
   
   if (OGRE_BUILD_COMPONENT_TERRAIN)
@@ -92,6 +80,7 @@ if (OGRE_BUILD_SAMPLES)
   	include_directories(${OGRE_SOURCE_DIR}/PlugIns/PCZSceneManager/include)
   	include_directories(${OGRE_SOURCE_DIR}/RenderSystems/Direct3D9/include)
   	include_directories(${OGRE_SOURCE_DIR}/RenderSystems/Direct3D10/include)
+  	include_directories(${OGRE_SOURCE_DIR}/RenderSystems/Direct3D11/include)
   	include_directories(${OGRE_SOURCE_DIR}/RenderSystems/GLES/include)
   	include_directories(
 		${OGRE_SOURCE_DIR}/RenderSystems/GL/include
@@ -118,11 +107,10 @@ if (OGRE_BUILD_SAMPLES)
   		set(OGRE_LIBRARIES ${OGRE_LIBRARIES} OgreRTShaderSystem)
 	endif () 
   endif ()
-
-  add_subdirectory(Browser)
   
   add_subdirectory(BezierPatch)
   add_subdirectory(CameraTrack)
+  add_subdirectory(Character)
   add_subdirectory(Compositor)
   add_subdirectory(FacialAnimation)
   add_subdirectory(Grass)
@@ -130,9 +118,6 @@ if (OGRE_BUILD_SAMPLES)
   add_subdirectory(Lighting)
   add_subdirectory(OceanDemo)
   add_subdirectory(ParticleFX)
-if (OGRE_BUILD_COMPONENT_PAGING)
-  add_subdirectory(Paging)
-endif ()
   if (OGRE_BUILD_COMPONENT_RTSHADERSYSTEM)
     add_subdirectory(ShaderSystem)
   endif ()
@@ -163,15 +148,18 @@ if (NOT OGRE_BUILD_PLATFORM_IPHONE)
   add_subdirectory(ParticleGS)
 endif ()
 
+  # Add browser last
+  add_subdirectory(Browser)
 endif ()
 
 
+  
 # Install sample sources
 if (OGRE_INSTALL_SAMPLES_SOURCE)
   if (WIN32 OR APPLE)
     set(OGRE_SAMPLES_DIR Samples)
   elseif (UNIX)
-    set(OGRE_SAMPLES_DIR share/OGRE/samples)
+    set(OGRE_SAMPLES_DIR share/OGRE/Samples)
   endif ()
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ DESTINATION ${OGRE_SAMPLES_DIR}
     REGEX "^CMakeLists.txt$" EXCLUDE
@@ -185,6 +173,13 @@ if (OGRE_INSTALL_SAMPLES_SOURCE)
 	PATTERN "scripts" EXCLUDE
   )
   # install a new CMakeLists.txt file to allow building of samples
-  configure_file(${OGRE_TEMPLATES_DIR}/SampleLists.cmake ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt @ONLY)
+  configure_file(${OGRE_TEMPLATES_DIR}/SDK_CMakeLists.txt.in ${CMAKE_CURRENT_BINARY_DIR}/../CMakeLists.txt @ONLY)
+  configure_file(${OGRE_TEMPLATES_DIR}/SDK_Samples_CMakeLists.txt.in ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt @ONLY)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../CMakeLists.txt DESTINATION ${OGRE_SAMPLES_DIR}/../)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt DESTINATION ${OGRE_SAMPLES_DIR})
 endif ()
+
+# Install sample headers, some people rely on these
+file(GLOB SAMPLE_COMMON_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/Common/include/*.h")
+install(FILES ${SAMPLE_COMMON_HEADERS}
+		DESTINATION include/OGRE)

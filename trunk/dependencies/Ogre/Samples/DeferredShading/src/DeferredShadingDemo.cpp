@@ -55,14 +55,11 @@ const ColourValue SAMPLE_COLORS[] =
 class _OgreSampleClassExport Sample_DeferredShading : public SdkSample, public RenderTargetListener
 {
 protected:
-	MovablePlane* mPlane;
-    Entity* mPlaneEnt;
-    SceneNode* mPlaneNode;
 	DeferredShadingSystem *mSystem;
 	SelectMenu* mDisplayModeMenu;
 
 public:
-    Sample_DeferredShading() : mPlane(0) 
+    Sample_DeferredShading()
 	{
 		mInfo["Title"] = "Deferred Shading";
 		mInfo["Description"] = "A sample implementation of a deferred renderer using the compositor framework.";
@@ -82,8 +79,7 @@ protected:
 	{
 		delete ( SharedData::getSingletonPtr() );
 
-        delete mPlane;
-		delete mSystem;
+        delete mSystem;
 	}
 
 	bool frameRenderingQueued(const FrameEvent& evt)
@@ -99,18 +95,16 @@ protected:
 
 	void setupControls()
 	{
-		// make room for the controls
-		mTrayMgr->showLogo(TL_TOPRIGHT);
-		mTrayMgr->showFrameStats(TL_TOPRIGHT);
-		mTrayMgr->toggleAdvancedFrameStats();
+		mTrayMgr->showCursor();
 
 		// create checkboxs to toggle ssao and shadows
-		mTrayMgr->createCheckBox(TL_TOPLEFT, "SSAO", "Screen space ambient occlusion (2)")->setChecked(false, false);
-		mTrayMgr->createCheckBox(TL_TOPLEFT, "GlobalLight", "Global light (3)")->setChecked(true, false);
-		//mTrayMgr->createCheckBox(TL_TOPLEFT, "Shadows", "Shadows")->setChecked(true, false);
+		mTrayMgr->createCheckBox(TL_TOPLEFT, "DeferredShading", "Deferred Shading", 220)->setChecked(true, false);
+		mTrayMgr->createCheckBox(TL_TOPLEFT, "SSAO", "Ambient Occlusion", 220)->setChecked(false, false);
+		mTrayMgr->createCheckBox(TL_TOPLEFT, "GlobalLight", "Global Light", 220)->setChecked(true, false);
+		mTrayMgr->createCheckBox(TL_TOPLEFT, "Shadows", "Shadows", 220)->setChecked(true, false);
 		
 		// create a menu to choose the model displayed
-		mDisplayModeMenu = mTrayMgr->createLongSelectMenu(TL_BOTTOM, "DisplayMode", "Display Mode (1)", 500, 290, 4);
+		mDisplayModeMenu = mTrayMgr->createThickSelectMenu(TL_TOPLEFT, "DisplayMode", "Display Mode", 220, 4);
 		mDisplayModeMenu->addItem("Regular view");
 		mDisplayModeMenu->addItem("Debug colours");
 		mDisplayModeMenu->addItem("Debug normals");
@@ -124,23 +118,6 @@ protected:
 			(DeferredShadingSystem::DSMode)menu->getSelectionIndex());
 	}
 
-	bool keyPressed (const OIS::KeyEvent &e)
-	{
-		switch (e.key)
-		{
-		case OIS::KC_1:
-			mDisplayModeMenu->selectItem((mDisplayModeMenu->getSelectionIndex() + 1) % mDisplayModeMenu->getNumItems());
-			break;
-		case OIS::KC_2:
-			(static_cast<CheckBox*>(mTrayMgr->getWidget("SSAO")))->toggle();
-			break;
-		case OIS::KC_3:
-			(static_cast<CheckBox*>(mTrayMgr->getWidget("GlobalLight")))->toggle();
-			break;
-		}
-
-		return SdkSample::keyPressed(e);
-	}
 	void checkBoxToggled(CheckBox* box)
 	{
 		if (box->getName() == "SSAO")
@@ -152,12 +129,16 @@ protected:
 			SharedData::getSingleton().iGlobalActivate = box->isChecked();
 			SharedData::getSingleton().iMainLight->setVisible(box->isChecked());
 		}
-		//else if (box->getName() == "Shadows")
-		//{
-		//	mSceneMgr->setShadowTechnique(box->isChecked() ? 
-		//		SHADOWTYPE_TEXTURE_ADDITIVE :
-		//		SHADOWTYPE_NONE);
-		//}
+		else if (box->getName() == "Shadows")
+		{
+			mSceneMgr->setShadowTechnique(box->isChecked() ? 
+				SHADOWTYPE_TEXTURE_ADDITIVE :
+				SHADOWTYPE_NONE);
+		}
+		else if (box->getName() == "DeferredShading")
+		{
+			SharedData::getSingleton().iSystem->setActive(box->isChecked());
+		}
 	}
 
     //Utility function to help set scene up
@@ -276,7 +257,6 @@ protected:
     {
 		mCameraMan->setTopSpeed(20.0);
 		new SharedData();
-		mPlane = 0;
 		mSystem = 0;
 
 		RenderSystem *rs = Root::getSingleton().getRenderSystem();
@@ -314,6 +294,7 @@ protected:
         mCamera->lookAt(0,0,0);
 		mCamera->setFarClipDistance(1000.0);
         mCamera->setNearClipDistance(0.5);
+		setDragLook(true);
 
 		mSystem = new DeferredShadingSystem(mWindow->getViewport(0), mSceneMgr, mCamera);
 		SharedData::getSingleton().iSystem = mSystem;
@@ -351,7 +332,7 @@ protected:
 		// Create light nodes
 		vector<Node*>::type nodes;
 
-        Vector4 attParams = Vector4(3,1,0,5);
+        Vector4 attParams = Vector4(4,1,0,7);
         Real lightRadius = 25;
 
 		Light *a = mSceneMgr->createLight();
@@ -455,12 +436,12 @@ protected:
 		float stations_per_revolution = 3.5f;
 		size_t skip = 2; // stations between lights
 		Vector3 station_pos[stations];
-		for(int x=0; x<s_to_top; ++x)
+		for(size_t x=0; x<s_to_top; ++x)
 		{
 			float theta = ((float)x/stations_per_revolution)*2.0f*Math::PI;
 			station_pos[x] = base+Vector3(Math::Sin(theta)*r, ascend*x, Math::Cos(theta)*r);
 		}
-		for(int x=s_to_top; x<stations; ++x)
+		for(size_t x=s_to_top; x<stations; ++x)
 		{
 			float theta = ((float)x/stations_per_revolution)*2.0f*Math::PI;
 			station_pos[x] = base+Vector3(Math::Sin(theta)*r, h-ascend*(x-s_to_top), Math::Cos(theta)*r);
@@ -473,7 +454,7 @@ protected:
 		{
 			// Create a track to animate the camera's node
 			NodeAnimationTrack* track = anim->createNodeTrack(x, nodes[x]);
-			for(int y=0; y<=stations; ++y)
+			for(size_t y=0; y<=stations; ++y)
 			{
 				// Setup keyframes
 				TransformKeyFrame* key = track->createNodeKeyFrame(y*seconds_per_station); // A start position
@@ -497,6 +478,8 @@ protected:
 	}
 };
 
+#ifndef OGRE_STATIC_LIB
+
 SamplePlugin* sp;
 Sample* s;
 
@@ -514,3 +497,5 @@ extern "C" _OgreSampleExport void dllStopPlugin()
 	OGRE_DELETE sp;
 	delete s;
 }
+
+#endif
