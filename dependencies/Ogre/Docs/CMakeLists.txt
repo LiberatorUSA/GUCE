@@ -13,12 +13,10 @@
 ###############################################################
 
 # Set docs target directory
-if (WIN32)
+if (WIN32 OR APPLE)
   set(OGRE_DOCS_PATH "Docs")
 elseif (UNIX)
   set(OGRE_DOCS_PATH "share/OGRE/docs")
-elseif (APPLE)
-  # TODO
 endif ()
   
 if (OGRE_INSTALL_DOCS)
@@ -39,5 +37,7 @@ if(DOXYGEN_FOUND)
   )
 	file(WRITE ${OGRE_BINARY_DIR}/api/temp.txt "This file should be deleted before installation. It is only here to force the creation of the api folder")
 	file(REMOVE ${OGRE_BINARY_DIR}/api/temp.txt)
-	install(DIRECTORY ${OGRE_BINARY_DIR}/api DESTINATION ${OGRE_DOCS_PATH})
+	if (OGRE_INSTALL_DOCS)
+		install(DIRECTORY ${OGRE_BINARY_DIR}/api DESTINATION ${OGRE_DOCS_PATH})
+	endif()
 endif()

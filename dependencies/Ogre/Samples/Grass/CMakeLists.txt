@@ -1,4 +1,4 @@
-# Configure Bezier demo build
+# Configure Grass demo build
 
 set(HEADER_FILES include/Grass.h)
 set(SOURCE_FILES src/Grass.cpp)
@@ -17,4 +17,3 @@ if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
     )
 endif()
 
-add_dependencies(SampleBrowser Sample_Grass)

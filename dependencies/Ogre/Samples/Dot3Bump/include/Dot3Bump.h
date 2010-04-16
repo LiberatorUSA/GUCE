@@ -11,6 +11,7 @@ class _OgreSampleClassExport Sample_Dot3Bump : public SdkSample
 public:
 
 	Sample_Dot3Bump()
+		: mMoveLights (true)
 	{
 		mInfo["Title"] = "Bump Mapping";
 		mInfo["Description"] = "Shows how to use the dot product blending operation and normalization cube map "
@@ -47,58 +48,16 @@ public:
 
 	bool frameRenderingQueued(const FrameEvent& evt)
 	{
-		// rotate the light pivots
-		mLightPivot1->roll(Degree(evt.timeSinceLastFrame * 30));
-		mLightPivot2->roll(Degree(evt.timeSinceLastFrame * 10));
+		if (mMoveLights)
+		{
+			// rotate the light pivots
+			mLightPivot1->roll(Degree(evt.timeSinceLastFrame * 30));
+			mLightPivot2->roll(Degree(evt.timeSinceLastFrame * 10));
+		}
 
 		return SdkSample::frameRenderingQueued(evt);  // don't forget the parent class updates!
 	}
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-	bool touchPressed(const OIS::MultiTouchEvent& evt)
-	{
-		if (mTrayMgr->injectMouseDown(evt)) return true;
-		if (evt.state.touchIsType(OIS::MT_Pressed)) mTrayMgr->hideCursor();  // hide the cursor if user left-clicks in the scene
-		return true;
-	}
-
-	bool touchReleased(const OIS::MultiTouchEvent& evt)
-	{
-		if (mTrayMgr->injectMouseUp(evt)) return true;
-		if (evt.state.touchIsType(OIS::MT_Pressed)) mTrayMgr->showCursor();  // unhide the cursor if user lets go of LMB
-		return true;
-	}
-
-	bool touchMoved(const OIS::MultiTouchEvent& evt)
-	{
-		// only rotate the camera if cursor is hidden
-		if (mTrayMgr->isCursorVisible()) mTrayMgr->injectMouseMove(evt);
-		else mCameraMan->injectMouseMove(evt);
-		return true;
-	}
-#else
-	bool mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID id)
-	{
-		if (mTrayMgr->injectMouseDown(evt, id)) return true;
-		if (id == OIS::MB_Left) mTrayMgr->hideCursor();  // hide the cursor if user left-clicks in the scene
-		return true;
-	}
-    
-	bool mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID id)
-	{
-		if (mTrayMgr->injectMouseUp(evt, id)) return true;
-		if (id == OIS::MB_Left) mTrayMgr->showCursor();  // unhide the cursor if user lets go of LMB
-		return true;
-	}
-    
-	bool mouseMoved(const OIS::MouseEvent& evt)
-	{
-		// only rotate the camera if cursor is hidden
-		if (mTrayMgr->isCursorVisible()) mTrayMgr->injectMouseMove(evt);
-		else mCameraMan->injectMouseMove(evt);
-		return true;
-	}
-#endif
 	void itemSelected(SelectMenu* menu)
 	{
 		if (menu == mMeshMenu)
@@ -124,14 +83,22 @@ public:
 
 	void checkBoxToggled(CheckBox* box)
 	{
-		// get the light pivot that corresponds to this checkbox
-		SceneNode* pivot = box->getName() == "Light1" ? mLightPivot1 : mLightPivot2;
-		SceneNode::ObjectIterator it = pivot->getAttachedObjectIterator();
-
-		while (it.hasMoreElements())  // toggle visibility of light and billboard set
+		if (StringUtil::startsWith(box->getName(), "Light", false))
 		{
-			MovableObject* o = it.getNext();
-			o->setVisible(box->isChecked());
+			// get the light pivot that corresponds to this checkbox
+			SceneNode* pivot = box->getName() == "Light1" ? mLightPivot1 : mLightPivot2;
+			SceneNode::ObjectIterator it = pivot->getAttachedObjectIterator();
+
+			while (it.hasMoreElements())  // toggle visibility of light and billboard set
+			{
+				MovableObject* o = it.getNext();
+				o->setVisible(box->isChecked());
+			}
+
+		}
+		else if (box->getName() == "MoveLights")
+		{
+			mMoveLights = !mMoveLights;
 		}
 	}
 
@@ -147,6 +114,8 @@ protected:
 		setupControls();
 
 		mCamera->setPosition(0, 0, 500);
+
+		setDragLook(true);
 	}
 
 
@@ -316,6 +285,7 @@ protected:
 		// create checkboxes to toggle lights
 		mTrayMgr->createCheckBox(TL_TOPLEFT, "Light1", "Light A")->setChecked(true, false);
 		mTrayMgr->createCheckBox(TL_TOPLEFT, "Light2", "Light B")->setChecked(true, false);
+		mTrayMgr->createCheckBox(TL_TOPLEFT, "MoveLights", "Move Lights")->setChecked(true, false);
 
 		// a friendly reminder
 		StringVector names;
@@ -337,6 +307,7 @@ protected:
 	SceneNode* mObjectNode;
 	SceneNode* mLightPivot1;
 	SceneNode* mLightPivot2;
+	bool mMoveLights;
 	SelectMenu* mMeshMenu;
 	SelectMenu* mMaterialMenu;
 };

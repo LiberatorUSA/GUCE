@@ -19,7 +19,7 @@ same license as the rest of the engine.
         Shows OGRE's Compositor feature
 	\author
 		W.J. :wumpus: van der Laan
-			Ogre composition framework
+			Ogre compositor framework
 		Manuel Bua
 			Postfilter ideas and original out-of-core implementation
         Jeff (nfz) Doyle
@@ -42,64 +42,13 @@ Sample_Compositor::Sample_Compositor()
 	mInfo["Category"] = "Effects";
 }
 //--------------------------------------------------------------------------
-void Sample_Compositor::createCamera(void)
+void Sample_Compositor::setupView()
 {
-    // Create the camera
-    mCamera = mSceneMgr->createCamera("PlayerCam");
-
-    // Position it at 500 in Z direction
+	SdkSample::setupView();
     mCamera->setPosition(Ogre::Vector3(0,0,0));
-    // Look back along -Z
     mCamera->lookAt(Ogre::Vector3(0,0,-300));
     mCamera->setNearClipDistance(1);
-
 }
-//--------------------------------------------------------------------------
-#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-	bool Sample_Compositor::touchPressed(const OIS::MultiTouchEvent& evt)
-	{
-		if (mTrayMgr->injectMouseDown(evt)) return true;
-		if (evt.state.touchIsType(OIS::MT_Pressed)) mTrayMgr->hideCursor();  // hide the cursor if user left-clicks in the scene
-		return true;
-	}
-
-	bool Sample_Compositor::touchReleased(const OIS::MultiTouchEvent& evt)
-	{
-		if (mTrayMgr->injectMouseUp(evt)) return true;
-		if (evt.state.touchIsType(OIS::MT_Pressed)) mTrayMgr->showCursor();  // unhide the cursor if user lets go of LMB
-		return true;
-	}
-
-	bool Sample_Compositor::touchMoved(const OIS::MultiTouchEvent& evt)
-	{
-		// only rotate the camera if cursor is hidden
-		if (mTrayMgr->isCursorVisible()) mTrayMgr->injectMouseMove(evt);
-		else mCameraMan->injectMouseMove(evt);
-		return true;
-	}
-#else
-	bool Sample_Compositor::mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID id)
-	{
-		if (mTrayMgr->injectMouseDown(evt, id)) return true;
-		if (id == OIS::MB_Left) mTrayMgr->hideCursor();  // hide the cursor if user left-clicks in the scene
-		return true;
-	}
-    
-	bool Sample_Compositor::mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID id)
-	{
-		if (mTrayMgr->injectMouseUp(evt, id)) return true;
-		if (id == OIS::MB_Left) mTrayMgr->showCursor();  // unhide the cursor if user lets go of LMB
-		return true;
-	}
-    
-	bool Sample_Compositor::mouseMoved(const OIS::MouseEvent& evt)
-	{
-		// only rotate the camera if cursor is hidden
-		if (mTrayMgr->isCursorVisible()) mTrayMgr->injectMouseMove(evt);
-		else mCameraMan->injectMouseMove(evt);
-		return true;
-	}
-#endif
 //-----------------------------------------------------------------------------------
 void Sample_Compositor::setupContent(void)
 {
@@ -120,10 +69,13 @@ void Sample_Compositor::setupContent(void)
 	/// but the preferred method is to use compositor scripts.
 	createEffects();
 
-	createScene();
+	setupScene();
 
 	registerCompositors();
-	createControls();
+
+	setupControls();
+
+	setDragLook(true);
 }
 //-----------------------------------------------------------------------------------
 void Sample_Compositor::registerCompositors(void)
@@ -155,7 +107,7 @@ void Sample_Compositor::registerCompositors(void)
 		}
 		try 
 		{
-			Ogre::CompositorInstance *instance = Ogre::CompositorManager::getSingleton().addCompositor(vp, compositorName, addPosition);
+			Ogre::CompositorManager::getSingleton().addCompositor(vp, compositorName, addPosition);
 			Ogre::CompositorManager::getSingleton().setCompositorEnabled(vp, compositorName, false);
 		} catch (...) {
 		}
@@ -178,10 +130,22 @@ void Sample_Compositor::changePage(size_t pageNum)
 		if (i < maxCompositorsInPage)
 		{
 			String compositorName = mCompositorNames[pageNum * COMPOSITORS_PER_PAGE + i];
+			CompositorInstance *tmpCompo = CompositorManager::getSingleton().getCompositorChain(mViewport)
+				->getCompositor(compositorName);
+
 			cb->setCaption(compositorName);
-			cb->setChecked(CompositorManager::getSingleton().getCompositorChain(mViewport)
-				->getCompositor(compositorName)->getEnabled(), false);
-			cb->show();
+
+			if( tmpCompo )
+			{
+				cb->setChecked( tmpCompo->getEnabled(), false );
+				cb->show();
+			}
+			else
+			{
+				cb->setChecked( false, false );
+				cb->hide();
+			}
+
 		}
 		else
 		{
@@ -191,39 +155,48 @@ void Sample_Compositor::changePage(size_t pageNum)
 
 	OgreBites::Button* pageButton = static_cast<OgreBites::Button*>(mTrayMgr->getWidget(TL_TOPLEFT, "PageButton"));
 	Ogre::StringStream ss;
-	ss << "Page " << pageNum+1 << " / " << mNumCompositorPages;
+	ss << "Compositors " << pageNum + 1 << "/" << mNumCompositorPages;
 	pageButton->setCaption(ss.str());
 }
 //-----------------------------------------------------------------------------------
 void Sample_Compositor::cleanupContent(void)
 {
+	mDebugTextureTUS->setContentType(TextureUnitState::CONTENT_NAMED);
 	CompositorManager::getSingleton().removeCompositorChain(mViewport);
 	mCompositorNames.clear();
 }
 //-----------------------------------------------------------------------------------
-void Sample_Compositor::createControls(void) 
+void Sample_Compositor::setupControls(void) 
 {
-	mTrayMgr->createButton(TL_TOPLEFT, "PageButton", "Page", 175);
+	mTrayMgr->createButton(TL_TOPLEFT, "PageButton", "Compositors", 175);
+
 	for (size_t i=0; i < COMPOSITORS_PER_PAGE; i++)
 	{
 		String checkBoxName = "Compositor_" + Ogre::StringConverter::toString(i);
 		CheckBox* cb = mTrayMgr->createCheckBox(TL_TOPLEFT, checkBoxName, "Compositor", 175);
 		cb->hide();
 	}
+
 	changePage(0);
 	
-
-	mTrayMgr->createLabel(TL_TOPRIGHT, "DebugRTTLabel", "Debug RTTs", 256);
-	mDebugTextureSelectMenu = mTrayMgr->createLongSelectMenu(
-		TL_TOPRIGHT, "DebugRTTSelectMenu", "Texture", 256, 175, 5);
+	mDebugTextureSelectMenu = mTrayMgr->createThickSelectMenu(TL_TOPRIGHT, "DebugRTTSelectMenu", "Debug RTT", 180, 5);
 	mDebugTextureSelectMenu->addItem("None");
-	DecorWidget* debugRTTPanel = mTrayMgr->createDecorWidget(
-		TL_TOPRIGHT, "DebugRTTPanel", "Panel", "CompositorDemo/DebugView");
-	mDebugTextureTUS = debugRTTPanel->getOverlayElement()->getMaterial()
-		->getBestTechnique()->getPass(0)->getTextureUnitState(0);
+
+	mTrayMgr->createSeparator(TL_TOPRIGHT, "DebugRTTSep1");  // this is a hack to give the debug RTT a bit more room
+
+	DecorWidget* debugRTTPanel = mTrayMgr->createDecorWidget(TL_NONE, "DebugRTTPanel", "SdkTrays/Picture");
+	OverlayContainer* debugRTTContainer = (OverlayContainer*)debugRTTPanel->getOverlayElement();
+	mDebugTextureTUS = debugRTTContainer->getMaterial()->getBestTechnique()->getPass(0)->getTextureUnitState(0);
+	//mDebugTextureTUS->setTextureName("CompositorDemo/DebugView");
+	debugRTTContainer->setDimensions(128, 128);
+	debugRTTContainer->getChild("DebugRTTPanel/PictureFrame")->setDimensions(144, 144);
 	debugRTTPanel->hide();
 
+	mTrayMgr->createSeparator(TL_TOPRIGHT, "DebugRTTSep2");  // this is a hack to give the debug RTT a bit more room
+
 	mTrayMgr->showCursor();
+	mTrayMgr->showLogo(TL_BOTTOMLEFT);
+	mTrayMgr->toggleAdvancedFrameStats();
 }
 //-----------------------------------------------------------------------------------
 void Sample_Compositor::checkBoxToggled(OgreBites::CheckBox * box)
@@ -265,26 +238,29 @@ void Sample_Compositor::checkBoxToggled(OgreBites::CheckBox * box)
 		{
 			//Add the items to the selectable texture menu
 			CompositorInstance* instance = CompositorManager::getSingleton().getCompositorChain(mViewport)->getCompositor(compositorName);
-			CompositionTechnique::TextureDefinitionIterator it = instance->getTechnique()->getTextureDefinitionIterator();
-			while (it.hasMoreElements())
+			if (instance)
 			{
-				CompositionTechnique::TextureDefinition* texDef = it.getNext();
-				size_t numTextures = texDef->formatList.size();
-				if (numTextures > 1)
+				CompositionTechnique::TextureDefinitionIterator it = instance->getTechnique()->getTextureDefinitionIterator();
+				while (it.hasMoreElements())
 				{
-					for (size_t i=0; i<numTextures; i++)
+					CompositionTechnique::TextureDefinition* texDef = it.getNext();
+					size_t numTextures = texDef->formatList.size();
+					if (numTextures > 1)
 					{
-						//Dirty string composition. NOT ROBUST!
-						mDebugTextureSelectMenu->addItem(compositorName + ";" + texDef->name + ";" + 
-							Ogre::StringConverter::toString((uint32)i));
+						for (size_t i=0; i<numTextures; i++)
+						{
+							//Dirty string composition. NOT ROBUST!
+							mDebugTextureSelectMenu->addItem(compositorName + ";" + texDef->name + ";" + 
+								Ogre::StringConverter::toString((Ogre::uint32)i));
+						}
+					}
+					else
+					{
+						mDebugTextureSelectMenu->addItem(compositorName + ";" + texDef->name);
 					}
 				}
-				else
-				{
-					mDebugTextureSelectMenu->addItem(compositorName + ";" + texDef->name);
-				}
+				mDebugTextureSelectMenu->selectItem(activeTex, false);
 			}
-			mDebugTextureSelectMenu->selectItem(activeTex, false);
 		}
 	}
 }
@@ -301,12 +277,15 @@ void Sample_Compositor::itemSelected(OgreBites::SelectMenu* menu)
 	{
 		mDebugTextureTUS->setContentType(TextureUnitState::CONTENT_NAMED);
 		mTrayMgr->getWidget("DebugRTTPanel")->hide();
+		mTrayMgr->removeWidgetFromTray("DebugRTTPanel");
 		return;
 	}
 
 	mTrayMgr->getWidget("DebugRTTPanel")->show();
+	mTrayMgr->moveWidgetToTray("DebugRTTPanel", TL_TOPRIGHT, mTrayMgr->getNumWidgets(TL_TOPRIGHT) - 1);
 	StringVector parts = StringUtil::split(menu->getSelectedItem(), ";");
 	mDebugTextureTUS->setContentType(TextureUnitState::CONTENT_COMPOSITOR);
+
 	if (parts.size() == 2)
 	{
 		mDebugTextureTUS->setCompositorReference(parts[0], parts[1]);
@@ -316,10 +295,9 @@ void Sample_Compositor::itemSelected(OgreBites::SelectMenu* menu)
 		mDebugTextureTUS->setCompositorReference(parts[0], parts[1], 
 			StringConverter::parseUnsignedInt(parts[2]));
 	}
-	
 }
 //-----------------------------------------------------------------------------------
-void Sample_Compositor::createScene(void)
+void Sample_Compositor::setupScene(void)
 {
 	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
 	mSceneMgr->setShadowFarDistance(1000);
@@ -656,8 +634,11 @@ void Sample_Compositor::createTextures(void)
 	ptr2->unlock();
 }
 //--------------------------------------------------------------------------
+#ifndef OGRE_STATIC_LIB
+
 SamplePlugin* sp;
 Sample* s;
+
 
 extern "C" _OgreSampleExport void dllStartPlugin()
 {
@@ -673,3 +654,5 @@ extern "C" _OgreSampleExport void dllStopPlugin()
 	OGRE_DELETE sp;
 	delete s;
 }
+
+#endif

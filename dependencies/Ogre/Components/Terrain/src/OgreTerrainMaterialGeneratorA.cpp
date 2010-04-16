@@ -202,7 +202,15 @@ namespace Ogre
 		// colourmap
 		if (terrain->getGlobalColourMapEnabled())
 			--freeTextureUnits;
-		// TODO shadowmaps
+		if (isShadowingEnabled(HIGH_LOD, terrain))
+		{
+			uint numShadowTextures = 1;
+			if (getReceiveDynamicShadowsPSSM())
+			{
+				numShadowTextures = getReceiveDynamicShadowsPSSM()->getSplitCount();
+			}
+			freeTextureUnits -= numShadowTextures;
+		}
 
 		// each layer needs 2.25 units (1xdiffusespec, 1xnormalheight, 0.25xblend)
 		return static_cast<uint8>(freeTextureUnits / 2.25f);
@@ -229,6 +237,16 @@ namespace Ogre
 		}
 		// clear everything
 		mat->removeAllTechniques();
+		
+		// Automatically disable normal & parallax mapping if card cannot handle it
+		// We do this rather than having a specific technique for it since it's simpler
+		GpuProgramManager& gmgr = GpuProgramManager::getSingleton();
+		if (!gmgr.isSyntaxSupported("ps_3_0") && !gmgr.isSyntaxSupported("ps_2_x")
+			&& !gmgr.isSyntaxSupported("fp40"))
+		{
+			setLayerNormalMappingEnabled(false);
+			setLayerParallaxMappingEnabled(false);
+		}
 
 		addTechnique(mat, terrain, HIGH_LOD);
 
@@ -237,7 +255,7 @@ namespace Ogre
 		{
 			addTechnique(mat, terrain, LOW_LOD);
 			Material::LodValueList lodValues;
-			lodValues.push_back(TerrainGlobalOptions::getCompositeMapDistance());
+			lodValues.push_back(TerrainGlobalOptions::getSingleton().getCompositeMapDistance());
 			mat->setLodLevels(lodValues);
 			Technique* lowLodTechnique = mat->getTechnique(1);
 			lowLodTechnique->setLodIndex(1);
@@ -732,8 +750,6 @@ namespace Ogre
 	void TerrainMaterialGeneratorA::SM2Profile::ShaderHelperCg::generateVpHeader(
 		const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream)
 	{
-		bool texShadowsOn = terrain->getSceneManager()->isShadowTechniqueTextureBased();
-
 		outStream << 
 			"void main_vp(\n"
 			"float4 pos : POSITION,\n"

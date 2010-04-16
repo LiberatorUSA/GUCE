@@ -11,6 +11,7 @@ set(SOURCE_FILES
 	)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+ogre_add_component_include_dir(RTShaderSystem)
 
 add_library(Sample_ShaderSystem ${OGRE_LIB_TYPE} ${SOURCE_FILES} ${HEADER_FILES})
 
@@ -25,6 +26,5 @@ if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
     )
 endif()
 
-add_dependencies(SampleBrowser Sample_ShaderSystem)
 
 

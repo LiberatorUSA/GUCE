@@ -38,28 +38,12 @@ DeferredLightRenderOperation::DeferredLightRenderOperation(
 	mAmbientLight = new AmbientLight();
 	const MaterialPtr& mat = mAmbientLight->getMaterial();
 	mat->load();
-	for(unsigned short i=0; i<mat->getNumTechniques(); ++i)
-	{
-		Pass *pass = mat->getTechnique(i)->getPass(0);
-		pass->getTextureUnitState(0)->setTextureName(mTexName0);
-		pass->getTextureUnitState(1)->setTextureName(mTexName1);
-	}
 }
 //-----------------------------------------------------------------------
 DLight* DeferredLightRenderOperation::createDLight(Ogre::Light* light)
 {
 	DLight *rv = new DLight(mLightMaterialGenerator,light);
 	mLights[light] = rv;
-
-	const MaterialPtr& mat = rv->getMaterial();
-	mat->load();
-	for(unsigned short i=0; i<mat->getNumTechniques(); ++i)
-	{
-		Pass *pass = mat->getTechnique(i)->getPass(0);
-		pass->getTextureUnitState(0)->setTextureName(mTexName0);
-		pass->getTextureUnitState(1)->setTextureName(mTexName1);
-	}
-	mat->compile();
 	return rv;
 }
 //-----------------------------------------------------------------------
@@ -88,7 +72,6 @@ void DeferredLightRenderOperation::execute(SceneManager *sm, RenderSystem *rs)
     Technique* tech = mAmbientLight->getMaterial()->getBestTechnique();
 	injectTechnique(sm, tech, mAmbientLight, 0);
 
-	int i=0;
 	const LightList& lightList = sm->_getLightsAffectingFrustum();
     for (LightList::const_iterator it = lightList.begin(); it != lightList.end(); it++) 
 	{

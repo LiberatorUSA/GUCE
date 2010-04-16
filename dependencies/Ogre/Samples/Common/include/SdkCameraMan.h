@@ -29,6 +29,7 @@
 #define __SdkCameraMan_H__
 
 #include "Ogre.h"
+#include <limits>
 
 namespace OgreBites
 {
@@ -85,12 +86,22 @@ namespace OgreBites
 		-----------------------------------------------------------------------------*/
 		virtual void setTarget(Ogre::SceneNode* target)
 		{
-			if (mStyle == CS_ORBIT)
+			if (target != mTarget)
 			{
-				mTarget = target ? target : mCamera->getSceneManager()->getRootSceneNode();
-				setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
-				mCamera->setAutoTracking(true, mTarget);
+				mTarget = target;
+				if(target)
+				{
+					setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
+					mCamera->setAutoTracking(true, mTarget);
+				}
+				else
+				{
+					mCamera->setAutoTracking(false);
+				}
+
 			}
+
+
 		}
 
 		virtual Ogre::SceneNode* getTarget()
@@ -103,14 +114,11 @@ namespace OgreBites
 		-----------------------------------------------------------------------------*/
 		virtual void setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real dist)
 		{
-			if (mStyle == CS_ORBIT)
-			{
-				mCamera->setPosition(mTarget->_getDerivedPosition());
-				mCamera->setOrientation(mTarget->_getDerivedOrientation());
-				mCamera->yaw(yaw);
-				mCamera->pitch(-pitch);
-				mCamera->moveRelative(Ogre::Vector3(0, 0, dist));
-			}
+			mCamera->setPosition(mTarget->_getDerivedPosition());
+			mCamera->setOrientation(mTarget->_getDerivedOrientation());
+			mCamera->yaw(yaw);
+			mCamera->pitch(-pitch);
+			mCamera->moveRelative(Ogre::Vector3(0, 0, dist));
 		}
 
 		/*-----------------------------------------------------------------------------
@@ -133,22 +141,24 @@ namespace OgreBites
 		{
 			if (mStyle != CS_ORBIT && style == CS_ORBIT)
 			{
-				mStyle = CS_ORBIT;
-				setTarget(mTarget);
+				setTarget(mTarget ? mTarget : mCamera->getSceneManager()->getRootSceneNode());
 				mCamera->setFixedYawAxis(true);
+				manualStop();
+				setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
+
 			}
 			else if (mStyle != CS_FREELOOK && style == CS_FREELOOK)
 			{
-				mStyle = CS_FREELOOK;
 				mCamera->setAutoTracking(false);
 				mCamera->setFixedYawAxis(true);
 			}
 			else if (mStyle != CS_MANUAL && style == CS_MANUAL)
 			{
-				mStyle = CS_MANUAL;
 				mCamera->setAutoTracking(false);
-				mCamera->setFixedYawAxis(true);
+				manualStop();
 			}
+			mStyle = style;
+
 		}
 
 		virtual CameraStyle getStyle()
@@ -196,13 +206,16 @@ namespace OgreBites
 				// if not accelerating, try to stop in a certain time
 				else mVelocity -= mVelocity * evt.timeSinceLastFrame * 10;
 
-				// keep camera velocity below top speed and above zero
+				Ogre::Real tooSmall = std::numeric_limits<Ogre::Real>::epsilon();
+
+				// keep camera velocity below top speed and above epsilon
 				if (mVelocity.squaredLength() > topSpeed * topSpeed)
 				{
 					mVelocity.normalise();
 					mVelocity *= topSpeed;
 				}
-				else if (mVelocity.squaredLength() < 0.1) mVelocity = Ogre::Vector3::ZERO;
+				else if (mVelocity.squaredLength() < tooSmall * tooSmall)
+					mVelocity = Ogre::Vector3::ZERO;
 
 				if (mVelocity != Ogre::Vector3::ZERO) mCamera->move(mVelocity * evt.timeSinceLastFrame);
 			}

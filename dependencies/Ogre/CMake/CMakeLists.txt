@@ -13,11 +13,11 @@
 # directory, but can also be used for custom projects.
 #############################################################
 
-if(WIN32)
+if(WIN32 OR APPLE)
 	set(OGRE_CMAKE_DIR "CMake")
-else(WIN32)
+else()
 	set(OGRE_CMAKE_DIR "lib/OGRE/cmake")
-endif(WIN32)
+endif()
 
 set(INST_FILES
   Packages/FindOIS.cmake
@@ -52,8 +52,6 @@ if (APPLE)
   set(STATIC_INST_FILES ${STATIC_INST_FILES}
     Packages/FindCarbon.cmake
     Packages/FindCocoa.cmake
-  )
-  set(STATIC_INST_FILES ${STATIC_INST_FILES}
     Packages/FindiPhoneSDK.cmake
   )
 endif ()

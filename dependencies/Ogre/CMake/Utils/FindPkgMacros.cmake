@@ -38,9 +38,11 @@ endmacro(getenv_path)
 macro(create_search_paths PREFIX)
   foreach(dir ${${PREFIX}_PREFIX_PATH})
     set(${PREFIX}_INC_SEARCH_PATH ${${PREFIX}_INC_SEARCH_PATH}
-      ${dir}/include ${dir}/include/${PREFIX} ${dir}/Headers)
+      ${dir}/include ${dir}/Include ${dir}/include/${PREFIX} ${dir}/Headers)
     set(${PREFIX}_LIB_SEARCH_PATH ${${PREFIX}_LIB_SEARCH_PATH}
-      ${dir}/lib ${dir}/lib/${PREFIX} ${dir}/Libs)
+      ${dir}/lib ${dir}/Lib ${dir}/lib/${PREFIX} ${dir}/Libs)
+    set(${PREFIX}_BIN_SEARCH_PATH ${${PREFIX}_BIN_SEARCH_PATH}
+      ${dir}/bin)
   endforeach(dir)
   set(${PREFIX}_FRAMEWORK_SEARCH_PATH ${${PREFIX}_PREFIX_PATH})
 endmacro(create_search_paths)
@@ -127,12 +129,15 @@ MACRO(findpkg_framework fwk)
       /System/Library/Frameworks
       /Network/Library/Frameworks
       /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS3.0.sdk/System/Library/Frameworks/
+      ${CMAKE_CURRENT_SOURCE_DIR}/../lib/Release
+      ${CMAKE_CURRENT_SOURCE_DIR}/../lib/Debug
     )
     FOREACH(dir ${${fwk}_FRAMEWORK_PATH})
       SET(fwkpath ${dir}/${fwk}.framework)
       IF(EXISTS ${fwkpath})
         SET(${fwk}_FRAMEWORK_INCLUDES ${${fwk}_FRAMEWORK_INCLUDES}
           ${fwkpath}/Headers ${fwkpath}/PrivateHeaders)
+        SET(${fwk}_FRAMEWORK_PATH ${dir})
         if (NOT ${fwk}_LIBRARY_FWK)
           SET(${fwk}_LIBRARY_FWK "-framework ${fwk}")
         endif ()

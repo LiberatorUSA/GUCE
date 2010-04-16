@@ -33,8 +33,6 @@ THE SOFTWARE.
 #include "OgreArchive.h"
 #include "OgreArchiveFactory.h"
 
-#if OGRE_NO_ZIP_ARCHIVE != 0
-
 // Forward declaration for zziplib to avoid header file dependency.
 typedef struct zzip_dir		ZZIP_DIR;
 typedef struct zzip_file	ZZIP_FILE;
@@ -286,7 +284,5 @@ namespace Ogre {
 	/** @} */
 
 }
-
-#endif
 
 #endif

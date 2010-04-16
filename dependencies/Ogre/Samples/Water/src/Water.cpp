@@ -25,7 +25,6 @@ same license as the rest of the engine.
 using namespace Ogre;
 using namespace OgreBites;
 
-AnimationState* mAnimState;
 
 // Mesh stuff
 #define MESH_NAME "WaterMesh"
@@ -270,52 +269,7 @@ public:
 protected:
 	WaterMesh *waterMesh ;
 	Entity *waterEntity ;
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
-	bool touchPressed(const OIS::MultiTouchEvent& evt)
-	{
-		if (mTrayMgr->injectMouseDown(evt)) return true;
-		if (evt.state.touchIsType(OIS::MT_Pressed)) mTrayMgr->hideCursor();  // hide the cursor if user left-clicks in the scene
-		return true;
-	}
-
-	bool touchReleased(const OIS::MultiTouchEvent& evt)
-	{
-		if (mTrayMgr->injectMouseUp(evt)) return true;
-		if (evt.state.touchIsType(OIS::MT_Pressed)) mTrayMgr->showCursor();  // unhide the cursor if user lets go of LMB
-		return true;
-	}
-
-	bool touchMoved(const OIS::MultiTouchEvent& evt)
-	{
-		// only rotate the camera if cursor is hidden
-		if (mTrayMgr->isCursorVisible()) mTrayMgr->injectMouseMove(evt);
-		else mCameraMan->injectMouseMove(evt);
-		return true;
-	}
-#else
-	bool mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID id)
-	{
-		if (mTrayMgr->injectMouseDown(evt, id)) return true;
-		if (id == OIS::MB_Left) mTrayMgr->hideCursor();  // hide the cursor if user left-clicks in the scene
-		return true;
-	}
-    
-	bool mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID id)
-	{
-		if (mTrayMgr->injectMouseUp(evt, id)) return true;
-		if (id == OIS::MB_Left) mTrayMgr->showCursor();  // unhide the cursor if user lets go of LMB
-		return true;
-	}
-    
-	bool mouseMoved(const OIS::MouseEvent& evt)
-	{
-		// only rotate the camera if cursor is hidden
-		if (mTrayMgr->isCursorVisible()) mTrayMgr->injectMouseMove(evt);
-		else mCameraMan->injectMouseMove(evt);
-		return true;
-	}
-#endif
+	AnimationState* mAnimState;
 
 // Just override the mandatory create scene method
     void setupContent(void)
@@ -397,6 +351,8 @@ protected:
 		prepareCircleMaterial();
 
 		setupControls();
+
+		setDragLook(true);
 
 		timeoutDelay = 0.0f;
 	}
@@ -610,6 +566,8 @@ public:
     }
 };
 
+#ifndef OGRE_STATIC_LIB
+
 SamplePlugin* sp;
 Sample* s;
 
@@ -627,3 +585,4 @@ extern "C" _OgreSampleExport void dllStopPlugin()
 	OGRE_DELETE sp;
 	delete s;
 }
+#endif
