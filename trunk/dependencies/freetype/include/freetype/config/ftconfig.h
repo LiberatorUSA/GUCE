@@ -331,11 +331,27 @@ FT_BEGIN_HEADER
 
 #endif /* !FT_BASE_DEF */
 
+/* Dinand Vanvelzen edit:
+  Had to add this to export API
+  */
+#ifdef FT_DVEDIT_DLL_API
+    #if defined( _WIN32 ) || defined( WIN32 ) || defined( _WINDOWS )
+      #ifdef FT_DVEDIT_BUILD_DLL
+        #define FT_DVEDIT_EXPORT __declspec(dllexport)
+      #else  
+        #define FT_DVEDIT_EXPORT __declspec(dllimport)
+      #endif 
+    #else
+      #define FT_DVEDIT_EXPORT
+    #endif 
+#else
+  #define FT_DVEDIT_EXPORT
+#endif
 
 #ifndef FT_EXPORT
 
 #ifdef __cplusplus
-#define FT_EXPORT( x )  extern "C"  x
+#define FT_EXPORT( x )  extern "C" FT_DVEDIT_EXPORT  x
 #else
 #define FT_EXPORT( x )  extern  x
 #endif
@@ -346,7 +362,7 @@ FT_BEGIN_HEADER
 #ifndef FT_EXPORT_DEF
 
 #ifdef __cplusplus
-#define FT_EXPORT_DEF( x )  extern "C"  x
+#define FT_EXPORT_DEF( x )  extern "C" FT_DVEDIT_EXPORT  x
 #else
 #define FT_EXPORT_DEF( x )  extern  x
 #endif
@@ -357,7 +373,7 @@ FT_BEGIN_HEADER
 #ifndef FT_EXPORT_VAR
 
 #ifdef __cplusplus
-#define FT_EXPORT_VAR( x )  extern "C"  x
+#define FT_EXPORT_VAR( x )  extern "C" FT_DVEDIT_EXPORT  x
 #else
 #define FT_EXPORT_VAR( x )  extern  x
 #endif
