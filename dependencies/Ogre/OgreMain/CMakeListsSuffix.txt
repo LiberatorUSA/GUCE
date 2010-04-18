@@ -1,6 +1,10 @@
 
 add_library( OgreMain ${HEADER_FILES} ${SOURCE_FILES} )
+if( WIN32 )
+  set_target_properties( OgreMain PROPERTIES COMPILE_DEFINITIONS "__WIN32__;OGRE_NONCLIENT_BUILD;FT_DVEDIT_DLL_API" )
+else()
+  set_target_properties( OgreMain PROPERTIES COMPILE_DEFINITIONS "OGRE_NONCLIENT_BUILD;FT_DVEDIT_DLL_API" )
+endif()
 add_dependencies( OgreMain zlib zziplib FreeImage freetype )
 target_link_libraries( OgreMain zlib zziplib FreeImage freetype )
-set_target_properties( OgreMain PROPERTIES COMPILE_DEFINITIONS OGRE_NONCLIENT_BUILD )
 GUCE_config_lib( OgreMain )
