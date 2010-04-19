@@ -1,6 +1,10 @@
 
-add_library( RenderSystem_GL ${HEADER_FILES} ${SOURCE_FILES} )
+add_library( RenderSystem_GL ${ALL_FILES} )
 add_dependencies( RenderSystem_GL OgreMain )
-target_link_libraries( RenderSystem_GL OgreMain )
-#set_target_properties( RenderSystem_GL PROPERTIES COMPILE_DEFINITIONS GUCE_GUI_BUILD_MODULE )
+if ( WIN32 )
+  target_link_libraries( RenderSystem_GL OgreMain opengl32.lib )
+else ()
+  target_link_libraries( RenderSystem_GL OgreMain opengl.lib )
+endif()
+set_target_properties( RenderSystem_GL PROPERTIES COMPILE_DEFINITIONS OGRE_GLPLUGIN_EXPORTS )
 GUCE_config_lib( RenderSystem_GL )
