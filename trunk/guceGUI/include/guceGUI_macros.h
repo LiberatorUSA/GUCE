@@ -52,36 +52,6 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-/*
- *      Macro for enabling/disabling the GUCE namespace
- */
-#undef GUCE_NAMESPACE_BEGIN
-#undef GUCE_NAMESPACE_END   
-#ifdef USE_GUCE_NAMESPACE
-  #define GUCE_NAMESPACE_BEGIN   namespace GUCE {
-  #define GUCE_NAMESPACE_END     }
-#else
-  #define GUCE_NAMESPACE_BEGIN
-  #define GUCE_NAMESPACE_END
-#endif /* USE_GUCE_NAMESPACE ? */
-
-/*-------------------------------------------------------------------------*/
-
-/*
- *      Macro for enabling/disabling the CORE namespace
- */
-#undef GUI_NAMESPACE_BEGIN
-#undef GUI_NAMESPACE_END   
-#ifdef USE_GUI_NAMESPACE
-  #define GUI_NAMESPACE_BEGIN   namespace GUI {
-  #define GUI_NAMESPACE_END     }
-#else
-  #define GUI_NAMESPACE_BEGIN
-  #define GUI_NAMESPACE_END
-#endif /* USE_GUI_NAMESPACE ? */
-
-/*-------------------------------------------------------------------------*/
-
 #ifndef GUCE_GUI_DEBUG_MODE
   #if defined( DEBUG ) || defined( _DEBUG ) && !defined( NDEBUG )
     #define GUCE_GUI_DEBUG_MODE
@@ -99,11 +69,12 @@
  *      Macros for dynamic linking. Use the switches in the
  *      config file to control the export type.
  */
+#undef GUCE_GUI_EXPORT 
 #ifdef GUCEF_MSWIN_BUILD
   #ifdef GUCE_GUI_BUILD_MODULE
-    #define GUCE_GUI_EXPORT __declspec( dllexport )
+    #define GUCE_GUI_EXPORT GUCEF_EXPORT
   #else
-    #define GUCE_GUI_EXPORT __declspec( dllimport )
+    #define GUCE_GUI_EXPORT GUCEF_IMPORT
   #endif /* GUCE_GUI_BUILD_MODULE ? */
 #else
   #define GUCE_GUI_EXPORT   /* Linux does not need an additional directive */
@@ -119,8 +90,6 @@
   #define GUCE_GUI_EXPORT_CPP
 #endif /* GUCE_GUI_EXPORT_CPP_CODE ? */
 
-#define GUCE_GUI_EXPORT_CPP GUCE_GUI_EXPORT_CPP
-
 /*
  *  Are we exporting C code ?
  */
@@ -130,8 +99,6 @@
 #else
   #define GUCE_GUI_EXPORT_C
 #endif /* GUCE_GUI_EXPORT_C_CODE ? */
-
-#define GUCE_GUI_EXPORT_C GUCE_GUI_EXPORT_C
 
 /*-------------------------------------------------------------------------*/
 

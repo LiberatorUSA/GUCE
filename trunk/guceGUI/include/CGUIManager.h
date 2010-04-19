@@ -53,8 +53,8 @@ namespace GUCEF { namespace CORE { class CDataNode; } }
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-GUI_NAMESPACE_BEGIN
+namespace GUCE {
+namespace GUI {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -62,8 +62,8 @@ GUI_NAMESPACE_BEGIN
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-class GUCEGUI_EXPORT_CPP CGUIManager : public GUCEF::CORE::CObservingNotifier ,
-                                       public GUCEF::CORE::CIConfigurable
+class GUCE_GUI_EXPORT_CPP CGUIManager : public GUCEF::CORE::CObservingNotifier ,
+                                        public GUCEF::CORE::CIConfigurable
 {
     public:
     
@@ -126,8 +126,8 @@ class GUCEGUI_EXPORT_CPP CGUIManager : public GUCEF::CORE::CObservingNotifier ,
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUI_NAMESPACE_END
-GUCE_NAMESPACE_END
+} // namespace GUI
+} // namespace GUCE
 
 /*-------------------------------------------------------------------------*/
 

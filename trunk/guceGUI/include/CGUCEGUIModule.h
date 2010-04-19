@@ -35,8 +35,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-GUI_NAMESPACE_BEGIN
+namespace GUCE {
+namespace GUI {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -46,17 +46,17 @@ GUI_NAMESPACE_BEGIN
 
 class CGUCEGUIModule
 {
-        public:
-        
-        static bool Load( void );
-        
-        static bool Unload( void );
-        
-        private:
-        CGUCEGUIModule( void );
-        CGUCEGUIModule( const CGUCEGUIModule& src );
-        ~CGUCEGUIModule();
-        CGUCEGUIModule& operator=( const CGUCEGUIModule& src );
+    public:
+    
+    static bool Load( void );
+    
+    static bool Unload( void );
+    
+    private:
+    CGUCEGUIModule( void );
+    CGUCEGUIModule( const CGUCEGUIModule& src );
+    ~CGUCEGUIModule();
+    CGUCEGUIModule& operator=( const CGUCEGUIModule& src );
 };
 
 /*-------------------------------------------------------------------------//
@@ -65,8 +65,8 @@ class CGUCEGUIModule
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUI_NAMESPACE_END
-GUCE_NAMESPACE_END
+} // namespace GUI
+} // namespace GUCE
 
 /*-------------------------------------------------------------------------*/
           
