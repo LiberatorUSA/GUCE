@@ -7,5 +7,6 @@
     <ITEM NAME="ftsystem.c" />
     <ITEM NAME="ftglyph.c" />
     <ITEM NAME="ftbitmap.c" />
+    <ITEM NAME="ftinit.c" />
   </INCLUDES>
 </CMAKELISTGENERATOR>
