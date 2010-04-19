@@ -1,5 +1,5 @@
 
-add_library( OgreMain ${HEADER_FILES} ${SOURCE_FILES} )
+add_library( OgreMain ${ALL_FILES} )
 if( WIN32 )
   set_target_properties( OgreMain PROPERTIES COMPILE_DEFINITIONS "__WIN32__;OGRE_NONCLIENT_BUILD;FT_DVEDIT_DLL_API" )
 else()
