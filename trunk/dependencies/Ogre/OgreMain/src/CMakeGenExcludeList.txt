@@ -1,5 +1,4 @@
 OgreILUtil.cpp
 OgreILImageCodec.cpp
 OgreILCodecs.cpp
-Threading
 OgreParticleScriptCompiler.cpp
