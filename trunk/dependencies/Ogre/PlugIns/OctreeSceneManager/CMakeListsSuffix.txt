@@ -1,4 +1,6 @@
 
-add_library( OgrePlugin_OctreeSceneManager ${HEADER_FILES} ${SOURCE_FILES} )
-#set_target_properties( OgrePlugin_OctreeSceneManager PROPERTIES COMPILE_DEFINITIONS GUCE_GUI_BUILD_MODULE )
+add_library( OgrePlugin_OctreeSceneManager ${ALL_FILES} )
+add_dependencies( OgrePlugin_OctreeSceneManager OgreMain )
+target_link_libraries( OgrePlugin_OctreeSceneManager OgreMain )
+set_target_properties( OgrePlugin_OctreeSceneManager PROPERTIES COMPILE_DEFINITIONS OGRE_TERRAINPLUGIN_EXPORTS )
 GUCE_config_lib( OgrePlugin_OctreeSceneManager )
