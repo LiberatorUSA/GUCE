@@ -51,8 +51,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-GUI_NAMESPACE_BEGIN
+namespace GUCE {
+namespace GUI {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -312,7 +312,7 @@ CGUIManager::UnregisterGUIDriver( const CString& driverName )
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUI_NAMESPACE_END
-GUCE_NAMESPACE_END
+} // namespace GUI
+} // namespace GUCE
 
 /*-------------------------------------------------------------------------*/
