@@ -23,7 +23,7 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#include <MyGUI.h>
+#include "MyGUI.h"
 
 #ifndef GUCEF_CORE_CLOGMANAGER_H
 #include "CLogManager.h"
@@ -241,7 +241,7 @@ CGUIDriver::Initialize( CORE::CWindowManager::TWindowContextPtr windowContext )
             //MyGUI::LogManager::initialise();
             
             m_guiSystem = new MyGUI::Gui();
-            m_guiSystem->initialise( m_window, "core.xml", "GUI" );
+            m_guiSystem->initialise( "core.xml" );
         }
         catch ( Ogre::Exception& e )
         {
