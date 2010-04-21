@@ -33,6 +33,11 @@
 #define __ROOT__
 #endif /* __ROOT__ ? */
 
+#ifndef __MYGUI_XML_DOCUMENT_H__
+#include "MyGUI_XmlDocument.h"
+#define __MYGUI_XML_DOCUMENT_H__
+#endif /* __MYGUI_XML_DOCUMENT_H__ */
+
 #ifndef GUCEF_CORE_DVCPPSTRINGUTILS_H
 #include "dvcppstringutils.h"
 #define GUCEF_CORE_DVCPPSTRINGUTILS_H
@@ -47,6 +52,11 @@
 #include "CIOAccessArchiveFactory.h"
 #define GUCE_CORE_CIOACCESSARCHIVEFACTORY_H
 #endif /* GUCE_CORE_CIOACCESSARCHIVEFACTORY_H ? */
+
+#ifndef GUCE_MYGUIOGRE_CIOACCESSTOMYGUIDATASTREAMADAPTER_H
+#include "guceMyGUIOgre_CIOAccessToMyGUIDataStreamAdapter.h"
+#define GUCE_MYGUIOGRE_CIOACCESSTOMYGUIDATASTREAMADAPTER_H
+#endif /* GUCE_MYGUIOGRE_CIOACCESSTOMYGUIDATASTREAMADAPTER_H ? */
 
 #ifndef GUCE_MYGUIOGRE_CBUTTONIMP_H
 #include "guceMyGUIOgre_CButtonImp.h"
@@ -300,17 +310,22 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
     
     try
     {
-        // provide hacky access to the given data
-        m_dummyArchive->AddResource( layoutStorage, "currentFile" );
-
-        // Now we can load the window layout from the given storage
-        // Note that if MyGUI ever provides an interface to do this directly
-        // clean up this mess !!!
-        rootWidgets = lmgr->loadLayout( "currentFile"       , 
-                                        m_widgetNamePrefix  ,
-                                        0                   ,
-                                        m_resourceGroupName );     
-        m_dummyArchive->ClearResourceList();
+        // Prepare variables we need
+        MyGUI::Version dummyVersion;
+        MyGUI::xml::Document xmlDocument;
+        CIOAccessToMyGUIDataStreamAdapter storageAdapter( layoutStorage );
+        
+        // Parse the xml doc
+        xmlDocument.open( &storageAdapter );        
+        MyGUI::xml::ElementPtr rootElement = xmlDocument.getRoot();
+ 
+        // Load the layout from the xml
+        lmgr->setLayoutPrefix( m_widgetNamePrefix.STL_String() );
+        lmgr->_load( rootElement              , 
+                     "DirectLoadFromIOAccess" ,  
+                     dummyVersion             );
+                                   
+        rootWidgets = lmgr->getVectorWidgetPtr();
     }
     catch ( Ogre::Exception& e )
     {

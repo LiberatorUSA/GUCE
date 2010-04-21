@@ -26,7 +26,12 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#include <MyGUI.h>
+#include "MyGUI.h"
+
+#ifndef __Exception_H_
+#include "OgreException.h"
+#define __Exception_H_
+#endif /* __Exception_H_ ? */
 
 #ifndef GUCEF_CORE_CSTDOSTREAMADAPTER_H
 #include "CSTDOStreamAdapter.h"

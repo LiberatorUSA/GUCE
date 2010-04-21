@@ -46,6 +46,10 @@ namespace MyGUI
 		*/
 		VectorWidgetPtr& load(const std::string& _file);
 		void _load(xml::ElementPtr _node, const std::string& _file, Version _version);
+		
+		/* DV edit: need this: */
+		void setLayoutPrefix( const std::string& prefix ) { layoutPrefix = prefix; }
+		VectorWidgetPtr getVectorWidgetPtr( void ) { return mVectorWidgetPtr; }
 
 		/** Load layout file
 			@param _file name of layout
