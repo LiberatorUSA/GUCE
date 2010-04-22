@@ -13,7 +13,29 @@ IF NOT DEFINED GUCEF_HOME (
   GOTO END
 )
 
-GOTO FIND_GUCEF_OLD_SLN_DEBUG_CMAKELISTGENERATOR
+GOTO FIND_GUCE_CMAKE_SLN_DEBUG_CMAKELISTGENERATOR
+
+REM -----------------------------------------------------
+
+:FIND_GUCE_CMAKE_SLN_DEBUG_CMAKELISTGENERATOR
+
+SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\common\bin\MVC9\bin\Debug
+SET GENERATOREXE=CMakeListGenerator.exe
+SET EXETEST="%GENERATORPATH%\%GENERATOREXE%"
+
+ECHO Test path = %EXETEST%
+IF EXIST %EXETEST% (
+  ECHO Warning: Using GUCE CMake debug MVC9 development version of the CMakeListGenerator
+  GOTO RUN_CMAKELISTGENERATOR
+)
+
+IF NOT EXIST %EXETEST% (
+  ECHO Cannot locate GUCE CMake MVC9 debug development version of the CMakeListGenerator, trying GUCEF
+  GOTO FIND_GUCEF_OLD_SLN_DEBUG_CMAKELISTGENERATOR
+)
+
+cd %GUCE_THEBATCHDIR%
+GOTO RUN_CMAKELISTGENERATOR
 
 REM -----------------------------------------------------
 
