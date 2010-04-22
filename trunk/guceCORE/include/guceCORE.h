@@ -89,10 +89,10 @@
  *      Adapter class that allows Ogre to use image codecs
  *      provided by gucefIMAGE
  */
-#ifndef CGUCFTOOGREIMAGECODEC_H
-#include "CGUCEFToOgreImageCodec.h"
-#define CGUCFTOOGREIMAGECODEC_H
-#endif /* CGUCFTOOGREIMAGECODEC_H ? */
+#ifndef GUCE_CORE_COGREIMAGECODECADAPTER_H
+#include "COgreImageCodecAdapter.h"
+#define GUCE_CORE_COGREIMAGECODECADAPTER_H
+#endif /* GUCE_CORE_COGREIMAGECODECADAPTER_H ? */
 
 /*
  *      Class that will allow you to pass a local recource as an
