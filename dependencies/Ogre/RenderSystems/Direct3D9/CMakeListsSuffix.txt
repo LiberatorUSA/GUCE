@@ -1,6 +1,6 @@
 
 add_library( RenderSystem_Direct3D9 ${HEADER_FILES} ${SOURCE_FILES} )
 add_dependencies( RenderSystem_Direct3D9 OgreMain )
-target_link_libraries( RenderSystem_Direct3D9 OgreMain )
+target_link_libraries( RenderSystem_Direct3D9 OgreMain d3d9.lib d3dxof.lib dxguid.lib comctl32.lib winmm.lib )
 set_target_properties( RenderSystem_Direct3D9 PROPERTIES COMPILE_DEFINITIONS OGRED3DENGINEDLL_EXPORTS )
 GUCE_config_lib( RenderSystem_Direct3D9 )
