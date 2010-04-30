@@ -769,6 +769,8 @@ bool
 CGUCEApplication::SetupOgrePlugins( const GUCEF::CORE::CDataNode& rootnode )
 {GUCE_TRACE;
 
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEApplication: Setting up Ogre plugins according to config" );
+    
     const GUCEF::CORE::CDataNode* n = rootnode.Find( "OGREPlugins" );
     
     if ( n != NULL )
@@ -796,6 +798,8 @@ CGUCEApplication::SetupOgrePlugins( const GUCEF::CORE::CDataNode& rootnode )
                     AppendToPath( plugin, att->value );
                     try 
                     {
+                        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEApplication: Attempting to load Ogre plugin from: " + plugin );
+                        
                         Ogre::Root::getSingletonPtr()->loadPlugin( plugin.C_String() );        
                     }
                     catch ( Ogre::Exception& )

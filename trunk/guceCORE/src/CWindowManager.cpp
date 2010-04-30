@@ -87,10 +87,10 @@
 
 #include "CWindowManager.h"      /* definition of the class implemented here */
 
-#ifndef GUCECORE_MACROS_H
+#ifndef GUCE_CORE_MACROS_H
 #include "guceCORE_macros.h"     /* guceCORE build config and macros */
-#define GUCECORE_MACROS_H
-#endif /* GUCECORE_MACROS_H ? */
+#define GUCE_CORE_MACROS_H
+#endif /* GUCE_CORE_MACROS_H ? */
 
 #ifdef GUCE_MSWIN_BUILD
   #ifndef GUCEF_CORE_CWNDMSGHOOKNOTIFIER_H
