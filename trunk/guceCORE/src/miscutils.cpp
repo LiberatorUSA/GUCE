@@ -205,14 +205,14 @@ FindOtherDataTreeStorage( GUCEF::CORE::CString& configfile      ,
                                                           fromcurrent );
         if ( node )
         {
-                const GUCEF::CORE::CDataNode::TNodeAtt* att( node->GetAttribute( "file" ) );
+                const GUCEF::CORE::CDataNode::TKeyValuePair* att( node->GetAttribute( "file" ) );
                 if ( att )
                 { 
-                        configfile = att->value;
+                        configfile = att->second;
                         att = node->GetAttribute( "filecodec" );
                         if ( att )
                         {
-                                filecodec = att->value;
+                                filecodec = att->second;
                                 return true;
                         }
                 }

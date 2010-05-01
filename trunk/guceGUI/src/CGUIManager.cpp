@@ -190,13 +190,24 @@ CGUIManager::Init( CORE::CWindowManager::TWindowContextPtr windowContext )
         /* Apply the loaded configuration (if any exists) */
         if ( LoadConfig( m_guiConfig ) )
         {
+            if ( m_drivers.size() == 0 )
+            {
+                GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Cannot initialize GUI system because no driver is available" ); 
+                return false;
+            }
+            if ( m_selectedDriverName.Length() == 0 )
+            {
+                GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: No GUI driver specified in config: Using first available driver" ); 
+                m_selectedDriverName = (*m_drivers.begin()).first;
+            }
+            
             TDriverMap::iterator i = m_drivers.find( m_selectedDriverName );
             if ( i != m_drivers.end() )
             {
                 GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Using driver with name " + m_selectedDriverName );
                 
                 CIGUIDriver* driver = (*i).second;
-                //if ( driver->LoadConfig( m_guiConfig ) )
+                if ( driver->LoadConfig( m_guiConfig ) )
                 {
                     if ( driver->Initialize( windowContext ) )
                     {
@@ -207,22 +218,22 @@ CGUIManager::Init( CORE::CWindowManager::TWindowContextPtr windowContext )
                     }
                     else
                     {
-                        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to initialize the GUI system driver" );
+                        GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to initialize the GUI system driver" );
                     }
                 }
-               // else
+                else
                 {
-                    //GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to load the GUI system driver config" );
+                    GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to load the GUI system driver config" );
                 }
             }
             else
             {
-                GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to locate the configured GUI system driver" );
+                GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to locate the configured GUI system driver" );
             }            
         }
         else
         {
-            GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to load the GUI system config" );
+            GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Failed to load the GUI system config" );
             return false;
         }
     }
@@ -236,6 +247,8 @@ bool
 CGUIManager::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )       
 {GUCE_TRACE;             
 
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_BELOW_NORMAL, "GUCE::GUI::CGUCEApplication: Loading config" );
+    
     const GUCEF::CORE::CDataNode* m = NULL;
     
     if ( &m_guiConfig != &rootNode )
@@ -263,7 +276,10 @@ CGUIManager::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )
     if ( !m_initialized )
     {       
         m = m_guiConfig.Find( "CGUIManager" );
-        m_selectedDriverName = m->GetAttributeValue( "Driver" );
+        if ( 0 != m )
+        {
+            m_selectedDriverName = m->GetAttributeValue( "Driver" );
+        }
     }
     
     return true;
@@ -285,6 +301,8 @@ CGUIManager::RegisterGUIDriver( const CString& driverName ,
                                 CIGUIDriver& driver       )
 {GUCE_TRACE;
 
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: registering GUI driver: " + driverName );
+    
     m_drivers[ driverName ] = &driver;
     
     if ( m_selectedDriverName.IsNULLOrEmpty() )
@@ -302,6 +320,8 @@ CGUIManager::UnregisterGUIDriver( const CString& driverName )
     TDriverMap::iterator i = m_drivers.find( driverName );
     if ( i != m_drivers.end() )
     {
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: unregistering GUI driver: " + driverName );
+        
         m_drivers.erase( i );
     }
 }
