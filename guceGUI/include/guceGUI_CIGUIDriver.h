@@ -67,6 +67,10 @@ namespace GUI {
 class GUCE_GUI_EXPORT_CPP CIGUIDriver : public GUCEF::GUI::CGUIDriver
                                         
 {
+    public:
+    
+    static const CString HasGuceInterfaceDriverProperty;
+    
     public:    
     
     CIGUIDriver( void );

@@ -79,6 +79,7 @@ CGUIManager::CGUIManager( void )
 
     RegisterEvents();    
     SubscribeTo( CORE::CGUCEApplication::Instance() );
+    SubscribeTo( GUCEF::GUI::CGUIManager::Instance() );
 }
 
 /*-------------------------------------------------------------------------*/
@@ -160,7 +161,19 @@ CGUIManager::OnNotify( GUCEF::CORE::CNotifier* notifier                  ,
                        const GUCEF::CORE::CEvent& eventid                ,
                        GUCEF::CORE::CICloneable* eventdata /* = NULL  */ )
 {GUCE_TRACE;
-
+    
+    if ( GUCEF::GUI::CGUIManager::DriverRegisteredEvent == eventid )
+    {
+        // Check if the registerd driver has a GUCE interface so we can use it
+        // at this level
+        
+    }
+    else
+    if ( GUCEF::GUI::CGUIManager::DriverUnregisteredEvent == eventid )
+    {
+    
+    }
+    else
     if ( CORE::CGUCEApplication::VideoSetupCompletedEvent == eventid )
     {
         if ( !Init( CORE::CGUCEApplication::Instance()->GetPrimaryWindowContext() ) )
@@ -301,7 +314,7 @@ CGUIManager::RegisterGUIDriver( const CString& driverName ,
                                 CIGUIDriver& driver       )
 {GUCE_TRACE;
 
-    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: registering GUI driver: " + driverName );
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: registering GUI driver: " + driverName );
     
     m_drivers[ driverName ] = &driver;
     
@@ -320,7 +333,7 @@ CGUIManager::UnregisterGUIDriver( const CString& driverName )
     TDriverMap::iterator i = m_drivers.find( driverName );
     if ( i != m_drivers.end() )
     {
-        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: unregistering GUI driver: " + driverName );
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: unregistering GUI driver: " + driverName );
         
         m_drivers.erase( i );
     }
