@@ -124,6 +124,8 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     
     virtual const CString& GetClassTypeName( void ) const;
     
+    virtual CString GetDriverProperty( const CString& propertyName ) const;
+    
     private:
     friend class CModule;
     

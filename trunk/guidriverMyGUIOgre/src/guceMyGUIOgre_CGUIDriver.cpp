@@ -317,6 +317,19 @@ CGUIDriver::SaveConfig( GUCEF::CORE::CDataNode& tree )
 
 /*-------------------------------------------------------------------------*/
 
+CString
+CGUIDriver::GetDriverProperty( const CString& propertyName ) const
+{GUCE_TRACE;
+
+    if ( propertyName == HasGuceInterfaceDriverProperty )
+    {
+        return "true";
+    }
+    return CString();
+}
+
+/*-------------------------------------------------------------------------*/
+
 GUCEF::GUI::CIGUIContext*
 CGUIDriver::CreateGUIContext()
 {GUCE_TRACE;
