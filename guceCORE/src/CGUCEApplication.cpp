@@ -378,7 +378,7 @@ CGUCEApplication::SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode    
             *selectedRenderSystem = NULL;
         }
         
-        const GUCEF::CORE::CDataNode::TNodeAtt* att;
+        const GUCEF::CORE::CDataNode::TKeyValuePair* att;
         att = n->GetAttribute( "name" );
         if ( att )
         {                        
@@ -386,11 +386,11 @@ CGUCEApplication::SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode    
              *      The user requested a specific render system
              *      Your wish is my command master,...
              */
-            GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Desired render system: " + att->value ); 
+            GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Desired render system: " + att->second ); 
             for ( UInt32 i=0; i<rendersyslist.size(); ++i )
             {
                 GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Available render system: " + GUCEF::CORE::CString( (rendersyslist[ i ])->getName().c_str() ) );
-                if ( (rendersyslist[ i ])->getName() == att->value.C_String() )
+                if ( (rendersyslist[ i ])->getName() == att->second.C_String() )
                 {
                     renderSystem = rendersyslist[ i ];
                     break;        
@@ -470,12 +470,14 @@ bool
 CGUCEApplication::SetupOgreRecources( const GUCEF::CORE::CDataNode& rootnode )
 {GUCE_TRACE;
 
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEApplication: Setting up Ogre recources" );
+
     const GUCEF::CORE::CDataNode* n = rootnode.Find( "OgreRecourceGroups" );
     
     if ( n != NULL )
     {
         const GUCEF::CORE::CDataNode* rscnode;                   
-        const GUCEF::CORE::CDataNode::TNodeAtt *att1 = NULL, *att2 = NULL, *att3 = NULL;
+        const GUCEF::CORE::CDataNode::TKeyValuePair *att1 = NULL, *att2 = NULL, *att3 = NULL;
         GUCEF::CORE::CDataNode::const_iterator i( n->ConstBegin() );
         while ( i != n->ConstEnd() )
         {
@@ -494,16 +496,16 @@ CGUCEApplication::SetupOgreRecources( const GUCEF::CORE::CDataNode& rootnode )
                     {
                         // Non-GUCEF systems might not be able to handle relative paths
                         // We will check and convert if needed for such scenarios
-                        GUCEF::CORE::CString resNam( att2->value );
-                        if ( att3->value != "gucefVFS" )
+                        GUCEF::CORE::CString resNam( att2->second );
+                        if ( att3->second != "gucefVFS" )
                         {
-                            resNam = GUCEF::CORE::RelativePath( att2->value );
+                            resNam = GUCEF::CORE::RelativePath( att2->second );
                         }
                         
                         // Now we perform the actual add using Ogre
-                        m_ogreRoot->addResourceLocation( resNam.C_String()      , 
-                                                         att3->value.C_String() , 
-                                                         att1->value.C_String() );
+                        m_ogreRoot->addResourceLocation( resNam.C_String()       , 
+                                                         att3->second.C_String() , 
+                                                         att1->second.C_String() );
                     }
                     catch ( Ogre::Exception& e )
                     {
@@ -775,13 +777,13 @@ CGUCEApplication::SetupOgrePlugins( const GUCEF::CORE::CDataNode& rootnode )
     
     if ( n != NULL )
     {
-        const GUCEF::CORE::CDataNode::TNodeAtt* att = n->GetAttribute( "plugindir" );
+        const GUCEF::CORE::CDataNode::TKeyValuePair* att = n->GetAttribute( "plugindir" );
         if ( !att ) 
         {
             return false;
         }                        
                         
-        GUCEF::CORE::CString plugindir( GUCEF::CORE::RelativePath( att->value ) );
+        GUCEF::CORE::CString plugindir( GUCEF::CORE::RelativePath( att->second ) );
         GUCEF::CORE::CString plugin;
         
         GUCEF::CORE::CDataNode::const_iterator i = n->ConstBegin();
@@ -795,7 +797,7 @@ CGUCEApplication::SetupOgrePlugins( const GUCEF::CORE::CDataNode& rootnode )
                 if ( att )
                 {
                     plugin = plugindir;
-                    AppendToPath( plugin, att->value );
+                    AppendToPath( plugin, att->second );
                     try 
                     {
                         GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEApplication: Attempting to load Ogre plugin from: " + plugin );
@@ -882,16 +884,18 @@ bool
 CGUCEApplication::LoadConfig( const GUCEF::CORE::CDataNode& tree )
 {GUCE_TRACE;
 
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_BELOW_NORMAL, "CGUCEApplication: Loading config" );
+
     const GUCEF::CORE::CDataNode* n = tree.Search( "GUCE%CORE%CGUCEApplication%INPUTDRIVER" ,
                                                    '%'                                      ,
                                                    false                                    );
     if ( n )
     {
-            const GUCEF::CORE::CDataNode::TNodeAtt* att = n->GetAttribute( "module" );
+            const GUCEF::CORE::CDataNode::TKeyValuePair* att = n->GetAttribute( "module" );
             if ( att ) 
             {
                     GUCEF::CORE::CValueList paramlist;
-                    if ( !GUCEF::INPUT::CInputController::Instance()->LoadDriverModule( att->value, paramlist ) )
+                    if ( !GUCEF::INPUT::CInputController::Instance()->LoadDriverModule( att->second, paramlist ) )
                     {
                         return false;
                     }

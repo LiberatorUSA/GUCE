@@ -275,18 +275,18 @@ CWindowManager::CreateWindowContext( const GUCEF::CORE::CDataNode& params       
         const GUCEF::CORE::CDataNode* n = params.Find( "WindowSettings" );
         if ( n )
         {
-            const GUCEF::CORE::CDataNode::TNodeAtt* att;
+            const GUCEF::CORE::CDataNode::TKeyValuePair* att;
             UInt32 width( 640 ), height( 480 );
             bool fullscreen( false );                        
             
             att = n->GetAttribute( "width" );
-            if ( att ) width = att->value.GetInt();
+            if ( att ) width = att->second.GetInt();
             att = n->GetAttribute( "height" );        
-            if ( att ) height = att->value.GetInt();
+            if ( att ) height = att->second.GetInt();
             att = n->GetAttribute( "fullscreen" );
-            if ( att ) fullscreen = GUCEF::CORE::String_To_Boolint( att->value.C_String() ) == 1;
+            if ( att ) fullscreen = GUCEF::CORE::String_To_Boolint( att->second.C_String() ) == 1;
             
-            const GUCEF::CORE::CDataNode::TNodeAtt* att2;
+            const GUCEF::CORE::CDataNode::TKeyValuePair* att2;
             const GUCEF::CORE::CString name( "name" );
             const GUCEF::CORE::CString value( "value" );
             Ogre::NameValuePairList valuelist;
@@ -303,7 +303,7 @@ CWindowManager::CreateWindowContext( const GUCEF::CORE::CDataNode& params       
                         att2 = cn->GetAttribute( value );
                         if ( att2 )
                         {
-                                valuelist[ att->value.C_String() ] = att2->value.C_String();
+                                valuelist[ att->second.C_String() ] = att2->second.C_String();
                         }        
                     }
                 }
