@@ -56,7 +56,7 @@
  *      Forward declarations of classes used here 
  */
 namespace Ogre { class RenderWindow; class RenderTexture; class Root; }
-namespace MyGUI { class Gui; }
+namespace MyGUI { class Gui; class OgrePlatform; }
 namespace GUCEF { namespace CORE { class CDataNode; } }
 
 /*-------------------------------------------------------------------------//
@@ -145,6 +145,7 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     bool m_initialized;                         /**< flag for manager initialization */    
     Ogre::RenderWindow* m_window;               /**< window displaying our GUI */
     MyGUI::Gui* m_guiSystem;                    /**< main GUI system class */
+    MyGUI::OgrePlatform* m_myguiPlatform;       /**< Ogre backend for the GUI system */
     CMyGUIInputAdapter* m_inputAdapter;         /**< binding between the input system and MyGUI */
     GUCEF::CORE::CDataNode m_guiConfig;    
     GUCEF::GUI::CFormFactory m_formFactory;

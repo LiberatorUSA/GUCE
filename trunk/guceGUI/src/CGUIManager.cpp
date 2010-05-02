@@ -28,6 +28,11 @@
 #define GUCEF_CORE_CLOGMANAGER_H
 #endif /* GUCEF_CORE_CLOGMANAGER_H ? */
 
+#ifndef GUCEF_GUI_CGUIMANAGER_H
+#include "gucefGUI_CGUIManager.h"
+#define GUCEF_GUI_CGUIMANAGER_H
+#endif /* GUCEF_GUI_CGUIMANAGER_H ? */
+
 #ifndef GUCE_CORE_CWINDOWCONTEXT_H
 #include "CWindowContext.h"
 #define GUCE_CORE_CWINDOWCONTEXT_H
@@ -164,14 +169,28 @@ CGUIManager::OnNotify( GUCEF::CORE::CNotifier* notifier                  ,
     
     if ( GUCEF::GUI::CGUIManager::DriverRegisteredEvent == eventid )
     {
-        // Check if the registerd driver has a GUCE interface so we can use it
-        // at this level
+        // Check if the registered driver has a GUCE interface so we can use it
+        // at this level. First get the information about the driver
+        CString& driverName = static_cast< GUCEF::CORE::TCloneableString* >( eventdata )->GetData();
+        GUCEF::GUI::CGUIDriver* basicGucefDriver = GUCEF::GUI::CGUIManager::Instance()->GetGuiDriver( driverName );        
         
+        // Now get the property telling us whether its GUCE capable
+        CString hasGuceInterfaceStr = basicGucefDriver->GetDriverProperty( CIGUIDriver::HasGuceInterfaceDriverProperty );
+        if ( ( hasGuceInterfaceStr.Length() > 0 )                &&
+             ( GUCEF::CORE::StringToBool( hasGuceInterfaceStr ) ) )
+        {        
+            // The newly registered driver is GUCE compatible/capable
+            // We register it here for use
+            CIGUIDriver& guceDriver = *static_cast< CIGUIDriver* >( basicGucefDriver );
+            RegisterGUIDriver( driverName, guceDriver );
+        }
     }
     else
     if ( GUCEF::GUI::CGUIManager::DriverUnregisteredEvent == eventid )
     {
-    
+        // In case the driver is registered at a GUCE level let's unregister it
+        CString& driverName = static_cast< GUCEF::CORE::TCloneableString* >( eventdata )->GetData();
+        UnregisterGUIDriver( driverName );
     }
     else
     if ( CORE::CGUCEApplication::VideoSetupCompletedEvent == eventid )
@@ -200,7 +219,7 @@ CGUIManager::Init( CORE::CWindowManager::TWindowContextPtr windowContext )
     {
         GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Initializing GUI system" );
 
-        /* Apply the loaded configuration (if any exists) */
+        // Apply the loaded configuration (if any exists)
         if ( LoadConfig( m_guiConfig ) )
         {
             if ( m_drivers.size() == 0 )
@@ -333,8 +352,7 @@ CGUIManager::UnregisterGUIDriver( const CString& driverName )
     TDriverMap::iterator i = m_drivers.find( driverName );
     if ( i != m_drivers.end() )
     {
-        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: unregistering GUI driver: " + driverName );
-        
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: unregistering GUI driver: " + driverName );        
         m_drivers.erase( i );
     }
 }

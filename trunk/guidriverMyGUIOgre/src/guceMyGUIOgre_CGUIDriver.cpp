@@ -24,6 +24,7 @@
 //-------------------------------------------------------------------------*/
 
 #include "MyGUI.h"
+#include "MyGUI_OgrePlatform.h"
 
 #ifndef GUCEF_CORE_CLOGMANAGER_H
 #include "CLogManager.h"
@@ -127,6 +128,7 @@ CGUIDriver::CGUIDriver( void )
       m_initialized( false )  ,
       m_window( NULL )        ,
       m_guiSystem( NULL )     ,
+      m_myguiPlatform( NULL ) ,
       m_inputAdapter( NULL )  ,
       m_guiConfig()           ,
       m_formFactory()         ,
@@ -211,8 +213,13 @@ CGUIDriver::Shutdown( void )
     {   
         GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutting down MyGUI system" );
         
+        m_guiSystem->shutdown();
         delete m_guiSystem;
         m_guiSystem = NULL;
+        
+        m_myguiPlatform->shutdown();
+        delete m_myguiPlatform;
+        m_myguiPlatform = NULL;
        
         m_window = NULL;        
         m_initialized = false;
@@ -237,9 +244,10 @@ CGUIDriver::Initialize( CORE::CWindowManager::TWindowContextPtr windowContext )
             assert( windowContext != NULL );
             m_window = windowContext->GetOgreWindowPtr();                
             assert( m_window != NULL );
-            
-            //MyGUI::LogManager::initialise();
-            
+
+            m_myguiPlatform = new MyGUI::OgrePlatform();
+            m_myguiPlatform->initialise( m_window, CORE::CGUCEApplication::Instance()->GetSceneManager() );
+                       
             m_guiSystem = new MyGUI::Gui();
             m_guiSystem->initialise( "core.xml" );
         }
@@ -290,7 +298,7 @@ CGUIDriver::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )
         }
         else
         {
-            return false;
+            //return false;
         }
     }
     else
