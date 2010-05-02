@@ -96,6 +96,15 @@ CGUIManager::~CGUIManager()
 
 /*-------------------------------------------------------------------------*/
 
+const CString&
+CGUIManager::GetSelectedDriverName( void ) const
+{GUCE_TRACE;
+
+    return m_selectedDriverName; 
+}
+
+/*-------------------------------------------------------------------------*/
+
  const CString&
  CGUIManager::GetClassTypeName( void ) const
  {GUCE_TRACE;

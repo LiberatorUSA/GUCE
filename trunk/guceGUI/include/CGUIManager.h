@@ -84,6 +84,8 @@ class GUCE_GUI_EXPORT_CPP CGUIManager : public GUCEF::CORE::CObservingNotifier ,
 
     void UnregisterGUIDriver( const CString& driverName );
     
+    const CString& GetSelectedDriverName( void ) const;
+    
     virtual const CString& GetClassTypeName( void ) const;
 
     protected:
