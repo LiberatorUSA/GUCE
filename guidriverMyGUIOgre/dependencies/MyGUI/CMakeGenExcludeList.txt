@@ -1,5 +1,4 @@
 CMake
-Common
 Demos
 Docs
 Media
