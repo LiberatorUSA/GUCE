@@ -100,10 +100,29 @@ CWindowContext::GetOgreWindowPtr( void )
 
 /*-------------------------------------------------------------------------*/
         
-GUCEF::INPUT::CInputContext& 
+GUCEF::INPUT::CInputContext* 
 CWindowContext::GetInputContext( void )
 {GUCE_TRACE;
-        return *m_inputcontext;
+
+    return m_inputcontext;
+}
+
+/*-------------------------------------------------------------------------*/
+
+void
+CWindowContext::SetGuiContext( GUCEF::GUI::TGuiContextPtr& context )
+{GUCE_TRACE;
+
+    m_guiContext = context;
+}
+
+/*-------------------------------------------------------------------------*/
+    
+GUCEF::GUI::TGuiContextPtr
+CWindowContext::GetGuiContext( void )
+{GUCE_TRACE;
+
+    return m_guiContext;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -111,7 +130,8 @@ CWindowContext::GetInputContext( void )
 void
 CWindowContext::SetID( const UInt32 id )
 {GUCE_TRACE;
-        m_id = id;
+
+    m_id = id;
 }
 
 /*-------------------------------------------------------------------------*/

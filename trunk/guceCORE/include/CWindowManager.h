@@ -31,11 +31,6 @@
 #define __ROOT__
 #endif /* __ROOT__ ? */
 
-#ifndef GUCEF_CORE_CTSHAREDPTR_H
-#include "CTSharedPtr.h"
-#define GUCEF_CORE_CTSHAREDPTR_H
-#endif /* GUCEF_CORE_CTSHAREDPTR_H ? */
-
 #ifndef GUCEF_CORE_CTEVENTHANDLERFUNCTOR_H
 #include "gucefCORE_CTEventHandlerFunctor.h"
 #define GUCEF_CORE_CTEVENTHANDLERFUNCTOR_H
@@ -88,7 +83,6 @@ class GUCE_CORE_EXPORT_CPP CWindowManager : public GUCEF::CORE::CObservingNotifi
                                             private GUCEF::CORE::CTDynamicDestructorBase< CWindowContext >
 {
     public:
-    typedef GUCEF::CORE::CTSharedPtr< CWindowContext > TWindowContextPtr;
     
     static const GUCEF::CORE::CEvent PrimaryWindowContextCreatedEvent;
     static const GUCEF::CORE::CEvent PrimaryWindowContextDestroyedEvent;

@@ -433,8 +433,8 @@ CGUCEApplication::SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode    
 /*-------------------------------------------------------------------------*/
 
 bool
-CGUCEApplication::SetupWindow( const GUCEF::CORE::CDataNode& rootnode                         ,
-                               CWindowManager::TWindowContextPtr* windowsContext /* = NULL */ )
+CGUCEApplication::SetupWindow( const GUCEF::CORE::CDataNode& rootnode         ,
+                               TWindowContextPtr* windowsContext /* = NULL */ )
 {GUCE_TRACE;
 
     // Check to make sure we do not already have a primary window
@@ -524,7 +524,7 @@ CGUCEApplication::SetupOgreRecources( const GUCEF::CORE::CDataNode& rootnode )
 /*-------------------------------------------------------------------------*/
 
 bool
-CGUCEApplication::SetupOgreScene( CWindowManager::TWindowContextPtr& windowContext ,
+CGUCEApplication::SetupOgreScene( TWindowContextPtr& windowContext                 ,
                                   Ogre::SceneManager** sceneManager /* = NULL */   ,
                                   Ogre::SceneNode** worldNode       /* = NULL */   ,
                                   Ogre::Camera** camera             /* = NULL */   ,
@@ -575,7 +575,7 @@ CGUCEApplication::GetSceneManager( void )
 
 /*-------------------------------------------------------------------------*/
 
-CWindowManager::TWindowContextPtr
+TWindowContextPtr
 CGUCEApplication::GetPrimaryWindowContext( void )
 {GUCE_TRACE;
 
@@ -585,9 +585,9 @@ CGUCEApplication::GetPrimaryWindowContext( void )
 /*-------------------------------------------------------------------------*/
 
 bool
-CGUCEApplication::SetupOgreVideo( const GUCEF::CORE::CDataNode& rootnode                           ,
-                                  Ogre::RenderSystem** renderSystem /* = NULL */                   ,
-                                  CWindowManager::TWindowContextPtr* windowContext /* = NULL */    )
+CGUCEApplication::SetupOgreVideo( const GUCEF::CORE::CDataNode& rootnode         ,
+                                  Ogre::RenderSystem** renderSystem /* = NULL */ ,
+                                  TWindowContextPtr* windowContext /* = NULL */  )
 {GUCE_TRACE;
 
     try 
@@ -607,7 +607,7 @@ CGUCEApplication::SetupOgreVideo( const GUCEF::CORE::CDataNode& rootnode        
         /*
          *  Setup the window
          */                                                            
-        CWindowManager::TWindowContextPtr wContext;
+        TWindowContextPtr wContext;
         if ( !SetupWindow( rootnode  ,
                            &wContext ) ) return false;              
                          
@@ -649,7 +649,7 @@ CGUCEApplication::AppInitHandler( const GUCEF::CORE::CEvent& event )
             /*
              *      Startup Ogre
              */
-            CWindowManager::TWindowContextPtr windowContext;
+            TWindowContextPtr windowContext;
             if ( SetupOgreVideo( m_videoSettings ,
                                  NULL            ,
                                  &windowContext  ) )

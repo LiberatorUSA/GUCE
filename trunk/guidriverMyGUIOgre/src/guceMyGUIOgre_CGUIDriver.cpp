@@ -232,7 +232,7 @@ CGUIDriver::Shutdown( void )
 /*-------------------------------------------------------------------------*/
 
 bool
-CGUIDriver::Initialize( CORE::CWindowManager::TWindowContextPtr windowContext )
+CGUIDriver::Initialize( CORE::TWindowContextPtr windowContext )
 {GUCE_TRACE;
 
     if ( !m_initialized )
@@ -250,29 +250,32 @@ CGUIDriver::Initialize( CORE::CWindowManager::TWindowContextPtr windowContext )
                        
             m_guiSystem = new MyGUI::Gui();
             m_guiSystem->initialise( "core.xml" );
+            
+            /* feed MyGUI with input events */
+            m_inputAdapter = new CMyGUIInputAdapter( m_guiSystem );
         }
         catch ( Ogre::Exception& e )
         {
             GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_CRITICAL, "CGUIDriver: Exception while initializing the GUI system: " + e.getFullDescription() );
             return false;
-        }            
-
-        /* feed MyGUI with input events */
-        m_inputAdapter = new CMyGUIInputAdapter( m_guiSystem );
-    
+        }    
         m_initialized = true;
 
-        /* Apply the loaded configuration (if any exists) */
+        // Apply the loaded configuration (if any exists)
         if ( LoadConfig( m_guiConfig ) )
         {
             GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Successfully initialized the GUI system" );
-            return true;
         }
         else
         {
             GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Failed to initialize the GUI system" );
             return false;
         }
+    }
+    
+    if ( NULL == windowContext->GetGuiContext() )
+    {
+        windowContext->SetGuiContext( CreateGUIContext() );
     }
     
     return true;
@@ -338,11 +341,11 @@ CGUIDriver::GetDriverProperty( const CString& propertyName ) const
 
 /*-------------------------------------------------------------------------*/
 
-GUCEF::GUI::CIGUIContext*
+GUCEF::GUI::TGuiContextPtr
 CGUIDriver::CreateGUIContext()
 {GUCE_TRACE;
 
-    GUCEF::GUI::CIGUIContext* context = new CGUIContext( *this );
+    GUCEF::GUI::TGuiContextPtr context( new CGUIContext( *this ) );
     m_contextList.insert( context );
     return context;
 }
@@ -353,8 +356,8 @@ void
 CGUIDriver::DestroyGUIContext( GUCEF::GUI::CIGUIContext* context )
 {GUCE_TRACE;
     
-    m_contextList.erase( context );
-    delete context;
+    //m_contextList.erase( context );
+    //delete context;
 }
 
 /*-------------------------------------------------------------------------*/

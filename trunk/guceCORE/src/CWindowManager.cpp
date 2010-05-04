@@ -262,7 +262,7 @@ CWindowManager::OnNotify( GUCEF::CORE::CNotifier* notifier                 ,
 
 /*-------------------------------------------------------------------------*/
         
-CWindowManager::TWindowContextPtr
+TWindowContextPtr
 CWindowManager::CreateWindowContext( const GUCEF::CORE::CDataNode& params       ,
                                      const CString& title          /* = "" */   )
 {GUCE_TRACE;
@@ -330,7 +330,7 @@ CWindowManager::CreateWindowContext( const GUCEF::CORE::CDataNode& params       
 
 /*-------------------------------------------------------------------------*/
 
-CWindowManager::TWindowContextPtr 
+TWindowContextPtr 
 CWindowManager::CreateWindowContext( const CString& title ,
                                      const UInt32 width   ,
                                      const UInt32 height  ,
@@ -347,7 +347,7 @@ CWindowManager::CreateWindowContext( const CString& title ,
 
 /*-------------------------------------------------------------------------*/
 
-CWindowManager::TWindowContextPtr 
+TWindowContextPtr 
 CWindowManager::CreateWindowContext( const CString& title                  ,
                                      const UInt32 width                    ,
                                      const UInt32 height                   ,
@@ -440,7 +440,7 @@ CWindowManager::CreateWindowContext( const CString& title                  ,
 
 /*-------------------------------------------------------------------------*/
 
-CWindowManager::TWindowContextPtr 
+TWindowContextPtr 
 CWindowManager::CreateWindowContext( const CString& title                  ,
                                      const CVideoSettings& settings        ,
                                      const Ogre::NameValuePairList* params )
@@ -510,7 +510,7 @@ CWindowManager::DestroyWindowContextImp( CWindowContext* windowContext )
 
     // Perform the actual cleanup
     renderWindow->destroy();
-    GUCEF::INPUT::CInputController::Instance()->DestroyContext( &windowContext->GetInputContext() );
+    GUCEF::INPUT::CInputController::Instance()->DestroyContext( windowContext->GetInputContext() );
     delete windowContext;
     
     // Check if this was the last application window

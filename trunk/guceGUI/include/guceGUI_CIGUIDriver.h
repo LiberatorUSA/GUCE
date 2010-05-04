@@ -81,7 +81,7 @@ class GUCE_GUI_EXPORT_CPP CIGUIDriver : public GUCEF::GUI::CGUIDriver
     
     CIGUIDriver& operator=( const CIGUIDriver& src );
     
-    virtual bool Initialize( CORE::CWindowManager::TWindowContextPtr windowContext ) = 0;
+    virtual bool Initialize( CORE::TWindowContextPtr windowContext ) = 0;
     
     virtual bool Shutdown( void ) = 0;
     

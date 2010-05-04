@@ -26,11 +26,6 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#ifndef GUCECORE_MACROS_H
-#include "guceCORE_macros.h"     /* guceCORE build config and macros */
-#define GUCECORE_MACROS_H
-#endif /* GUCECORE_MACROS_H ? */
-
 #ifndef GUCEF_CORE_CNOTIFIER_H
 #include "CNotifier.h"
 #define GUCEF_CORE_CNOTIFIER_H
@@ -40,6 +35,21 @@
 #include "cloneables.h"
 #define GUCEF_CORE_CLONEABLES_H
 #endif /* GUCEF_CORE_CLONEABLES_H ? */
+
+#ifndef GUCEF_CORE_CTSHAREDPTR_H
+#include "CTSharedPtr.h"
+#define GUCEF_CORE_CTSHAREDPTR_H
+#endif /* GUCEF_CORE_CTSHAREDPTR_H ? */
+
+#ifndef GUCEF_GUI_CIGUICONTEXT_H
+#include "gucefGUI_CIGUIContext.h"
+#define GUCEF_GUI_CIGUICONTEXT_H
+#endif /* GUCEF_GUI_CIGUICONTEXT_H ? */
+
+#ifndef GUCE_CORE_MACROS_H
+#include "guceCORE_macros.h"     /* guceCORE build config and macros */
+#define GUCE_CORE_MACROS_H
+#endif /* GUCE_CORE_MACROS_H ? */
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -85,7 +95,11 @@ class GUCE_CORE_EXPORT_CPP CWindowContext : GUCEF::CORE::CNotifier
     
     Ogre::RenderWindow* GetOgreWindowPtr( void );
     
-    GUCEF::INPUT::CInputContext& GetInputContext( void );
+    GUCEF::INPUT::CInputContext* GetInputContext( void );
+    
+    void SetGuiContext( GUCEF::GUI::TGuiContextPtr& context );
+    
+    GUCEF::GUI::TGuiContextPtr GetGuiContext( void );
     
     UInt32 GetID( void ) const;
     
@@ -121,9 +135,14 @@ class GUCE_CORE_EXPORT_CPP CWindowContext : GUCEF::CORE::CNotifier
     
     Ogre::RenderWindow* m_window;
     GUCEF::INPUT::CInputContext* m_inputcontext;
+    GUCEF::GUI::TGuiContextPtr m_guiContext;
     UInt32 m_id;
     bool m_active;
 };
+
+/*-------------------------------------------------------------------------*/
+
+typedef GUCEF::CORE::CTSharedPtr< CWindowContext > TWindowContextPtr;
 
 /*-------------------------------------------------------------------------//
 //                                                                         //

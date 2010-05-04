@@ -190,18 +190,18 @@ class GUCE_CORE_EXPORT_CPP CGUCEApplication : public GUCEF::CORE::CObservingNoti
     bool SetupOgreRenderSys( const GUCEF::CORE::CDataNode& rootnode           ,
                              Ogre::RenderSystem** selectedRenderSystem = NULL );
     
-    bool SetupWindow( const GUCEF::CORE::CDataNode& rootnode                   ,
-                      CWindowManager::TWindowContextPtr* windowsContext = NULL );
+    bool SetupWindow( const GUCEF::CORE::CDataNode& rootnode   ,
+                      TWindowContextPtr* windowsContext = NULL );
     
-    bool SetupOgreScene( CWindowManager::TWindowContextPtr& windowContext ,
-                         Ogre::SceneManager** sceneManager = NULL         ,
-                         Ogre::SceneNode** worldNode       = NULL         ,
-                         Ogre::Camera** camera             = NULL         ,
-                         Ogre::Viewport** viewport         = NULL         );
+    bool SetupOgreScene( TWindowContextPtr& windowContext         ,
+                         Ogre::SceneManager** sceneManager = NULL ,
+                         Ogre::SceneNode** worldNode       = NULL ,
+                         Ogre::Camera** camera             = NULL ,
+                         Ogre::Viewport** viewport         = NULL );
 
-    bool SetupOgreVideo( const GUCEF::CORE::CDataNode& rootnode                  ,
-                         Ogre::RenderSystem** renderSystem = NULL                ,
-                         CWindowManager::TWindowContextPtr* windowContext = NULL );
+    bool SetupOgreVideo( const GUCEF::CORE::CDataNode& rootnode   ,
+                         Ogre::RenderSystem** renderSystem = NULL ,
+                         TWindowContextPtr* windowContext = NULL  );
     
     bool SetupOgreRecources( const GUCEF::CORE::CDataNode& rootnode );
     
@@ -209,7 +209,7 @@ class GUCE_CORE_EXPORT_CPP CGUCEApplication : public GUCEF::CORE::CObservingNoti
     
     Ogre::SceneManager* GetSceneManager( void );
     
-    CWindowManager::TWindowContextPtr GetPrimaryWindowContext( void );
+    TWindowContextPtr GetPrimaryWindowContext( void );
     
     bool ApplyVideoSettings( const CVideoSettings& settings );
     
@@ -259,7 +259,7 @@ class GUCE_CORE_EXPORT_CPP CGUCEApplication : public GUCEF::CORE::CObservingNoti
     COgreLogToGUCEFLogAdapter* m_ogreLogAdapter; /**< adapter for Ogre logging redirection to GUCEF logging */
     bool _fatalerror;                            /**< flag for fatal init errors */
     bool _initialized;                           /**< flag to indicate if everything is initialized */ 
-    CWindowManager::TWindowContextPtr m_windowContext;
+    TWindowContextPtr m_windowContext;
     TImageCodecMap m_imageCodecMap;
     GUCEF::CORE::CCodecRegistry::TCodecFamilyRegistryPtr m_gucefImageCodecs;
     CMeshManager m_meshManager;
