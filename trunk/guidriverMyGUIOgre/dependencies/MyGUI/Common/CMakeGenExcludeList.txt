@@ -1,4 +1,2 @@
-Base
-Input
 precompiled.h
 precompiled.cpp
