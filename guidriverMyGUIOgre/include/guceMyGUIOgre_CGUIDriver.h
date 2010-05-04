@@ -88,13 +88,11 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     
     static CGUIDriver* Instance( void );
     
-    virtual bool Initialize( CORE::CWindowManager::TWindowContextPtr windowContext );
+    virtual bool Initialize( CORE::TWindowContextPtr windowContext );
     
     virtual bool Shutdown( void );
     
-    virtual GUCEF::GUI::CIGUIContext* CreateGUIContext();
-    
-    virtual void DestroyGUIContext( GUCEF::GUI::CIGUIContext* context );
+    virtual GUCEF::GUI::TGuiContextPtr CreateGUIContext();
     
     virtual TGUIContextSet GetContextList( void );
     
@@ -137,6 +135,8 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     CGUIDriver( const CGUIDriver& src );        
     virtual ~CGUIDriver();    
     CGUIDriver& operator=( const CGUIDriver& src );
+    
+    void DestroyGUIContext( GUCEF::GUI::CIGUIContext* context );
     
     private:
     

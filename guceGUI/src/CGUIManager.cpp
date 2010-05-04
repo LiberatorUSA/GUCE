@@ -221,7 +221,7 @@ CGUIManager::OnNotify( GUCEF::CORE::CNotifier* notifier                  ,
 /*-------------------------------------------------------------------------*/
 
 bool
-CGUIManager::Init( CORE::CWindowManager::TWindowContextPtr windowContext )
+CGUIManager::Init( CORE::TWindowContextPtr& windowContext )
 {GUCE_TRACE;
 
     if ( !m_initialized )
@@ -254,7 +254,9 @@ CGUIManager::Init( CORE::CWindowManager::TWindowContextPtr windowContext )
                     {
                         m_initialized = true;
                         GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIManager: Successfully initialized the GUI system" );
-                        NotifyObservers( GUIInitializedEvent );
+                        
+                        TGUIInitializedEventData eData( windowContext );
+                        NotifyObservers( GUIInitializedEvent, &eData );
                         return true;
                     }
                     else

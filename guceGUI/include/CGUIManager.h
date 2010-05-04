@@ -29,6 +29,11 @@
 #define GUCEF_CORE_COBSERVINGNOTIFIER_H
 #endif /* GUCEF_CORE_COBSERVINGNOTIFIER_H ? */
 
+#ifndef GUCEF_CORE_CTCLONEABLEOBJ_H
+#include "CTCloneableObj.h"
+#define GUCEF_CORE_CTCLONEABLEOBJ_H
+#endif /* GUCEF_CORE_CTCLONEABLEOBJ_H ? */
+
 #ifndef GUCE_GUI_CIGUIDRIVER_H
 #include "guceGUI_CIGUIDriver.h"
 #define GUCE_GUI_CIGUIDRIVER_H
@@ -73,6 +78,8 @@ class GUCE_GUI_EXPORT_CPP CGUIManager : public GUCEF::CORE::CObservingNotifier ,
     
     public:
     
+    typedef GUCEF::CORE::CTCloneableObj< CORE::TWindowContextPtr > TGUIInitializedEventData;
+    
     static CGUIManager* Instance( void );
     
     virtual bool LoadConfig( const GUCEF::CORE::CDataNode& rootNode );
@@ -106,7 +113,7 @@ class GUCE_GUI_EXPORT_CPP CGUIManager : public GUCEF::CORE::CObservingNotifier ,
     virtual ~CGUIManager();
     CGUIManager& operator=( const CGUIManager& src );
     
-    bool Init( CORE::CWindowManager::TWindowContextPtr windowContext );
+    bool Init( CORE::TWindowContextPtr& windowContext );
     
     void ShutdownGUISystems( void );
     
