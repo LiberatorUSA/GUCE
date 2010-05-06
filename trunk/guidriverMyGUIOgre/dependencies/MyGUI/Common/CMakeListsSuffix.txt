@@ -1,5 +1,5 @@
 
 add_library( MyGUI.Common STATIC ${ALL_FILES} )
-add_dependencies( MyGUI.Common OIS )
-target_link_libraries( MyGUI.Common OIS )
+add_dependencies( MyGUI.Common OgreMain OIS MyGUIEngine MyGUI.OgrePlatform )
+target_link_libraries( MyGUI.Common OgreMain OIS MyGUIEngine MyGUI.OgrePlatform )
 GUCE_config_lib( MyGUI.Common )
