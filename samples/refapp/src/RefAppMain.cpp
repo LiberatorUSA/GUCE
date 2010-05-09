@@ -91,18 +91,25 @@ main( const char* argv[] ,
                 
     try 
     {
+        GUCEF::CORE::CLogManager* logManager = GUCEF::CORE::CLogManager::Instance();
         
         GUCEF::CORE::CString logFilename = GUCEF::CORE::RelativePath( "$CURWORKDIR$" );
-        GUCEF::CORE::AppendToPath( logFilename, "RefAppLog.txt" );
+        GUCEF::CORE::AppendToPath( logFilename, "GU_MG.txt" );
         GUCEF::CORE::CFileAccess logFileAccess( logFilename, "w" );
         
         GUCEF::CORE::CStdLogger logger( logFileAccess );
-        GUCEF::CORE::CLogManager::Instance()->AddLogger( &logger ); 
+        #ifdef GUCE_CORE_DEBUG_MODE
+        logger.SetMinimalLogLevel( GUCEF::CORE::LOGLEVEL_NORMAL );
+        #endif /* GUCE_CORE_DEBUG_MODE ? */
+        logManager->AddLogger( &logger ); 
 
         #if defined( GUCEF_MSWIN_BUILD ) && defined( GUCE_CORE_DEBUG_MODE )
         GUCEF::CORE::CMSWinConsoleLogger consoleOut;
-        GUCEF::CORE::CLogManager::Instance()->AddLogger( &consoleOut );
+        consoleOut.SetMinimalLogLevel( GUCEF::CORE::LOGLEVEL_NORMAL );
+        logManager->AddLogger( &consoleOut );
         #endif /* GUCEF_MSWIN_BUILD && GUCE_CORE_DEBUG_MODE ? */
+        
+        logManager->FlushBootstrapLogEntriesToLogs();
         
         /*
          *      Get some pointers to system components
@@ -111,18 +118,23 @@ main( const char* argv[] ,
         GUCEF::CORE::CDStoreCodecPluginManager* dataStorageCodecMan = GUCEF::CORE::CDStoreCodecPluginManager::Instance();        
         GUCE::CORE::CGUCEApplication::Instance();
         GUCE::GUI::CGUIManager::Instance();
+
+        #if defined( GUCEF_MSWIN_BUILD )
+        GUCEF::CORE::CMsWin32ConsoleWindow win32Console;
+        win32Console.ConsoleWindowCreate();
+	    win32Console.Show();
+        #endif
+         
+        // Load data store codec's so we can load config
+        GUCEF::CORE::CDStoreCodecPluginManager* dstoreCodecPluginManager = GUCEF::CORE::CDStoreCodecPluginManager::Instance();
+        dstoreCodecPluginManager->LoadAll( GUCEF::CORE::RelativePath( "$MODULEDIR$" ) );
         
         CRefAppSubSystem* refAppSubSys = new CRefAppSubSystem();
 
-        // Load all plugins
-        GUCEF::CORE::CPluginControl* pluginControl = GUCEF::CORE::CPluginControl::Instance();
-        pluginControl->SetPluginDir( "$CURWORKDIR$\\plugins" );
-        pluginControl->LoadAll(); 
-
         /*
          *      Load the configuration
-         */
-        configStore->SetConfigFile( "$CURWORKDIR$\\RefAppConfig.xml" );                
+         */ 
+        configStore->SetConfigFile( "$MODULEDIR$\\RefAppConfig.xml" );                
         if ( configStore->LoadConfig() )
         {
             /*

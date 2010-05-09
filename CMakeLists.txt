@@ -298,6 +298,7 @@ add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatf
 add_subdirectory( guidriverMyGUIOgre )
 
 # Setup GUCE guidriverCEGUIOgre Plugin module
+add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI/dependencies/pcre )
 add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
 add_subdirectory( guidriverCEGUIOgre )
 

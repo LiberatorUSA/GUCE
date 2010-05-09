@@ -1,10 +1,9 @@
 bin
-dependencies
 documentation
 ImageCodecModules
 lib
 makefiles
-RenderModules
+RendererModules
 Samples
 ScriptingModules
 WindowRendererSets

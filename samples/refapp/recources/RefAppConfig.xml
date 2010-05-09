@@ -16,9 +16,9 @@
 		<VFS>
 			<CFPCodecPluginManager plugincount="0" />
 			<CVFS maxmemload="1024000" >
-				<vfsroot path="$CURWORKDIR$\data" writeable="false" />
-				<vfsroot path="$CURWORKDIR$\data\tmp" writeable="true" />
-				<vfsroot path="$CURWORKDIR$\$UPDIR$\SampleData" writeable="false" />
+				<vfsroot path="$MODULEDIR$\data" writeable="false" />
+				<vfsroot path="$MODULEDIR$\data\tmp" writeable="true" />
+				<vfsroot path="$MODULEDIR$\..\..\..\SampleData" writeable="false" />
 			</CVFS>
 		</VFS>
 		<CVFS maxmemload="1024" >
@@ -183,17 +183,17 @@
 	<GUCE>
 		<CORE>
 			<CGUCEApplication>
-				<INPUTDRIVER module="$CURWORKDIR$\plugins\inputdriverOIS_d" >
+				<INPUTDRIVER module="inputdriverOIS_d" >
 					<INPUTDRIVERPARAM key="HINSTANCE" value="$ENVVAR:HINSTANCE$" />
 					<INPUTDRIVERPARAM key="HWND" value="$ENVVAR:HWND$" />
 				</INPUTDRIVER>
 				<OGRE>
-					<OGREPlugins plugindir="$CURWORKDIR$" >
+					<OGREPlugins plugindir="$MODULEDIR$" >
 						<OGREPlugin filename="RenderSystem_GL" />
 						<OGREPlugin filename="Plugin_OctreeSceneManager" />
 					</OGREPlugins>
 					<OgreRecourceGroups>
-						<OgreRecourceGroup name="Bootstrap" path="$CURWORKDIR$\$UPDIR$\SampleData\Ogre\OgreCore.zip" type="Zip" />
+						<OgreRecourceGroup name="Bootstrap" path="$MODULEDIR$\..\..\..\SampleData\Ogre\OgreCore.zip" type="Zip" />
 				                <OgreRecourceGroup name="GUI" path="CEGUI/configs" type="gucefVFS" />
 						<OgreRecourceGroup name="GUI" path="CEGUI/fonts" type="gucefVFS" />
 						<OgreRecourceGroup name="GUI" path="CEGUI/imagesets" type="gucefVFS" />
