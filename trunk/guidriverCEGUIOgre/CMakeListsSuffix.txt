@@ -1,6 +1,6 @@
 
-add_library( guidriverCEGUIOgre ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( guidriverCEGUIOgre guceCORE guceGUI )
-target_link_libraries( guidriverCEGUIOgre guceCORE guceGUI )
+add_library( guidriverCEGUIOgre ${ALL_FILES} )
+add_dependencies( guidriverCEGUIOgre guceCORE guceGUI CEGUI )
+target_link_libraries( guidriverCEGUIOgre guceCORE guceGUI CEGUI )
 set_target_properties( guidriverCEGUIOgre PROPERTIES COMPILE_DEFINITIONS GUCE_CEGUIOGRE_BUILD_MODULE )
 GUCE_config_lib( guidriverCEGUIOgre )

@@ -298,8 +298,8 @@ add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatf
 add_subdirectory( guidriverMyGUIOgre )
 
 # Setup GUCE guidriverCEGUIOgre Plugin module
-#add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
-#add_subdirectory( guidriverCEGUIOgre )
+add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
+add_subdirectory( guidriverCEGUIOgre )
 
 # Setup GUCE Sample applications
 add_subdirectory( samples/refapp )
