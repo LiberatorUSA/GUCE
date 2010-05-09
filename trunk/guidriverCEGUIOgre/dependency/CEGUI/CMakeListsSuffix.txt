@@ -1,6 +1,6 @@
 
 add_library( CEGUI ${ALL_FILES} )
-add_dependencies( CEGUI freetype )
-target_link_libraries( CEGUI freetype )
+add_dependencies( CEGUI freetype pcre )
+target_link_libraries( CEGUI freetype pcre )
 set_target_properties( CEGUI PROPERTIES COMPILE_DEFINITIONS CEGUIBASE_EXPORTS )
 GUCE_config_lib( CEGUI )

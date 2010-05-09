@@ -90,7 +90,7 @@ class COgreDebugOverlay : protected Ogre::FrameListener
     
     Ogre::Overlay* m_debugOverlay;
     Ogre::OverlayManager* m_overlayManager;
-    GUCE::CORE::CWindowManager::TWindowContextPtr m_window;
+    GUCE::CORE::TWindowContextPtr m_window;
 };
 
 /*-------------------------------------------------------------------------*/
