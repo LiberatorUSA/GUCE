@@ -181,12 +181,13 @@ CFormBackendImp::CreateAndHookWrapperForWindow( MyGUI::Widget* widget )
     {
         widgetWrapper = new TBasicWidgetImp();
         static_cast< TBasicWidgetImp* >( widgetWrapper )->Hook( widget );
-    }    
-    //if ( "Button" == typeName )
-    //{
-    //    widgetWrapper = new CButtonImp();
-    //    static_cast< CButtonImp* >( widgetWrapper )->Hook( static_cast< CEGUI::PushButton* >( widget ) );
-    //}
+    }
+    else    
+    if ( "Button" == typeName )
+    {
+        widgetWrapper = new CButtonImp();
+        static_cast< CButtonImp* >( widgetWrapper )->Hook( static_cast< MyGUI::Button* >( widget ) );
+    }
     //else
     //if ( "Editbox" == typeName )
     //{
@@ -244,12 +245,12 @@ CFormBackendImp::CreateAndHookWrapperForWindow( MyGUI::Widget* widget )
     //    widgetWrapper = new CTabContentPaneImp();
     //    static_cast< CTabContentPaneImp* >( widgetWrapper )->Hook( window );        
     //}        
-    //else        
-    //if ( "FrameWindow" == typeName )
-    //{
-    //    widgetWrapper = new CWindowImp();
-    //    static_cast< CWindowImp* >( widgetWrapper )->Hook( static_cast< CEGUI::FrameWindow* >( window ) );        
-    //}
+    else        
+    if ( "Window" == typeName )
+    {
+        widgetWrapper = new CWindowImp();
+        static_cast< CWindowImp* >( widgetWrapper )->Hook( static_cast< MyGUI::Window* >( widget ) );        
+    }
     //else        
     //if ( "MultiColumnList" == typeName )
     //{
@@ -268,8 +269,15 @@ CFormBackendImp::CreateAndHookWrapperForWindow( MyGUI::Widget* widget )
     //    widgetWrapper = new TBasicWidgetImp();
     //    static_cast< TBasicWidgetImp* >( widgetWrapper )->Hook( window );
     //}
+    else
+    {
+        GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_IMPORTANT, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Unable match widget type to wrapper for widget type: " + typeName );
+    }    
     
-    GUCEF_DEBUG_LOG( 0, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Wrapped and hooked GUI widget for CEGUI widget of type " + typeName );
+    if ( NULL != widgetWrapper )
+    {
+        GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Wrapped and hooked GUI widget for CEGUI widget of type " + typeName );
+    }
     return widgetWrapper;
 }
 
@@ -351,7 +359,7 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
     }
     
     GUCEF_DEBUG_LOG( 0, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Successfully loaded a GUI Form layout" );
-    return false; 
+    return true; 
 }
 
 /*-------------------------------------------------------------------------*/

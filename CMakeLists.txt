@@ -278,6 +278,9 @@ add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D10 )
 add_subdirectory( dependencies/Ogre/RenderSystems/Direct3D11 )
 add_subdirectory( dependencies/Ogre/RenderSystems/GLES )
 add_subdirectory( dependencies/Ogre/PlugIns/OctreeSceneManager )
+add_subdirectory( dependencies/Ogre/Samples/Common )
+add_subdirectory( dependencies/Ogre/Samples/Browser )
+add_subdirectory( dependencies/Ogre/Samples/Skybox )
 
 # Setup GUCE modules
 add_subdirectory( guceCORE )
