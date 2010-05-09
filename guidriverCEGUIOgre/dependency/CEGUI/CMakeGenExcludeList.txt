@@ -1,0 +1,12 @@
+bin
+dependencies
+documentation
+ImageCodecModules
+lib
+makefiles
+RenderModules
+Samples
+ScriptingModules
+WindowRendererSets
+XMLParserModules
+XMLRefSchema
