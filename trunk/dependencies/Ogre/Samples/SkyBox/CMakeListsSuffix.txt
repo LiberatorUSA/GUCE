@@ -1,0 +1,5 @@
+add_library( OgreSampleSkybox ${ALL_FILES} )
+add_dependencies( OgreSampleSkybox OgreSamplesCommon OgreMain )
+target_link_libraries( OgreSampleSkybox OgreSamplesCommon OgreMain )
+#set_target_properties( OgreXMLConvertor PROPERTIES COMPILE_DEFINITIONS "MYGUI_USE_FREETYPE")
+GUCE_config_lib( OgreSampleSkybox )

@@ -1,0 +1,5 @@
+add_library( OgreSamplesCommon STATIC ${ALL_FILES} )
+add_dependencies( OgreSamplesCommon OgreMain OIS )
+target_link_libraries( OgreSamplesCommon OgreMain OIS )
+#set_target_properties( OgreSamplesCommon PROPERTIES COMPILE_DEFINITIONS "MYGUI_USE_FREETYPE")
+GUCE_config_lib( OgreSamplesCommon )
