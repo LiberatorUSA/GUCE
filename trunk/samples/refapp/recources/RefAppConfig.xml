@@ -215,15 +215,10 @@
 			</CGUCEApplication>
 		</CORE>
 		<GUI>
-			<CGUIManager>
-				<LoadScheme name="TaharezLook.scheme" resourceGroup="GUI" />
-				<LoadImageSet name="icons.imageset" resourceGroup="GUI" />
-				<!-- <LoadLookNFeel name="" resourceGroup="GUI" /> -->
-				<!-- <LoadLayout name="" resourceGroup="GUIlayouts" namePrefix="" /> -->
-				<LoadFont name="tahoma-12.font" resourceGroup="GUI" />
-				<DefaultFont name="tahoma-12" />
-				<DefaultMouseCursor imageSet="TaharezLook" imageName="MouseArrow" />
-			</CGUIManager>
+			<CGUIManager Driver="MyGUIOgre" />
+			<guceMyGUIOgre>
+				<ResourceGroup Name="guceMyGUIOgre" />
+			</guceMyGUIOgre>
 		</GUI>
 	</GUCE>
 </REFAPPCONFIG>

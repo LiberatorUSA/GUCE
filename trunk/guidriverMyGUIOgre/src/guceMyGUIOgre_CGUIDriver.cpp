@@ -99,8 +99,8 @@ CGUIDriver* CGUIDriver::g_instance = NULL;
 typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CFormBackend, CFormBackendImp > TFormBackendFactory;
 
 typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, TBasicWidgetImp >    TWidgetFactory;
-//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CWindowImp >         TWindowFactory;
-//typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CButtonImp >         TButtonFactory;
+typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CWindowImp >         TWindowFactory;
+typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CButtonImp >         TButtonFactory;
 //typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CPushButtonImp >     TPushButtonFactory;
 //typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CEditboxImp >        TEditboxFactory;
 //typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CListboxImp >        TListboxFactory;
@@ -133,12 +133,14 @@ CGUIDriver::CGUIDriver( void )
       m_guiConfig()           ,
       m_formFactory()         ,
       m_widgetFactory()       ,
-      m_contextList()
+      m_contextList()         ,
+      m_resourceGroup()
 {GUCE_TRACE;
 
+    m_resourceGroup = GetDriverName();
     m_widgetFactory.RegisterConcreteFactory( "Widget", new TWidgetFactory() );
-    //widgetFactory.RegisterConcreteFactory( "Window", new TWindowFactory() );
-    //widgetFactory.RegisterConcreteFactory( "Button", new TButtonFactory() );
+    m_widgetFactory.RegisterConcreteFactory( "Window", new TWindowFactory() );
+    m_widgetFactory.RegisterConcreteFactory( "Button", new TButtonFactory() );
     //widgetFactory.RegisterConcreteFactory( "PushButton", new TPushButtonFactory() );
     //widgetFactory.RegisterConcreteFactory( "Editbox", new TEditboxFactory() );
     //widgetFactory.RegisterConcreteFactory( "Listbox", new TListboxFactory() );
@@ -162,8 +164,8 @@ CGUIDriver::~CGUIDriver()
 {GUCE_TRACE;
 
     m_widgetFactory.UnregisterConcreteFactory( "Widget" );
-    //widgetFactory.UnregisterConcreteFactory( "Window" );
-    //widgetFactory.UnregisterConcreteFactory( "Button" );
+    m_widgetFactory.UnregisterConcreteFactory( "Window" );
+    m_widgetFactory.UnregisterConcreteFactory( "Button" );
     //widgetFactory.UnregisterConcreteFactory( "PushButton" );
     //widgetFactory.UnregisterConcreteFactory( "Editbox" );
     //widgetFactory.UnregisterConcreteFactory( "Listbox" );
@@ -246,7 +248,7 @@ CGUIDriver::Initialize( CORE::TWindowContextPtr windowContext )
             assert( m_window != NULL );
 
             m_myguiPlatform = new MyGUI::OgrePlatform();
-            m_myguiPlatform->initialise( m_window, CORE::CGUCEApplication::Instance()->GetSceneManager() );
+            m_myguiPlatform->initialise( m_window, CORE::CGUCEApplication::Instance()->GetSceneManager(), m_resourceGroup );
                        
             m_guiSystem = new MyGUI::Gui();
             m_guiSystem->initialise( "core.xml" );
@@ -287,33 +289,19 @@ bool
 CGUIDriver::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )       
 {GUCE_TRACE;             
 
-    const GUCEF::CORE::CDataNode* m = NULL;
-    
-    if ( &m_guiConfig != &rootNode )
+    const GUCEF::CORE::CDataNode* ourRoot = rootNode.FindChild( GetDriverName() );
+    if ( NULL != ourRoot )
     {
-        m = rootNode.Find( "MyGUI" );
-
-        if ( m != NULL )
+        const GUCEF::CORE::CDataNode* node = ourRoot->FindChild( "ResourceGroup" );
+        if ( NULL != node )
         {
-            m_guiConfig.ClearAttributes();
-            m_guiConfig.DelSubTree();
-            m_guiConfig.Copy( *m );
-        }
-        else
-        {
-            //return false;
+            CString resourceGroup = node->GetAttributeValue( "Name" );
+            if ( resourceGroup.Length() > 0 )
+            {
+                SetResourceGroup( resourceGroup );
+            }
         }
     }
-    else
-    {
-        m = &m_guiConfig;
-    }
-    
-    if ( m_initialized )
-    {       
-
-    }
-    
     return true;
 }
 
@@ -479,6 +467,24 @@ CGUIDriver::GetClassTypeName( void ) const
 
     static CString classTypeName = "GUCE::MYGUIOGRE::CGUIDriver";
     return classTypeName;
+}
+
+/*-------------------------------------------------------------------------*/
+
+void
+CGUIDriver::SetDriverResourceGroup( const CString& resourceGroup )
+{GUCE_TRACE;
+
+    m_resourceGroup = resourceGroup;
+}
+
+/*-------------------------------------------------------------------------*/
+    
+const CString&
+CGUIDriver::GetDriverResourceGroup( void ) const
+{GUCE_TRACE;
+
+    return m_resourceGroup;
 }
 
 /*-------------------------------------------------------------------------//
