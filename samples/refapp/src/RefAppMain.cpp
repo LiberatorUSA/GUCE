@@ -94,7 +94,7 @@ main( const char* argv[] ,
         GUCEF::CORE::CLogManager* logManager = GUCEF::CORE::CLogManager::Instance();
         
         GUCEF::CORE::CString logFilename = GUCEF::CORE::RelativePath( "$CURWORKDIR$" );
-        GUCEF::CORE::AppendToPath( logFilename, "GU_MG.txt" );
+        GUCEF::CORE::AppendToPath( logFilename, "GUCE_RefApp_Log.txt" );
         GUCEF::CORE::CFileAccess logFileAccess( logFilename, "w" );
         
         GUCEF::CORE::CStdLogger logger( logFileAccess );

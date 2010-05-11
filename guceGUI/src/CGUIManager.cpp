@@ -349,7 +349,8 @@ CGUIManager::RegisterGUIDriver( const CString& driverName ,
     m_drivers[ driverName ] = &driver;
     
     if ( m_selectedDriverName.IsNULLOrEmpty() )
-    {
+    {        
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: Setting the selected GUI driver to " + driverName );
         m_selectedDriverName = driverName;
     }
 }
@@ -363,7 +364,17 @@ CGUIManager::UnregisterGUIDriver( const CString& driverName )
     TDriverMap::iterator i = m_drivers.find( driverName );
     if ( i != m_drivers.end() )
     {
-        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: unregistering GUI driver: " + driverName );        
+        GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: Unregistering GUI driver: " + driverName ); 
+        
+        if ( (*i).second->Shutdown() )
+        {
+            GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "GUCE CGUIManager: GUI driver successfully shutdown. Reason: because it is being unregistered. Name: " + driverName );
+        }
+        else
+        {
+            GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_IMPORTANT, "GUCE CGUIManager: GUI driver failed to shutdown. Reason: Shutdown because it is being unregistered. Name: " + driverName );
+        }
+               
         m_drivers.erase( i );
     }
 }

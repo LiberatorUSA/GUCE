@@ -123,6 +123,10 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     virtual const CString& GetClassTypeName( void ) const;
     
     virtual CString GetDriverProperty( const CString& propertyName ) const;
+
+    virtual void SetDriverResourceGroup( const CString& resourceGroup );
+    
+    virtual const CString& GetDriverResourceGroup( void ) const;
     
     private:
     friend class CModule;
@@ -151,6 +155,7 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     GUCEF::GUI::CFormFactory m_formFactory;
     GUCEF::GUI::CWidgetFactory m_widgetFactory;
     TGUIContextSet m_contextList;
+    CString m_resourceGroup;
 };
 
 /*-------------------------------------------------------------------------//
