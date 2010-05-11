@@ -23,6 +23,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
+#include <assert.h>
+
 #ifndef GUCE_MYGUIOGRE_CGUIDRIVER_H
 #include "guceMyGUIOgre_CGUIDriver.h"
 #define GUCE_MYGUIOGRE_CGUIDRIVER_H
@@ -46,9 +48,13 @@ namespace MYGUIOGRE {
 //-------------------------------------------------------------------------*/
 
 CGUIContext::CGUIContext( CGUIDriver& myGuiDriver )
-    : GUCEF::GUI::CIGUIContext()
+    : GUCEF::GUI::CIGUIContext() ,
+      m_driver( &myGuiDriver )   ,
+      m_widgetSet()              ,
+      m_formSet()
 {GUCE_TRACE;
 
+    assert( NULL != m_driver );
 }
 
 /*-------------------------------------------------------------------------*/
