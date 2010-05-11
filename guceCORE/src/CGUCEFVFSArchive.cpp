@@ -199,12 +199,15 @@ CGUCEFVFSArchive::findFileInfo( const Ogre::String& pattern ,
     GUCEF::VFS::CVFS::TStringSet::iterator i = list.begin();
     while ( i != list.end() )
     {
+        CString vfsPath;
+        _vfs->GetVfsPathForAbsolutePath( (*i), vfsPath );
+        
         Ogre::FileInfo fileInfo;
         fileInfo.archive = this;
         fileInfo.filename = (*i);
-        fileInfo.path = GUCEF::CORE::StripFilename( (*i) );
+        //fileInfo.path = GUCEF::CORE::StripFilename( (*i) );
         fileInfo.basename = GUCEF::CORE::ExtractFilename( (*i) );
-        fileInfo.uncompressedSize = _vfs->GetFileSize( (*i) );
+        fileInfo.uncompressedSize = _vfs->GetFileSize( vfsPath );
         fileInfo.compressedSize = fileInfo.uncompressedSize;
         fileInfoList->push_back( fileInfo );
         ++i;
