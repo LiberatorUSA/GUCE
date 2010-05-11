@@ -276,7 +276,7 @@ CFormBackendImp::CreateAndHookWrapperForWindow( MyGUI::Widget* widget )
     
     if ( NULL != widgetWrapper )
     {
-        GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Wrapped and hooked GUI widget for CEGUI widget of type " + typeName );
+        GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Wrapped and hooked GUI widget of type " + widgetWrapper->GetType() + " for MyGUI widget of type " + typeName );
     }
     return widgetWrapper;
 }
@@ -341,7 +341,8 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
         return false;
     }
     
-    // Now that we completed loading lets see what we got from MyGUI    
+    // Now that we completed loading lets see what we got from MyGUI
+    m_rootWindow = NULL;    
     MyGUI::VectorWidgetPtr::iterator i = rootWidgets.begin();
     while ( i != rootWidgets.end() )
     {
@@ -352,6 +353,10 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
         {
             CString localWidgetName = wrappedRootWidget->GetName().SubstrToChar( '/', false );
             m_widgetMap[ localWidgetName ] = wrappedRootWidget;
+            if ( NULL == m_rootWindow )
+            {
+                m_rootWindow = wrappedRootWidget;
+            }
             WrapAndHookChildWindows( rootWidget );
         }
         rootWidget->setVisible( false );
