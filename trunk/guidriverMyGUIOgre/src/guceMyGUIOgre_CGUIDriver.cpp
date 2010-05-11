@@ -71,6 +71,16 @@
 #define GUCE_MYGUIOGRE_CGUICONTEXT_H
 #endif /* GUCE_MYGUIOGRE_CGUICONTEXT_H ? */
 
+#ifndef GUCE_MYGUIOGRE_CBUTTONIMP_H
+#include "guceMyGUIOgre_CButtonImp.h"
+#define GUCE_MYGUIOGRE_CBUTTONIMP_H
+#endif /* GUCE_MYGUIOGRE_CBUTTONIMP_H ? */
+
+#ifndef GUCE_MYGUIOGRE_CWINDOWIMP_H
+#include "guceMyGUIOgre_CWindowImp.h"
+#define GUCE_MYGUIOGRE_CWINDOWIMP_H
+#endif /* GUCE_MYGUIOGRE_CWINDOWIMP_H ? */
+
 #include "guceMyGUIOgre_CGUIDriver.h"
 
 /*-------------------------------------------------------------------------//
@@ -298,7 +308,7 @@ CGUIDriver::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )
             CString resourceGroup = node->GetAttributeValue( "Name" );
             if ( resourceGroup.Length() > 0 )
             {
-                SetResourceGroup( resourceGroup );
+                SetDriverResourceGroup( resourceGroup );
             }
         }
     }

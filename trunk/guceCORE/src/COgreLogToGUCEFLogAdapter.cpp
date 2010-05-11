@@ -80,6 +80,25 @@ COgreLogToGUCEFLogAdapter::~COgreLogToGUCEFLogAdapter()
 
 /*-------------------------------------------------------------------------*/
 
+inline
+Int32
+OgreMsgLvlToGUCEFMsgLvl( Ogre::LogMessageLevel lml ) 
+{GUCE_TRACE;
+
+    switch ( lml )
+    {
+        case Ogre::LML_TRIVIAL: return GUCEF::CORE::LOGLEVEL_BELOW_NORMAL;
+        case Ogre::LML_NORMAL: return GUCEF::CORE::LOGLEVEL_NORMAL;
+        case Ogre::LML_CRITICAL: return GUCEF::CORE::LOGLEVEL_CRITICAL;
+        default:
+        {
+            return GUCEF::CORE::LOGLEVEL_NORMAL;
+        }
+    };
+}
+
+/*-------------------------------------------------------------------------*/
+
 void
 COgreLogToGUCEFLogAdapter::messageLogged( const Ogre::String& message , 
                                           Ogre::LogMessageLevel lml   , 
@@ -87,11 +106,11 @@ COgreLogToGUCEFLogAdapter::messageLogged( const Ogre::String& message ,
                                           const Ogre::String& logName )
 {GUCE_TRACE;
 
-    GUCEF::CORE::CString logMessage( "[OGRE] " );
+    CString logMessage( "[OGRE] " );
     logMessage += logName.c_str();
     logMessage += message.c_str(); 
     m_logManager->Log( GUCEF::CORE::CLogManager::LOG_SYSTEM ,
-                       static_cast< Int32 >( lml )          ,
+                       OgreMsgLvlToGUCEFMsgLvl( lml )       ,
                        logMessage                           );
 }
 
