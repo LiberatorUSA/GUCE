@@ -64,6 +64,8 @@ public:
 
 	bool saveOrLoadLayout(bool Save, bool Silent, const MyGUI::UString& _file);
 	void loadFile(const std::wstring& _file);
+	
+	virtual void prepare(int argc, char **argv);
 
 private:
 	void loadSettings(const MyGUI::UString& _fileName, bool _internal);

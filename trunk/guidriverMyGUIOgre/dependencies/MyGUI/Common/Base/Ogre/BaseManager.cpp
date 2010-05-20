@@ -41,6 +41,12 @@ namespace base
 	BaseManager::~BaseManager()
 	{
 	}
+	
+	void
+	BaseManager::SetResourcePath( const Ogre::String& resourcePath )
+	{
+	    mResourcePath = resourcePath;
+	}
 
 	bool BaseManager::create()
 	{
