@@ -49,6 +49,8 @@ namespace base
 	/*internal:*/
 		Ogre::SceneManager* getSceneManager() { return mSceneManager; }
 		Ogre::Camera* getCamera() { return mCamera; }
+		
+		void SetResourcePath( const Ogre::String& resourcePath );
 
 	protected:
 		virtual void createScene() { }
