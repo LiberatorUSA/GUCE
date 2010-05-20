@@ -88,7 +88,7 @@ class GUCE_GUI_EXPORT_CPP CMeshViewer : public GUCEF::CORE::CObservingNotifier
     
     CMeshViewerForm& GetMeshViewerForm( void );
     
-    GUCEF::GUI::CFileSystemDialog& GetFileOpenDialog( void );
+    GUCEF::GUI::CFileSystemDialog* GetFileOpenDialog( void );
     
     virtual const CString& GetClassTypeName( void ) const;
     
