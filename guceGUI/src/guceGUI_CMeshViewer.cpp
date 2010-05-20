@@ -143,11 +143,11 @@ CMeshViewer::GetMeshViewerForm( void )
 
 /*-------------------------------------------------------------------------*/
     
-GUCEF::GUI::CFileSystemDialog&
+GUCEF::GUI::CFileSystemDialog*
 CMeshViewer::GetFileOpenDialog( void )
 {GUCE_TRACE;
 
-    return *m_fileOpenDialog;
+    return m_fileOpenDialog;
 }
 
 /*-------------------------------------------------------------------------*/
