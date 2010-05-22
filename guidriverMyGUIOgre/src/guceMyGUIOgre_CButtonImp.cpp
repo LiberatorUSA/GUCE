@@ -102,6 +102,8 @@ void
 CButtonImp::OnMouseClick( MyGUI::Widget* sender )
 {GUCE_TRACE;
 
+    GUCEF_USER_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "MyGUIOgre: User clicked button \"" + GetName() + "\"" );
+    
     CWidgetImp< GUCEF::GUI::CButton >::OnMouseClick( sender );    
     NotifyObservers( ButtonClickedEvent );
 }
@@ -115,6 +117,8 @@ CButtonImp::OnMouseButtonPressed( MyGUI::Widget* sender     ,
                                   MyGUI::MouseButton button )
 {GUCE_TRACE;
 
+    GUCEF_USER_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "MyGUIOgre: User pressed button \"" + GetName() + "\"" );
+    
     CWidgetImp< GUCEF::GUI::CButton >::OnMouseButtonPressed( sender ,
                                                              left   ,
                                                              top    ,
@@ -131,6 +135,8 @@ CButtonImp::OnMouseButtonReleased( MyGUI::Widget* sender     ,
                                    MyGUI::MouseButton button )
 {GUCE_TRACE;
 
+    GUCEF_USER_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "MyGUIOgre: User released button \"" + GetName() + "\"" );
+    
     CWidgetImp< GUCEF::GUI::CButton >::OnMouseButtonReleased( sender ,
                                                               left   ,
                                                               top    ,
