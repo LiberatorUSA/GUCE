@@ -1,6 +1,18 @@
 @echo off
 
-SET GUCEF_THEBATCHDIR=%CD%
+SET GUCE_THEBATCHDIR=%CD%
+
+IF NOT DEFINED GUCEF_HOME (
+  ECHO WARNING: GUCEF_HOME not defined, falling back to relative path guesswork
+  SET GUCEF_HOME=%CD%\..\..\..\..\GUCEF\trunk
+)
+ECHO GUCEF_HOME=%GUCEF_HOME%
+
+IF NOT DEFINED GUCEF_HOME (
+  ECHO Error: GUCEF_HOME is not defined
+  GOTO END
+)
+
 GOTO FIND_GUCEF_CMAKE_SLN_DEBUG_MVC9_PROJECTGENERATOR
 
 
@@ -8,14 +20,14 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_RELEASE_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCEF_THEBATCHDIR%\..\..\tools\ProjectGenerator\bin\ReleasedBins\Win32\5April2011\
+SET GENERATORPATH=%GUCEF_HOME%\tools\ProjectGenerator\bin\ReleasedBins\Win32\5April2011\
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
 ECHO Test path = "%EXETEST%"
 IF EXIST "%EXETEST%" (
   ECHO Using released version of ProjectGenerator dated 5th April 2011
-  GOTO RUN_CMAKELISTGENERATOR
+  GOTO RUN_PROJECTGENERATOR
 )
 
 IF NOT EXIST "%EXETEST%" (
@@ -30,7 +42,7 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_CMAKE_SLN_DEBUG_MVC9_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCEF_THEBATCHDIR%\..\..\common\bin\MVC9\bin\Debug
+SET GENERATORPATH=%GUCEF_HOME%\common\bin\MVC9\bin\Debug
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
@@ -55,16 +67,15 @@ REM -----------------------------------------------------
 
 SET PATH="%GENERATORPATH%";%PATH%
 
-cd %GUCEF_THEBATCHDIR%\..\..\
+cd %GUCE_THEBATCHDIR%\..\..\
 
-IF NOT DEFINED GUCEF_HOME (
-  ECHO GUCEF environment variable not found, setting it
-  SET GUCEF_HOME=%CD%
-  ECHO GUCEF_HOME=%CD%
+IF NOT DEFINED GUCE_HOME (
+  ECHO WARNING: GUCE_HOME not defined, falling back to relative path
+  SET GUCE_HOME=%GUCE_THEBATCHDIR%\..\..\
 )
 
-%GENERATOREXE% *rootDir=%GUCEF_HOME%* *outputDir=%GUCEF_HOME%* *generators=androidmake* *dirsToIgnore=.svn;_svn* *projectName=GUCEF*
-cd "%GUCEF_THEBATCHDIR%"
+%GENERATOREXE% *rootDir=%GUCE_HOME%* *rootDir=%GUCEF_HOME%* *outputDir=%GUCE_HOME%* *generators=androidmake* *dirsToIgnore=.svn;_svn* *projectName=GUCE*
+cd "%GUCE_THEBATCHDIR%"
 GOTO END
 
 
