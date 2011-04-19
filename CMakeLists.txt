@@ -253,6 +253,7 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/PatcherGUI ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/PatchSetGenerator ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/ServerPortExtender ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CMakeListGenerator ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/tools/ProjectGenerator ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CallstackLogAnalyzer ${GUCE_BINARY_DIR} )
 
 # Setup Ogre dependencies
