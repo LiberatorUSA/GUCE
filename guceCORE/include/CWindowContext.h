@@ -66,8 +66,8 @@ namespace GUCEF { namespace INPUT { class CInputContext; class CIInputHandler; }
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -150,8 +150,8 @@ typedef GUCEF::CORE::CTSharedPtr< CWindowContext > TWindowContextPtr;
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
 

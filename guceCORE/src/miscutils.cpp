@@ -60,10 +60,10 @@
 #define GUCEF_CORE_CLOGMANAGER_H
 #endif /* GUCEF_CORE_CLOGMANAGER_H ? */
 
-#ifndef CVFS_H
-#include "CVFS.h"
-#define CVFS_H
-#endif /* CVFS_H ? */
+#ifndef GUCEF_VFS_CVFS_H
+#include "gucefVFS_CVFS.h"
+#define GUCEF_VFS_CVFS_H
+#endif /* GUCEF_VFS_CVFS_H ? */
 
 #ifndef GUCEF_IMAGE_CIMAGE_H
 #include "CImage.h"
@@ -103,8 +103,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -397,7 +397,7 @@ ImageToTexture( const CString& textureName        ,
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/

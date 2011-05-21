@@ -52,8 +52,8 @@ namespace GUCEF { namespace CORE { class CDataNode; class CIOAccess; }
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -178,8 +178,8 @@ ImageToTexture( const CString& textureName        ,
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
 

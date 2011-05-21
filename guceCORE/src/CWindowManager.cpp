@@ -105,8 +105,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -591,7 +591,7 @@ CWindowManager::ApplyVideoSettings( TWindowContextPtr& windowContext ,
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
