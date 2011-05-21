@@ -48,8 +48,8 @@ namespace GUCEF { namespace VFS { class CVFS; } }
 
 /*-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
          
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -106,8 +106,8 @@ class GUCE_CORE_EXPORT_CPP CGUCEFVFSArchive : public Ogre::Archive
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
 

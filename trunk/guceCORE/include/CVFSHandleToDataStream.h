@@ -41,8 +41,8 @@ namespace GUCEF { namespace VFS { class CVFSHandle; } }
 
 /*-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
          
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -88,8 +88,8 @@ class GUCE_CORE_EXPORT_CPP CVFSHandleToDataStream : public CIOAccessToDataStream
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
           

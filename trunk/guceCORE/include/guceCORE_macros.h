@@ -69,43 +69,13 @@
 /*-------------------------------------------------------------------------*/
 
 /*
- *  namespace the TRACE macro for GUCE
+ *  namespace the GUCEF_TRACE macro for GUCE
  */
 #ifdef GUCEF_TRACE
   #define GUCE_TRACE GUCEF_TRACE
 #else
   #define GUCE_TRACE  
 #endif
-
-/*-------------------------------------------------------------------------*/
-
-/*
- *      Macro for enabling/disabling the GUCE namespace
- */
-#undef GUCE_NAMESPACE_BEGIN
-#undef GUCE_NAMESPACE_END   
-#ifdef USE_GUCE_NAMESPACE
-  #define GUCE_NAMESPACE_BEGIN   namespace GUCE {
-  #define GUCE_NAMESPACE_END     }
-#else
-  #define GUCE_NAMESPACE_BEGIN
-  #define GUCE_NAMESPACE_END
-#endif /* USE_GUCE_NAMESPACE ? */
-
-/*-------------------------------------------------------------------------*/
-
-/*
- *      Macro for enabling/disabling the CORE namespace
- */
-#undef CORE_NAMESPACE_BEGIN
-#undef CORE_NAMESPACE_END   
-#ifdef USE_CORE_NAMESPACE
-  #define CORE_NAMESPACE_BEGIN   namespace CORE {
-  #define CORE_NAMESPACE_END     }
-#else
-  #define CORE_NAMESPACE_BEGIN
-  #define CORE_NAMESPACE_END
-#endif /* USE_CORE_NAMESPACE ? */
 
 /*-------------------------------------------------------------------------*/
 

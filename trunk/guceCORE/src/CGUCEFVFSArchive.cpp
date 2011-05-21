@@ -38,10 +38,10 @@
 #define GUCEF_CORE_CSTRINGLIST_H
 #endif /* GUCEF_CORE_CSTRINGLIST_H ? */
 
-#ifndef CVFS_H
-#include "CVFS.h"                       /* singleton for VFS access */
-#define CVFS_H                   
-#endif /* CVFS_H ? */
+#ifndef GUCEF_VFS_CVFS_H
+#include "gucefVFS_CVFS.h"              /* singleton for VFS access */
+#define GUCEF_VFS_CVFS_H                   
+#endif /* GUCEF_VFS_CVFS_H ? */
 
 #ifndef GUCECORE_MACROS_H
 #include "guceCORE_macros.h"            /* guceCORE build config and macros */
@@ -61,8 +61,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
          
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -241,7 +241,7 @@ CGUCEFVFSArchive::getModifiedTime( const Ogre::String& filename )
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/

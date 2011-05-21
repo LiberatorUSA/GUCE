@@ -66,8 +66,8 @@ namespace GUCEF { namespace CORE { class CDataNode; } }
 
 /*-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
          
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -177,8 +177,8 @@ class GUCE_CORE_EXPORT_CPP CWindowManager : public GUCEF::CORE::CObservingNotifi
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCE_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
 

@@ -74,7 +74,7 @@ IF NOT DEFINED GUCE_HOME (
   SET GUCE_HOME=%GUCE_THEBATCHDIR%\..\..\
 )
 
-%GENERATOREXE% *rootDir=%GUCE_HOME%* *rootDir=%GUCEF_HOME%* *outputDir=%GUCE_HOME%* *generators=androidmake* *dirsToIgnore=.svn;_svn* *projectName=GUCE*
+%GENERATOREXE% *rootDir=%GUCEF_HOME%* *rootDir=%GUCE_HOME%* *outputDir=%GUCE_HOME%* *generators=androidmake* *dirsToIgnore=.svn;_svn* *projectName=GUCE*
 cd "%GUCE_THEBATCHDIR%"
 GOTO END
 

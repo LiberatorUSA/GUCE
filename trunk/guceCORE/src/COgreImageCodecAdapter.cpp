@@ -102,8 +102,8 @@ COgreImageCodecAdapter::GUCEFPSToOgrePF( GUCEF::IMAGE::TPixelStorageFormat psf  
     
     switch ( biDataType )
     {
-        case GUCEF::MT::DT_UINT8 :
-        case GUCEF::MT::DT_INT8 :
+        case GUCEF::MT::DATATYPE_UINT8 :
+        case GUCEF::MT::DATATYPE_INT8 :
         {
             switch ( psf )
             {
@@ -119,7 +119,7 @@ COgreImageCodecAdapter::GUCEFPSToOgrePF( GUCEF::IMAGE::TPixelStorageFormat psf  
                 default : return Ogre::PF_UNKNOWN;
             }
         }
-        case GUCEF::MT::DT_FLOAT32 :
+        case GUCEF::MT::DATATYPE_FLOAT32 :
         {
             switch ( psf )
             {
@@ -128,8 +128,8 @@ COgreImageCodecAdapter::GUCEFPSToOgrePF( GUCEF::IMAGE::TPixelStorageFormat psf  
                 default : return Ogre::PF_UNKNOWN;
             }
         }
-        case GUCEF::MT::DT_UINT16 :
-        case GUCEF::MT::DT_INT16 :
+        case GUCEF::MT::DATATYPE_UINT16 :
+        case GUCEF::MT::DATATYPE_INT16 :
         {
             switch ( psf )
             {
@@ -225,7 +225,7 @@ COgreImageCodecAdapter::decode( const GUCEF::IMAGE::CImage& image )
         ogreImageData->width = pixelMap->GetWidthInPixels();
         ogreImageData->height = pixelMap->GetHeightInPixels();
         ogreImageData->depth = 1;
-        ogreImageData->num_mipmaps = mipMapCount-1;
+        ogreImageData->num_mipmaps = (Ogre::ushort) mipMapCount-1;
         ogreImageData->size = pixelMap->GetTotalSizeInBytes();
         frameCount == 1 ? ogreImageData->flags = 0 : ogreImageData->flags |= Ogre::IF_CUBEMAP;
         

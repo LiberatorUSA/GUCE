@@ -23,20 +23,20 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/ 
 
-#ifndef CVFSHANDLE_H
-#include "CVFSHandle.h"               /* vfs file handle */
-#define CVFSHANDLE_H
-#endif /* CVFSHANDLE_H ? */
+#ifndef GUCEF_VFS_CVFSHANDLE_H
+#include "gucefVFS_CVFSHandle.h"               /* vfs file handle */
+#define GUCEF_VFS_CVFSHANDLE_H
+#endif /* GUCEF_VFS_CVFSHANDLE_H ? */
 
-#ifndef CVFS_H
-#include "CVFS.h"                     /* singleton vfs access */
-#define CVFS_H
-#endif /* CVFS_H ? */
+#ifndef GUCEF_VFS_CVFS_H
+#include "gucefVFS_CVFS.h"
+#define GUCEF_VFS_CVFS_H
+#endif /* GUCEF_VFS_CVFS_H ? */
 
-#ifndef GUCECORE_MACROS_H
+#ifndef GUCE_CORE_MACROS_H
 #include "guceCORE_macros.h"          /* guceCORE build config and macros */
-#define GUCECORE_MACROS_H
-#endif /* GUCECORE_MACROS_H ? */
+#define GUCE_CORE_MACROS_H
+#endif /* GUCE_CORE_MACROS_H ? */
 
 #include "CVFSHandleToDataStream.h"   /* definition of the class implemented here */
 
@@ -46,8 +46,8 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-GUCE_NAMESPACE_BEGIN
-CORE_NAMESPACE_BEGIN
+namespace GUCE {
+namespace CORE {
          
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -104,7 +104,7 @@ CVFSHandleToDataStream::close( void )
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-CORE_NAMESPACE_END
-GUCEF_NAMESPACE_END
+} /* namespace CORE ? */
+} /* namespace GUCE ? */
 
 /*-------------------------------------------------------------------------*/
