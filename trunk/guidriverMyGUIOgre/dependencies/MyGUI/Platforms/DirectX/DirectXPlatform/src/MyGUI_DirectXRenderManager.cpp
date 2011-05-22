@@ -5,7 +5,6 @@
 	@module
 */
 
-#include "MyGUI_Precompiled.h"
 #include "MyGUI_DirectXRenderManager.h"
 #include "MyGUI_DirectXTexture.h"
 #include "MyGUI_DirectXVertexBuffer.h"
@@ -18,7 +17,7 @@
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT(DirectXRenderManager);
+	MYGUI_INSTANCE_IMPLEMENT( DirectXRenderManager )
 
 	void DirectXRenderManager::initialise(IDirect3DDevice9 *_device)
 	{

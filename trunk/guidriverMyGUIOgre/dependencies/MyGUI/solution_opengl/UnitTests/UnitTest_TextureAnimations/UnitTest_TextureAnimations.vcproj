@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_TextureAnimations"
-	ProjectGUID="{8879EB85-1105-46C1-B047-DD0B30BA2684}"
+	ProjectGUID="{5D00E593-6FC0-42BA-8B80-37A7053C2B53}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

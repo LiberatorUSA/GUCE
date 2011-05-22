@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_MultiList"
-	ProjectGUID="{1AD8DF78-CE97-4409-A446-AB51542EA5F3}"
+	ProjectGUID="{8FC17663-ECFC-458A-B8A2-8DC145DAD1FF}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				BasicRuntimeChecks="3"
 				CompileAs="2"
 				DebugInformationFormat="3"
@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;Debug\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -72,7 +72,7 @@
 				Version="0.0"
 				GenerateManifest="TRUE"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;MYGUIHACK OGRE_SRC)\lib\$(OutDir)&quot;,&quot;MYGUIHACK OGRE_SRC)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;$(OGRE_SRC)\lib\$(OutDir)&quot;,&quot;$(OGRE_SRC)\lib&quot;"
 				ProgramDataBaseFile="../../bin/Debug/UnitTest_MultiList.pdb"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				CompileAs="2"
 				ExceptionHandling="1"
 				InlineFunctionExpansion="2"
@@ -106,7 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;Release\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -138,7 +138,7 @@
 				Version="0.0"
 				GenerateManifest="TRUE"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;MYGUIHACK OGRE_SRC)\lib\$(OutDir)&quot;,&quot;MYGUIHACK OGRE_SRC)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;$(OGRE_SRC)\lib\$(OutDir)&quot;,&quot;$(OGRE_SRC)\lib&quot;"
 				ProgramDataBaseFile="../../bin/Release/UnitTest_MultiList.pdb"
 				SubSystem="2"
 				ImportLibrary="..\..\lib\Release\UnitTest_MultiList.lib"/>
@@ -154,7 +154,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				CompileAs="2"
 				ExceptionHandling="1"
 				InlineFunctionExpansion="1"
@@ -171,7 +171,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -203,7 +203,7 @@
 				Version="0.0"
 				GenerateManifest="TRUE"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;MYGUIHACK OGRE_SRC)\lib\$(OutDir)&quot;,&quot;MYGUIHACK OGRE_SRC)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;$(OGRE_SRC)\lib\$(OutDir)&quot;,&quot;$(OGRE_SRC)\lib&quot;"
 				ProgramDataBaseFile="../../bin/MinSizeRel/UnitTest_MultiList.pdb"
 				SubSystem="2"
 				ImportLibrary="..\..\lib\MinSizeRel\UnitTest_MultiList.lib"/>
@@ -219,7 +219,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				CompileAs="2"
 				DebugInformationFormat="3"
 				ExceptionHandling="1"
@@ -237,7 +237,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\UnitTests\UnitTest_MultiList\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\UnitTests\UnitTest_MultiList;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -269,7 +269,7 @@
 				Version="0.0"
 				GenerateManifest="TRUE"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;MYGUIHACK OGRE_SRC)\lib\$(OutDir)&quot;,&quot;MYGUIHACK OGRE_SRC)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(OutDir)&quot;,&quot;$(OGRE_HOME)\lib&quot;,&quot;$(OGRE_SRC)\lib\$(OutDir)&quot;,&quot;$(OGRE_SRC)\lib&quot;"
 				ProgramDataBaseFile="../../bin/RelWithDebInfo/UnitTest_MultiList.pdb"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"

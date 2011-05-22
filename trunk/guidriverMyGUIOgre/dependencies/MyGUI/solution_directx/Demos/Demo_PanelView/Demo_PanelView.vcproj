@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_PanelView"
-	ProjectGUID="{87B7E69E-055E-461F-B756-49B7F64D700C}"
+	ProjectGUID="{34B634E9-F57C-416D-B810-428EC9095E12}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

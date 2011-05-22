@@ -7,17 +7,17 @@
 */
 /*
 	This file is part of MyGUI.
-	
+
 	MyGUI is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	MyGUI is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Lesser General Public License for more details.
-	
+
 	You should have received a copy of the GNU Lesser General Public License
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -145,7 +145,7 @@ namespace MyGUI
 	// Define version
     #define MYGUI_VERSION_MAJOR 3
     #define MYGUI_VERSION_MINOR 0
-    #define MYGUI_VERSION_PATCH 0
+    #define MYGUI_VERSION_PATCH 1
 
     #define MYGUI_VERSION    MYGUI_DEFINE_VERSION(MYGUI_VERSION_MAJOR, MYGUI_VERSION_MINOR, MYGUI_VERSION_PATCH)
 
@@ -190,4 +190,3 @@ namespace MyGUI
 } // namespace MyGUI
 
 #endif // __MYGUI_PREREQUEST_H__
-

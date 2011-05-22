@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="INSTALL"
-	ProjectGUID="{9A7A35B3-6A5D-4927-879B-C79A6CFC9E40}"
+	ProjectGUID="{65CE5E25-0282-411C-B536-253CA1CC94B3}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

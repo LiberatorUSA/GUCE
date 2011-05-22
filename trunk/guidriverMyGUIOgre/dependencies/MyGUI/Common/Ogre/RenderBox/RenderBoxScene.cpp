@@ -11,6 +11,8 @@ namespace wraps
 {
 
 	RenderBoxScene::RenderBoxScene() :
+		mScene(nullptr),
+		mNode(nullptr),
 		mCameraNode(nullptr),
 		mCamera(nullptr),
 		mEntity(nullptr),

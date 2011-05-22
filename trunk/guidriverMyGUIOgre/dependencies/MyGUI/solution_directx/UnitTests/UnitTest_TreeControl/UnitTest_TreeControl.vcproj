@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_TreeControl"
-	ProjectGUID="{34948F45-4B73-4A70-9B12-CD26AB6EA83A}"
+	ProjectGUID="{94408E33-0234-4E2C-A857-C77EDC387EF4}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

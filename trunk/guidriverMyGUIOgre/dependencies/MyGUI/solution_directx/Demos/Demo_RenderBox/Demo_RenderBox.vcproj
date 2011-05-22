@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_RenderBox"
-	ProjectGUID="{62C1F602-0204-4012-B6D3-8BEF9D80791B}"
+	ProjectGUID="{0DA9375B-1C1E-4FA0-8905-91B7600DAD8B}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

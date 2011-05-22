@@ -6,17 +6,17 @@
 */
 /*
 	This file is part of MyGUI.
-	
+
 	MyGUI is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	MyGUI is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Lesser General Public License for more details.
-	
+
 	You should have received a copy of the GNU Lesser General Public License
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -39,7 +39,7 @@ namespace MyGUI
 		public StaticText,
 		public ScrollViewBase
 	{
-		MYGUI_RTTI_DERIVED( Edit );
+		MYGUI_RTTI_DERIVED( Edit )
 
 	public:
 		Edit();
@@ -97,7 +97,7 @@ namespace MyGUI
 		/** Get text length excluding tags
 			For example "#00FF00Hello" length is 5
 		*/
-		size_t getTextLength() { return mTextLength; }
+		size_t getTextLength() const { return mTextLength; }
 
 		//! Sets if surplus characters should push characters off the left side rather than ignored
 		void setOverflowToTheLeft(bool _value) { mOverflowToTheLeft = _value; }
@@ -199,22 +199,31 @@ namespace MyGUI
 		void setVisibleVScroll(bool _value);
 		/** Get Show VScroll flag */
 		bool isVisibleVScroll() { return mVisibleVScroll; }
-		/** Get range of vertical scroll (or 0 if no scroll) */
+		/** Get range of vertical scroll (or 0 if no scroll).
+			Range measured in pixels (full text heiht minus Edit height).
+			For example if Edit is 200 pixels height and 40 lines of text
+			30 pixels height each (i.e. 600 pixels total), then return
+			value is 400 ( = 600 - 200 ).
+		*/
 		size_t getVScrollRange();
 		/** Get current position of vertical scroll (or 0 if no scroll) */
 		size_t getVScrollPosition();
-		/** Set current position of vertical scroll (or 0 if no scroll) */
+		/** Set current position of vertical scroll */
 		void setVScrollPosition(size_t _index);
 
 		/** Show HScroll when text size larger than Edit */
 		void setVisibleHScroll(bool _value);
 		/** Get Show HScroll flag */
 		bool isVisibleHScroll() { return mVisibleHScroll; }
-		/** Get range of horizontal scroll (or 0 if no scroll) */
+		/** Get range of horizontal scroll (or 0 if no scroll).
+			Range measured in pixels (full text width minus Edit width).
+			For example if Edit is 200 pixels width and the longest line
+			is 600 pixels width, then return value is 400 ( = 600 - 200 ).
+		*/
 		size_t getHScrollRange();
 		/** Get current position of horizontal scroll (or 0 if no scroll) */
 		size_t getHScrollPosition();
-		/** Set current position of horizontal scroll (or 0 if no scroll) */
+		/** Set current position of horizontal scroll */
 		void setHScrollPosition(size_t _index);
 
 
@@ -376,7 +385,7 @@ namespace MyGUI
 		virtual IntPoint getContentPosition();
 		virtual void setContentPosition(const IntPoint& _point);
 		// размер окна, через которые видно данные
-		virtual IntSize getViewSize();
+		virtual IntSize getViewSize() const;
 		// размер на который прокручиваются данные при щелчке по скролу
 		virtual size_t getVScrollPage();
 		virtual size_t getHScrollPage();

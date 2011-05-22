@@ -11,9 +11,7 @@
 #include "MyGUI_Prerequest.h"
 #include "MyGUI_ITexture.h"
 #include "MyGUI_RenderFormat.h"
-
-//struct IDirect3DDevice9;
-//struct IDirect3DTexture9;
+#include "MyGUI_Types.h"
 
 #include <d3dx9.h>
 
@@ -26,7 +24,7 @@ namespace MyGUI
 		DirectXTexture(const std::string& _name, IDirect3DDevice9* _device);
 		virtual ~DirectXTexture();
 
-		virtual const std::string& getName();
+		virtual const std::string& getName() const;
 
 		virtual void createManual(int _width, int _height, TextureUsage _usage, PixelFormat _format);
 		virtual void loadFromFile(const std::string& _filename);

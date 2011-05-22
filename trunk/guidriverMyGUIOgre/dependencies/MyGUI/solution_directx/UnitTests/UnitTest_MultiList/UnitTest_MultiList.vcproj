@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_MultiList"
-	ProjectGUID="{943C14EE-4C7B-443D-BD77-A0D0F4D6E08A}"
+	ProjectGUID="{76D25136-E382-4359-98DD-3F869F457603}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

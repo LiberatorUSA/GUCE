@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_ItemBox_Info"
-	ProjectGUID="{072984A5-DED3-42DC-B0B1-E92710AA9229}"
+	ProjectGUID="{7C61186C-90A8-4CD3-9560-2D6BCAD1AE40}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

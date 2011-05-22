@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_Colour"
-	ProjectGUID="{2A12E9B2-249A-4419-BFA9-36B31155E4EA}"
+	ProjectGUID="{E100AE1A-F87C-4F51-BB0E-325F59F93C22}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

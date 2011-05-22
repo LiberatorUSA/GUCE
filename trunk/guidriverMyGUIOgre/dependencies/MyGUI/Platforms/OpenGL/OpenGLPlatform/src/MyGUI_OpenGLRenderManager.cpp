@@ -5,7 +5,6 @@
 	@module
 */
 
-#include "MyGUI_Precompiled.h"
 #include "MyGUI_OpenGLRenderManager.h"
 #include "MyGUI_OpenGLTexture.h"
 #include "MyGUI_OpenGLVertexBuffer.h"
@@ -21,7 +20,7 @@
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT(OpenGLRenderManager);
+	MYGUI_INSTANCE_IMPLEMENT(OpenGLRenderManager)
 
 	void OpenGLRenderManager::initialise(OpenGLImageLoader* _loader)
 	{
@@ -152,7 +151,7 @@ namespace MyGUI
 		return mInfo;
 	}
 
-	const IntSize& OpenGLRenderManager::getViewSize()
+	const IntSize& OpenGLRenderManager::getViewSize() const
 	{
 		return mViewSize;
 	}

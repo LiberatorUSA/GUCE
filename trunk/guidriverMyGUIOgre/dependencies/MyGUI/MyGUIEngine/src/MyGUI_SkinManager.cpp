@@ -38,7 +38,7 @@ namespace MyGUI
 	const std::string XML_TYPE_RESOURCE("Resource");
 	const std::string RESOURCE_DEFAULT_NAME("Default");
 
-	MYGUI_INSTANCE_IMPLEMENT(SkinManager);
+	MYGUI_INSTANCE_IMPLEMENT( SkinManager )
 
 	void SkinManager::initialise()
 	{
@@ -104,19 +104,22 @@ namespace MyGUI
 		ResourceManager::getInstance()._load(root, "", Version());
 	}
 
-	ResourceSkin* SkinManager::getByName(const std::string& _name)
+	ResourceSkin* SkinManager::getByName(const std::string& _name) const
 	{
 		IResource* result = nullptr;
 		if (!_name.empty() && _name != RESOURCE_DEFAULT_NAME)
 			result = ResourceManager::getInstance().getByName(_name, false);
 
 		if (result == nullptr)
+		{
 			result = ResourceManager::getInstance().getByName(mDefaultName, false);
+			MYGUI_LOG(Error, "Skin '" << _name << "' not found. Replaced with default skin.");
+		}
 
 		return result ? result->castType<ResourceSkin>(false) : nullptr;
 	}
 
-	bool SkinManager::isExist(const std::string& _name)
+	bool SkinManager::isExist(const std::string& _name) const
 	{
 		return ResourceManager::getInstance().isExist(_name);
 	}

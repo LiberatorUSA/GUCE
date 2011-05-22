@@ -9,13 +9,14 @@
 
 #include "MyGUI_Prerequest.h"
 #include "MyGUI_Types.h"
+#include "MyGUI_Delegate.h"
 
 namespace MyGUI
 {
 
 	template <typename Type>
 	class GenericFactory
-	{	
+	{
 	public:
 		typedef delegates::CDelegate1<IObject*&> Delegate;
 		static typename Delegate::IDelegate* getFactory()

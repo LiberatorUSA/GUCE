@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_Themes"
-	ProjectGUID="{5B12B022-D353-450C-B6E8-263F9E20AE44}"
+	ProjectGUID="{4C4B8426-38D6-45BA-BCC4-9E4B68370EEF}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

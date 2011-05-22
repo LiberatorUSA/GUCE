@@ -24,7 +24,7 @@
 #define __MYGUI_SCROLL_VIEW_BASE_H__
 
 #include "MyGUI_Prerequest.h"
-#include "MyGUI_Common.h"
+#include "MyGUI_Types.h"
 
 namespace MyGUI
 {
@@ -45,7 +45,7 @@ namespace MyGUI
 		virtual IntPoint getContentPosition() { return IntPoint(); }
 		virtual void setContentPosition(const IntPoint& _value) { }
 		// размер окна, через которые видно данные
-		virtual IntSize getViewSize() { return IntSize(); }
+		virtual IntSize getViewSize() const { return IntSize(); }
 		// размер на который прокручиваются данные при щелчке по скролу
 		virtual size_t getHScrollPage() { return 1; }
 		virtual size_t getVScrollPage() { return 1; }

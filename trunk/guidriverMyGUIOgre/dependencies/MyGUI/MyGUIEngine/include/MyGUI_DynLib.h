@@ -7,17 +7,17 @@
 */
 /*
 	This file is part of MyGUI.
-	
+
 	MyGUI is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	MyGUI is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Lesser General Public License for more details.
-	
+
 	You should have received a copy of the GNU Lesser General Public License
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -26,6 +26,7 @@
 #define __MYGUI_DYNLIB_H__
 
 #include "MyGUI_Prerequest.h"
+#include <string>
 
 
 #if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
@@ -44,6 +45,7 @@ typedef struct HINSTANCE__* hInstance;
 #    define MYGUI_DYNLIB_UNLOAD( a ) dlclose( a )
 
 #elif MYGUI_PLATFORM == MYGUI_PLATFORM_APPLE
+#    include <CoreFoundation/CFBundle.h>
 #    define MYGUI_DYNLIB_HANDLE CFBundleRef
 #    define MYGUI_DYNLIB_LOAD( a ) mac_loadExeBundle( a )
 #    define MYGUI_DYNLIB_GETSYM( a, b ) mac_getBundleSym( a, b )

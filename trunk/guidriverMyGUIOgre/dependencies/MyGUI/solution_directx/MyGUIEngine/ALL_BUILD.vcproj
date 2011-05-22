@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="ALL_BUILD"
-	ProjectGUID="{D4ECB02D-A4A6-44F3-BC8D-3F8DBFFC9C52}"
+	ProjectGUID="{5DE34417-85FD-450D-B5C7-4B7656068AB8}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -25,7 +25,7 @@
 				ExceptionHandling="0"
 				PrecompiledHeaderThrough="MyGUI_Precompiled.h"
 				UsePrecompiledHeader="2"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Debug\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Debug\&quot;"
 				AssemblerListingLocation="Debug"
 				ObjectFile="$(IntDir)\"
 />
@@ -34,10 +34,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Debug\&quot;"/>
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Debug\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Debug\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Debug\&quot;"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -73,7 +73,7 @@
 				ExceptionHandling="0"
 				PrecompiledHeaderThrough="MyGUI_Precompiled.h"
 				UsePrecompiledHeader="2"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Release\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Release\&quot;"
 				AssemblerListingLocation="Release"
 				ObjectFile="$(IntDir)\"
 />
@@ -82,10 +82,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Release\&quot;"/>
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Release\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Release\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Release\&quot;"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -121,7 +121,7 @@
 				ExceptionHandling="0"
 				PrecompiledHeaderThrough="MyGUI_Precompiled.h"
 				UsePrecompiledHeader="2"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
 				AssemblerListingLocation="MinSizeRel"
 				ObjectFile="$(IntDir)\"
 />
@@ -130,10 +130,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -169,7 +169,7 @@
 				ExceptionHandling="0"
 				PrecompiledHeaderThrough="MyGUI_Precompiled.h"
 				UsePrecompiledHeader="2"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
 				AssemblerListingLocation="RelWithDebInfo"
 				ObjectFile="$(IntDir)\"
 />
@@ -178,10 +178,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				PreprocessorDefinitions="MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"

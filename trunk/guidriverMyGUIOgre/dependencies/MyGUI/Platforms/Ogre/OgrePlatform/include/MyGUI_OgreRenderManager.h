@@ -28,13 +28,13 @@ namespace MyGUI
 		public Ogre::RenderQueueListener,
 		public Ogre::RenderSystem::Listener
 	{
-		MYGUI_INSTANCE_HEADER(OgreRenderManager);
+		MYGUI_INSTANCE_HEADER(OgreRenderManager)
 
 	public:
 		void initialise(Ogre::RenderWindow* _window, Ogre::SceneManager* _scene);
 		void shutdown();
 
-		virtual const IntSize& getViewSize() { return mViewSize; }
+		virtual const IntSize& getViewSize() const { return mViewSize; }
 
 		virtual VertexColourType getVertexFormat() { return mVertexFormat; }
 
@@ -44,6 +44,8 @@ namespace MyGUI
 		virtual ITexture* createTexture(const std::string& _name);
 		virtual void destroyTexture(ITexture* _texture);
 		virtual ITexture* getTexture(const std::string& _name);
+
+		virtual bool isFormatSupported(PixelFormat _format, TextureUsage _usage);
 
 		virtual void begin();
 		virtual void end();

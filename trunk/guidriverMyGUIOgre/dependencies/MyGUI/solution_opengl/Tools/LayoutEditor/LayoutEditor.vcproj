@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="LayoutEditor"
-	ProjectGUID="{53DB6635-34B9-46C2-97C1-D9EDCB8CBD1E}"
+	ProjectGUID="{489644E6-4718-4281-BA26-CD21E416E2CE}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

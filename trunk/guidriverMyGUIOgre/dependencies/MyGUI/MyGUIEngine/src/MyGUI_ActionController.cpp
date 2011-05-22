@@ -6,17 +6,17 @@
 */
 /*
 	This file is part of MyGUI.
-	
+
 	MyGUI is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	MyGUI is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Lesser General Public License for more details.
-	
+
 	You should have received a copy of the GNU Lesser General Public License
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -59,12 +59,12 @@ namespace MyGUI
 		void inertionalMoveFunction(const IntCoord& _startRect, const IntCoord& _destRect, IntCoord& _result, float _current_time)
 		{
 #ifndef M_PI
-			const float M_PI = 3.141593;
+			const float M_PI = 3.141593f;
 #endif
-			double k = sin(M_PI * _current_time - M_PI/2);
-			if (k<0) k = (-pow((-k), (double)0.7) + 1)/2;
-			else k = (pow((k), (double)0.7) + 1)/2;
-			linearMoveFunction(_startRect, _destRect, _result, (float)k);
+			float k = sin(M_PI * _current_time - M_PI/2.0f);
+			if (k<0) k = (-pow(-k, 0.7f) + 1)/2;
+			else k = (pow(k, 0.7f) + 1)/2;
+			linearMoveFunction(_startRect, _destRect, _result, k);
 		}
 
 	} // namespace action

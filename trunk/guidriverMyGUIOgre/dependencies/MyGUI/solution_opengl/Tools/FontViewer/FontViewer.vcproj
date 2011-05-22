@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="FontViewer"
-	ProjectGUID="{8F9EEB1B-E11D-41D1-8182-20E00A9667C8}"
+	ProjectGUID="{E0D56B95-BF46-413B-BF9A-68F01903B189}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
