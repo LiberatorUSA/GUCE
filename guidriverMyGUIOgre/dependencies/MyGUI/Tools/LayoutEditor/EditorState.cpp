@@ -7,8 +7,6 @@
 #include "Base/Main.h"
 #include "GroupMessage.h"
 
-#define ON_EXIT( CODE ) class _OnExit { public: ~_OnExit() { CODE; } } _onExit
-
 const std::string LogSection = "LayoutEditor";
 
 const std::wstring settingsFile = L"settings.xml";
@@ -31,22 +29,6 @@ public:
 private:
 	Type* mData;
 };
-
-//===================================================================================
-
-void
-EditorState::prepare(int argc, char **argv)
-{
-    for ( int i=0; i<argc; ++i )
-    {
-        if ( argv[ i ] != '\0' && argv[ i ] != 0 )
-        {   
-            SetResourcePath( argv[ i ] );
-            break;
-        }
-    }
-}
-
 
 //===================================================================================
 void EditorState::setupResources()
@@ -712,8 +694,7 @@ void EditorState::notifyLoad()
 			localise("Warning"),
 			localise("Warn_unsaved_data"),
 			MyGUI::MessageBoxStyle::IconWarning |
-			MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No | MyGUI::MessageBoxStyle::Cancel,
-			"Overlapped"
+			MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No | MyGUI::MessageBoxStyle::Cancel
 			);
 		message->eventMessageBoxResult = newDelegate(this, &EditorState::notifyConfirmLoadMessage);
 		message->setUserString("FileName", fileName);
@@ -775,7 +756,7 @@ void EditorState::notifyEndTest()
 
 void EditorState::notifyClear()
 {
-	MyGUI::Message* message = MyGUI::Message::createMessageBox("Message", localise("Warning"), localise("Warn_delete_all_widgets"), MyGUI::MessageBoxStyle::IconWarning | MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No, "Overlapped");
+	MyGUI::Message* message = MyGUI::Message::createMessageBox("Message", localise("Warning"), localise("Warn_delete_all_widgets"), MyGUI::MessageBoxStyle::IconWarning | MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No);
 	message->eventMessageBoxResult = newDelegate(this, &EditorState::notifyClearMessage);
 }
 
@@ -812,8 +793,7 @@ void EditorState::notifyQuit()
 			localise("Warning"),
 			localise("Warn_unsaved_data"),
 			MyGUI::MessageBoxStyle::IconWarning |
-			MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No | MyGUI::MessageBoxStyle::Cancel,
-			"Overlapped"
+			MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No | MyGUI::MessageBoxStyle::Cancel
 			);
 		message->eventMessageBoxResult = newDelegate(this, &EditorState::notifyConfirmQuitMessage);
 		message->setUserString("FileName", fileName);
@@ -959,7 +939,6 @@ void EditorState::createWidgetPopup(WidgetContainer* _container, MyGUI::MenuCtrl
 void EditorState::notifyWidgetsSelect(MyGUI::MenuCtrl* _sender, MyGUI::MenuItem* _item)
 {
 	MyGUI::Widget* widget = *_item->getItemData<MyGUI::Widget*>();
-	//MyGUI::Widget* widget = *_widget->castType<MyGUI::PopupMenu>()->getItemInfoAt(_index).data.castType<MyGUI::Widget*>();
 	notifySelectWidget(widget);
 }
 
@@ -1092,8 +1071,7 @@ bool EditorState::saveOrLoadLayout(bool Save, bool Silent, const MyGUI::UString&
 			"Message",
 			localise("Warning"),
 			"Failed to " + saveLoad + " file '" + _file + "'",
-			MyGUI::MessageBoxStyle::IconWarning | MyGUI::MessageBoxStyle::Ok,
-			"Overlapped"
+			MyGUI::MessageBoxStyle::IconWarning | MyGUI::MessageBoxStyle::Ok
 			);
 	}
 

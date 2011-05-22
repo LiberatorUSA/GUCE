@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_ItemBox"
-	ProjectGUID="{C2E47747-F55A-4C0A-95BE-DEF32947D425}"
+	ProjectGUID="{9F8C40A4-8DA2-4687-864C-8383E3AF3684}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

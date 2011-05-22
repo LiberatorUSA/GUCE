@@ -26,6 +26,7 @@
 #include "MyGUI_Prerequest.h"
 #include <fstream>
 #include <iostream>
+#include <string>
 
 namespace MyGUI
 {
@@ -48,7 +49,7 @@ namespace MyGUI
 			return *this;
 		}
 
-		const std::string& getFileName() { return mFileName; }
+		const std::string& getFileName() const { return mFileName; }
 
 	private:
 		LogStream();
@@ -60,8 +61,8 @@ namespace MyGUI
 
 		bool getSTDOutputEnabled();
 
-		void lock() { }
-		void release() { }
+		void lock() const { }
+		void release() const { }
 
 	private:
 		std::ofstream mStream;

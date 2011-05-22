@@ -12,8 +12,9 @@
 #include "WidgetTypes.h"
 #include "UndoManager.h"
 #include "Parse.h"
+#include "GroupMessage.h"
 
-#define ON_EXIT( CODE ) class _OnExit { public: ~_OnExit() { CODE; } } _onExit
+#define ON_EXIT( CODE ) class _OnExit { public: void dummy() const { }; ~_OnExit() { CODE; } } _onExit; _onExit.dummy()
 
 int grid_step;//FIXME_HOOK
 int toGrid(int _x) { return _x / grid_step * grid_step; }
@@ -376,9 +377,9 @@ void PropertiesPanelView::createPropertiesWidgetsPair(MyGUI::Widget* _window, co
 	}
 	std::string prop = _property;
 	// trim widget name
-	std::string::iterator iter;
-	iter = std::find(prop.begin(), prop.end(), '_');
-	if (iter != prop.end()) prop.erase(prop.begin(), ++iter);
+	std::string::iterator iterS;
+	iterS = std::find(prop.begin(), prop.end(), '_');
+	if (iterS != prop.end()) prop.erase(prop.begin(), ++iterS);
 
 	size_t idx = prop.find_last_of(' ');
 	if (idx != std::string::npos) prop = prop.substr(idx);
@@ -534,16 +535,16 @@ void PropertiesPanelView::notifyApplyProperties(MyGUI::Widget* _sender, bool _fo
 		widgetContainer->skin = value;
 		if ( MyGUI::SkinManager::getInstance().isExist(widgetContainer->skin) || widgetContainer->skin.empty())
 		{
-			MyGUI::xml::Document * save = ew->savexmlDocument();
+			MyGUI::xml::Document * savedDoc = ew->savexmlDocument();
 			ew->clear();
-			ew->loadxmlDocument(save);
-			delete save;
+			ew->loadxmlDocument(savedDoc);
+			delete savedDoc;
 			eventRecreate();
 		}
 		else
 		{
 			std::string mess = MyGUI::utility::toString("Skin '", widgetContainer->skin, "' not found. This value will be saved.");
-			/*MyGUI::Message* message =*/ MyGUI::Message::createMessageBox("Message", localise("Error"), mess , MyGUI::MessageBoxStyle::IconError | MyGUI::MessageBoxStyle::Ok, "Overlapped");
+			GroupMessage::getInstance().addMessage(mess, MyGUI::LogManager::Error);
 		}
 		return;
 	}

@@ -21,7 +21,6 @@
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "MyGUI_Precompiled.h"
-#include "MyGUI_Common.h"
 #include "MyGUI_ListCtrl.h"
 #include "MyGUI_Button.h"
 #include "MyGUI_VScroll.h"
@@ -348,7 +347,7 @@ namespace MyGUI
 		}
 	}
 
-	void ListCtrl::_requestGetContainer(Widget* _sender,Widget*& _container, size_t& _index)
+	void ListCtrl::_requestGetContainer(Widget* _sender, Widget*& _container, size_t& _index)
 	{
 		if (_sender == _getClientWidget())
 		{
@@ -394,7 +393,7 @@ namespace MyGUI
 
 	void ListCtrl::setItemDataAt(size_t _index, Any _data)
 	{
-		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size() , "ListCtrl::setItemData");
+		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size(), "ListCtrl::setItemData");
 		mItemsInfo[_index].data = _data;
 
 		//FIXME потом только один попробовать обновить
@@ -442,7 +441,7 @@ namespace MyGUI
 
 	void ListCtrl::removeItemAt(size_t _index)
 	{
-		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size() , "ListCtrl::removeItemAt");
+		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size(), "ListCtrl::removeItemAt");
 
 		_resetContainer(false);
 		resetCurrentActiveItem();
@@ -488,7 +487,7 @@ namespace MyGUI
 
 	void ListCtrl::redrawItemAt(size_t _index)
 	{
-		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size() , "ListCtrl::redrawItemAt");
+		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size(), "ListCtrl::redrawItemAt");
 
 		//FIXME потом только один попробовать обновить
 		_updateAllVisible(_index, true, true);
@@ -862,7 +861,7 @@ namespace MyGUI
 		return mContentPosition;
 	}
 
-	IntSize ListCtrl::getViewSize()
+	IntSize ListCtrl::getViewSize() const
 	{
 		return _getClientWidget()->getSize();
 	}
@@ -879,6 +878,11 @@ namespace MyGUI
 	}
 
 	Widget* ListCtrl::_getClientWidget()
+	{
+		return mWidgetClient == nullptr ? this : mWidgetClient;
+	}
+
+	const Widget* ListCtrl::_getClientWidget() const
 	{
 		return mWidgetClient == nullptr ? this : mWidgetClient;
 	}

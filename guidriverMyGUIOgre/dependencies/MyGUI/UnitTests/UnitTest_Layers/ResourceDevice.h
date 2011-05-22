@@ -8,7 +8,6 @@
 #define __DEMO_RESOURCE_DEVICE_H__
 
 #include "MyGUI_Prerequest.h"
-#include "MyGUI_Common.h"
 #include "MyGUI_XmlDocument.h"
 #include "MyGUI_IResource.h"
 #include "MyGUI_ResourceManager.h"
@@ -22,10 +21,16 @@ namespace demo
 	{
 		friend class MyGUI::GenericFactory<ResourceDevice>;
 
-		MYGUI_RTTI_DERIVED( ResourceDevice );
+		MYGUI_RTTI_DERIVED( ResourceDevice )
 
 	private:
-		ResourceDevice() { }
+		ResourceDevice() :
+			mValueEnergy(0),
+			mValueExplosion(0),
+			mValueTarget(0),
+			mValueHP(0)
+		{
+		}
 		virtual ~ResourceDevice() { }
 
 		virtual void deserialization(MyGUI::xml::ElementPtr _node, MyGUI::Version _version)

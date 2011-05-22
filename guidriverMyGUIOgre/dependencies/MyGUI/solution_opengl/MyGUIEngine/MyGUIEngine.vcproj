@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="MyGUIEngine"
-	ProjectGUID="{1EDBA690-D2C2-4E03-9B27-9EB19D12DDCC}"
+	ProjectGUID="{5B969015-FEA8-4CFB-89AD-8111510A058B}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -33,7 +33,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Debug\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Debug\&quot;,MyGUIEngine_EXPORTS"
 				AssemblerListingLocation="Debug"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="../bin/Debug/MyGUIEngine_d.pdb"
@@ -43,10 +43,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Debug\&quot;,MyGUIEngine_EXPORTS"/>
+				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Debug\&quot;,MyGUIEngine_EXPORTS"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Debug\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Debug\&quot;,MyGUIEngine_EXPORTS"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -100,7 +100,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Release\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Release\&quot;,MyGUIEngine_EXPORTS"
 				AssemblerListingLocation="Release"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="../bin/Release/MyGUIEngine.pdb"
@@ -110,10 +110,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Release\&quot;,MyGUIEngine_EXPORTS"/>
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Release\&quot;,MyGUIEngine_EXPORTS"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;Release\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;Release\&quot;,MyGUIEngine_EXPORTS"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -166,7 +166,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;,MyGUIEngine_EXPORTS"
 				AssemblerListingLocation="MinSizeRel"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="../bin/MinSizeRel/MyGUIEngine.pdb"
@@ -176,10 +176,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;,MyGUIEngine_EXPORTS"/>
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;,MyGUIEngine_EXPORTS"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;,MyGUIEngine_EXPORTS"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -233,7 +233,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;,MyGUIEngine_EXPORTS"
 				AssemblerListingLocation="RelWithDebInfo"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="../bin/RelWithDebInfo/MyGUIEngine.pdb"
@@ -243,10 +243,10 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				AdditionalIncludeDirectories="..\..\MyGUIEngine\include;..\..\Dependencies\include;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;,MyGUIEngine_EXPORTS"/>
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;,MyGUIEngine_EXPORTS"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;,MyGUIEngine_EXPORTS"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,MYGUI_USE_FREETYPE,MYGUI_BUILD,NOMINMAX,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;,MyGUIEngine_EXPORTS"
 				MkTypLibCompatible="FALSE"
 				TargetEnvironment="1"
 				GenerateStublessProxies="TRUE"
@@ -1180,16 +1180,6 @@
 			</File>
 		</Filter>
 		</Filter>
-		</Filter>
-		<Filter
-			Name="Doc"
-			Filter="">
-			<File
-				RelativePath="..\..\MyGUIEngine\src\MyGUI_DocArray.cpp">
-			</File>
-			<File
-				RelativePath="..\..\MyGUIEngine\src\MyGUI_DocType.cpp">
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

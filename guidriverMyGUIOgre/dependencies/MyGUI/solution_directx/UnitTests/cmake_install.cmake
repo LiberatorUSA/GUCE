@@ -29,6 +29,7 @@ ENDIF(NOT CMAKE_INSTALL_COMPONENT)
 
 IF(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
+  INCLUDE("D:/MyGUI/MyGUI_300/solution_directx/UnitTests/TestApp/cmake_install.cmake")
   INCLUDE("D:/MyGUI/MyGUI_300/solution_directx/UnitTests/UnitTest_AttachDetach/cmake_install.cmake")
   INCLUDE("D:/MyGUI/MyGUI_300/solution_directx/UnitTests/UnitTest_Containers/cmake_install.cmake")
   INCLUDE("D:/MyGUI/MyGUI_300/solution_directx/UnitTests/UnitTest_MultiList/cmake_install.cmake")

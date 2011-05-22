@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="MyGUI.OgrePlatform"
-	ProjectGUID="{7F31C4B5-87C7-40D0-8AC6-F8D812893EED}"
+	ProjectGUID="{4BDE8392-B227-4D2A-8C44-DFFDB30E1914}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				BasicRuntimeChecks="3"
 				CompileAs="2"
 				DebugInformationFormat="3"
@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,CMAKE_INTDIR=\&quot;Debug\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -79,7 +79,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				CompileAs="2"
 				ExceptionHandling="1"
 				InlineFunctionExpansion="2"
@@ -96,7 +96,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,CMAKE_INTDIR=\&quot;Release\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -135,7 +135,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				CompileAs="2"
 				ExceptionHandling="1"
 				InlineFunctionExpansion="1"
@@ -152,7 +152,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -191,7 +191,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000 /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				CompileAs="2"
 				DebugInformationFormat="3"
 				ExceptionHandling="1"
@@ -209,7 +209,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\..\Platforms\Ogre\OgrePlatform\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;"
+				AdditionalIncludeDirectories="..\..\..\..\MyGUIEngine\include;..\..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"

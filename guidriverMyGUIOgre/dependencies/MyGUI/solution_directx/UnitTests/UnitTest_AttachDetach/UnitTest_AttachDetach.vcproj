@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_AttachDetach"
-	ProjectGUID="{488EE68C-5E03-4642-AD09-7D832BA8EE43}"
+	ProjectGUID="{46819601-320D-4001-8831-80B8DF27ECA9}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

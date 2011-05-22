@@ -9,6 +9,7 @@
 #define __MYGUI_OGRE_DATA_MANAGER_H__
 
 #include "MyGUI_Prerequest.h"
+#include "MyGUI_Instance.h"
 #include "MyGUI_DataManager.h"
 
 namespace MyGUI
@@ -17,7 +18,7 @@ namespace MyGUI
 	class DirectXDataManager :
 		public DataManager
 	{
-		MYGUI_INSTANCE_HEADER(DirectXDataManager);
+		MYGUI_INSTANCE_HEADER(DirectXDataManager)
 
 	public:
 		void initialise();

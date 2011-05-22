@@ -5,7 +5,6 @@
 	@module
 */
 
-#include "MyGUI_Precompiled.h"
 #include "MyGUI_OpenGLDataManager.h"
 #include "MyGUI_OpenGLDiagnostic.h"
 #include "MyGUI_DataFileStream.h"
@@ -14,7 +13,7 @@
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT(OpenGLDataManager);
+	MYGUI_INSTANCE_IMPLEMENT(OpenGLDataManager)
 
 	void OpenGLDataManager::initialise()
 	{

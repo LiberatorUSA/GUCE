@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_Controllers"
-	ProjectGUID="{801817E9-934E-40CB-A3F2-6666C9CC66B7}"
+	ProjectGUID="{A03810BA-73C5-42D4-8CB0-4D1B2FCE29ED}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

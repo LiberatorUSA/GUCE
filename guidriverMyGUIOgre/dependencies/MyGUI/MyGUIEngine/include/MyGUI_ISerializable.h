@@ -24,7 +24,6 @@
 #define __MYGUI_I_SERIALIZABLE_H__
 
 #include "MyGUI_Prerequest.h"
-#include "MyGUI_RTTI.h"
 #include "MyGUI_IObject.h"
 #include "MyGUI_XmlDocument.h"
 #include "MyGUI_Version.h"
@@ -34,7 +33,7 @@ namespace MyGUI
 
 	class MYGUI_EXPORT ISerializable : public IObject
 	{
-		MYGUI_RTTI_DERIVED( ISerializable );
+		MYGUI_RTTI_DERIVED( ISerializable )
 
 	public:
 		ISerializable() { }

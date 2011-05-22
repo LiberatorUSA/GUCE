@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_PluginStrangeButton"
-	ProjectGUID="{D7489DD2-2347-4C93-A13F-98275AD27294}"
+	ProjectGUID="{9691A70F-4259-44FE-BD51-27BD74B2E695}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

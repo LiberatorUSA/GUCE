@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_Pointers"
-	ProjectGUID="{F3443BAA-E72A-4E69-BE0E-5FBB99AD8CCB}"
+	ProjectGUID="{D861045F-A5D1-43F6-808F-754C38197FDB}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

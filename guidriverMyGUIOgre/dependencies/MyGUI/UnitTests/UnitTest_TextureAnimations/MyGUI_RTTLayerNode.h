@@ -9,7 +9,6 @@
 #define __MYGUI_RTT_LAYER_NODE_H__
 
 #include "MyGUI_Prerequest.h"
-#include "MyGUI_Common.h"
 #include "MyGUI_LayerNode.h"
 #include "MyGUI_ITexture.h"
 #include "MyGUI_LayerNodeAnimation.h"
@@ -19,7 +18,7 @@ namespace MyGUI
 
 	class /*MYGUI_EXPORT */RTTLayerNode : public LayerNode
 	{
-		MYGUI_RTTI_DERIVED( RTTLayerNode );
+		MYGUI_RTTI_DERIVED( RTTLayerNode )
 
 	public:
 		explicit RTTLayerNode(ILayer* _layer, ILayerNode* _parent = nullptr);

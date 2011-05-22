@@ -30,8 +30,14 @@ namespace MyGUI
 
 	RotatingSkin::RotatingSkin() :
 		SubSkin(),
-		mAngle(0.)
+		mAngle(0.0f),
+		mLocalCenter(false)
 	{
+		for (int i = 0; i<4; ++i)
+		{
+			mBaseAngles[i] = 0.0f;
+			mBaseDistances[i] = 0.0f;
+		}
 	}
 
 	RotatingSkin::~RotatingSkin()
@@ -98,7 +104,7 @@ namespace MyGUI
 	void RotatingSkin::recalculateAngles()
 	{
 #ifndef M_PI
-			const float M_PI = 3.141593;
+		const float M_PI = 3.141593f;
 #endif
 		// FIXME mLocalCenter ignored
 		float left_base = 0;

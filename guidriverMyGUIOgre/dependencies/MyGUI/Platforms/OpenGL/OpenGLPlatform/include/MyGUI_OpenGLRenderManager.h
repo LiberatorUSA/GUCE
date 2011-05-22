@@ -22,13 +22,13 @@ namespace MyGUI
 		public RenderManager,
 		public IRenderTarget
 	{
-		MYGUI_INSTANCE_HEADER(OpenGLRenderManager);
+		MYGUI_INSTANCE_HEADER(OpenGLRenderManager)
 
 	public:
 		void initialise(OpenGLImageLoader* _loader = 0);
 		void shutdown();
 
-		virtual const IntSize& getViewSize();
+		virtual const IntSize& getViewSize() const;
 
 		virtual VertexColourType getVertexFormat();
 

@@ -23,13 +23,13 @@ namespace MyGUI
 		public RenderManager,
 		public IRenderTarget
 	{
-		MYGUI_INSTANCE_HEADER(DirectXRenderManager);
+		MYGUI_INSTANCE_HEADER(DirectXRenderManager)
 
 	public:
 		void initialise(IDirect3DDevice9 *_device);
 		void shutdown();
 
-		virtual const IntSize& getViewSize() { return mViewSize; }
+		virtual const IntSize& getViewSize() const { return mViewSize; }
 
 		virtual VertexColourType getVertexFormat() { return mVertexFormat; }
 

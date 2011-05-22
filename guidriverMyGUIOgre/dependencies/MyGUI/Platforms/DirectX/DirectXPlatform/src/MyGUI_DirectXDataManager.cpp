@@ -5,7 +5,6 @@
 	@module
 */
 
-#include "MyGUI_Precompiled.h"
 #include "MyGUI_DataFileStream.h"
 #include "MyGUI_DirectXDataManager.h"
 #include "MyGUI_DirectXDiagnostic.h"
@@ -61,7 +60,7 @@ namespace MyGUI
 		}
 	}
 
-	MYGUI_INSTANCE_IMPLEMENT(DirectXDataManager);
+	MYGUI_INSTANCE_IMPLEMENT( DirectXDataManager )
 
 	void DirectXDataManager::initialise()
 	{

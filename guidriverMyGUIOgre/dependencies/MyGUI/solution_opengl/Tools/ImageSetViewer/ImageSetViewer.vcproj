@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="ImageSetViewer"
-	ProjectGUID="{C36CEBBC-B37C-4136-8207-68AE3969D034}"
+	ProjectGUID="{0AE914A5-75CE-4086-8B26-2EE2ABCBA6C2}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

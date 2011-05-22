@@ -1,0 +1,4 @@
+# CMake generation dependency list for this directory.
+../../../../UnitTests/TestApp/CMakeLists.txt
+../../../../UnitTests/TestApp/TestApp.list
+../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

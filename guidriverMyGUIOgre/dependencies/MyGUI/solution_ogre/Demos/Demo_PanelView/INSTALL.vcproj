@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="INSTALL"
-	ProjectGUID="{9986F9BA-FC2C-45AA-A2C3-D9B2D6DBDD1B}"
+	ProjectGUID="{7054DB27-18D7-4E60-858C-2416B0DC4D34}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				ExceptionHandling="0"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;Debug\&quot;"
 				AssemblerListingLocation="Debug"
@@ -31,7 +31,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;Debug\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -68,7 +68,7 @@ CommandLine="&quot;d:\Program Files\CMake 2.6\bin\cmake.exe&quot; -DBUILD_TYPE=$
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				ExceptionHandling="0"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;Release\&quot;"
 				AssemblerListingLocation="Release"
@@ -78,7 +78,7 @@ CommandLine="&quot;d:\Program Files\CMake 2.6\bin\cmake.exe&quot; -DBUILD_TYPE=$
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;Release\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -115,7 +115,7 @@ CommandLine="&quot;d:\Program Files\CMake 2.6\bin\cmake.exe&quot; -DBUILD_TYPE=$
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				ExceptionHandling="0"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
 				AssemblerListingLocation="MinSizeRel"
@@ -125,7 +125,7 @@ CommandLine="&quot;d:\Program Files\CMake 2.6\bin\cmake.exe&quot; -DBUILD_TYPE=$
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -162,7 +162,7 @@ CommandLine="&quot;d:\Program Files\CMake 2.6\bin\cmake.exe&quot; -DBUILD_TYPE=$
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /fp:fast"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				ExceptionHandling="0"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
 				AssemblerListingLocation="RelWithDebInfo"
@@ -172,7 +172,7 @@ CommandLine="&quot;d:\Program Files\CMake 2.6\bin\cmake.exe&quot; -DBUILD_TYPE=$
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;..\..\..\Demos\Demo_PanelView\MYGUIHACK OGRE_SRC)\OgreMain\include&quot;;..\..\..\Common\Input\OIS;"
+				AdditionalIncludeDirectories="..\..\..\MyGUIEngine\include;..\..\..\Demos\Demo_PanelView;..\..\..\Common;..\..\..\Dependencies\include\OIS;..\..\..\Dependencies\include;..\..\..\Common\Base\Ogre;..\..\..\Platforms\Ogre\OgrePlatform\include;&quot;$(OGRE_HOME)/include&quot;;&quot;$(OGRE_SRC)/OgreMain/include&quot;;..\..\..\Common\Input\OIS;"
 				PreprocessorDefinitions="MYGUI_OGRE_PLATFORM,MYGUI_SAMPLES_INPUT_OIS,CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
 			<Tool
 				Name="VCMIDLTool"

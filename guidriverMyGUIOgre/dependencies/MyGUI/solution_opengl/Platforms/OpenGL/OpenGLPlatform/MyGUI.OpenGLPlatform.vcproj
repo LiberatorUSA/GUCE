@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="MyGUI.OpenGLPlatform"
-	ProjectGUID="{DBEECCAA-283B-45C9-B631-B401880A2CFD}"
+	ProjectGUID="{43BC10BF-744A-4B64-AA3F-F1A3390B190A}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

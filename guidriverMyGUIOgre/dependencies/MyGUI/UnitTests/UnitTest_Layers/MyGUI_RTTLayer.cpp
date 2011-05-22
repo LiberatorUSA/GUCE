@@ -5,8 +5,6 @@
 	@module
 */
 
-#include "MyGUI_Precompiled.h"
-#include "MyGUI_Common.h"
 #include "MyGUI_LayerItem.h"
 #include "MyGUI_RTTLayer.h"
 #include "MyGUI_Enumerator.h"
@@ -99,7 +97,7 @@ namespace MyGUI
 		return nullptr;
 	}
 
-	IntPoint RTTLayer::getPosition(int _left, int _top)
+	IntPoint RTTLayer::getPosition(int _left, int _top) const
 	{
 		if (!mIsPick)
 			return Base::getPosition(_left, _top);

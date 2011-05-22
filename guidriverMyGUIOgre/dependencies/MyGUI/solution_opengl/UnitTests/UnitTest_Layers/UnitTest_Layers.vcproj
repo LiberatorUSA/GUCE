@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_Layers"
-	ProjectGUID="{64EBC803-1444-4864-A6FF-CF00E09E870B}"
+	ProjectGUID="{560FAE53-ED16-45AF-907B-D3A22C7E4050}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

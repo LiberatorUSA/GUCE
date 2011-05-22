@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="ALL_BUILD"
-	ProjectGUID="{863AA392-0145-4DEC-85F9-989E51790514}"
+	ProjectGUID="{9AF2A43E-8587-46FE-B898-54084BA522B0}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

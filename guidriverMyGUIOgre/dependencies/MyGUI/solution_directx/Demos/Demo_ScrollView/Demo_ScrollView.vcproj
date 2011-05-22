@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Demo_ScrollView"
-	ProjectGUID="{ADAAE40A-4577-448E-804E-27BDA743E381}"
+	ProjectGUID="{C98D91AE-6AD6-4221-8C4C-D307D92DF1A2}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

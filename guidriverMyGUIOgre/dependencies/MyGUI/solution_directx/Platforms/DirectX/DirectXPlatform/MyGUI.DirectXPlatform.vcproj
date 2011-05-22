@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="MyGUI.DirectXPlatform"
-	ProjectGUID="{C8D6C02A-D11B-4E28-BDC1-204381CC4C69}"
+	ProjectGUID="{8D60937D-C676-4AB2-BE2A-0B0E0EF4EBBB}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_Containers"
-	ProjectGUID="{26DBA155-8EFE-40D9-A24A-1A3D8C411857}"
+	ProjectGUID="{B9311ADE-9136-46F6-980F-54CD5D0122A4}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

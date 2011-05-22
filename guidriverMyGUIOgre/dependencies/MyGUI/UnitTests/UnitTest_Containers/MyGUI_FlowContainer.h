@@ -62,7 +62,7 @@ namespace MyGUI
 	*/
 	class /*MYGUI_EXPORT*/ FlowContainer : public Container
 	{
-		MYGUI_RTTI_DERIVED( FlowContainer );
+		MYGUI_RTTI_DERIVED( FlowContainer )
 	public:
 
 		class WidgetInfo : Container::BaseWidgetInfo
@@ -124,8 +124,13 @@ namespace MyGUI
 			/// MinimizeBits
 			int state;
 
-			SizeData() : parentCoeff(0),
-				freeCoeff(0), state(WT_ALL){}
+			SizeData() :
+				parentCoeff(0.0f),
+				freeCoeff(0.0f),
+				spacersCoeff(0.0f),
+				state(WT_ALL)
+			{
+			}
 		};
 
 	protected:

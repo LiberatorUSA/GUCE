@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="UnitTest_RTTLayer"
-	ProjectGUID="{1ABB2906-512C-404E-A80B-9B5160970758}"
+	ProjectGUID="{7F90F7EC-5E0B-452B-88E5-792DB87F6D2E}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

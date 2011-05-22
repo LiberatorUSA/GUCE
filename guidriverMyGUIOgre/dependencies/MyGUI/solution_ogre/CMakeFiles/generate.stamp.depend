@@ -59,6 +59,8 @@ d:/Program Files/CMake 2.6/share/cmake-2.6/Modules/TestEndianess.c.in
 ../../CMake/Utils/FindPkgMacros.cmake
 D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindPkgConfig.cmake
 ../../CMake/Packages/FindOGRE.cmake
+../../CMake/Utils/FindPkgMacros.cmake
+../../CMake/Utils/PreprocessorUtils.cmake
 ../../CMake/Packages/FindOIS.cmake
 ../../CMake/Utils/FindPkgMacros.cmake
 D:/Program Files/CMake 2.6/share/cmake-2.6/Modules/FindPkgConfig.cmake
