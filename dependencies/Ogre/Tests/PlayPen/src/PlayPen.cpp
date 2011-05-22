@@ -36,6 +36,14 @@ PlayPenPlugin::PlayPenPlugin()
 	// add the samples
 	addSample(new PlayPen_testManualBlend());
 	addSample(new PlayPen_testProjectSphere());
+	addSample(new PlayPen_testCameraSetDirection());
+	addSample(new PlayPen_testManualLOD());
+	addSample(new PlayPen_testManualLODFromFile());
+	addSample(new PlayPen_testFullScreenSwitch());
+	addSample(new PlayPen_testMorphAnimationWithNormals());
+	addSample(new PlayPen_testMorphAnimationWithoutNormals());
+	addSample(new PlayPen_testPoseAnimationWithNormals());
+	addSample(new PlayPen_testPoseAnimationWithoutNormals());
 }
 //---------------------------------------------------------------------
 PlayPenPlugin::~PlayPenPlugin()
@@ -62,6 +70,17 @@ void PlayPenBase::unloadResources()
 	ResourceGroupManager::getSingleton().clearResourceGroup(TRANSIENT_RESOURCE_GROUP);
 
 	SdkSample::unloadResources();
+}
+//---------------------------------------------------------------------
+bool PlayPenBase::frameStarted(const FrameEvent& evt)
+{
+	for (AnimationStateList::iterator animi = mAnimStateList.begin(); animi != mAnimStateList.end(); ++animi)
+	{
+		(*animi)->addTime(evt.timeSinceLastFrame);
+	}
+	
+	return true;
+	
 }
 
 

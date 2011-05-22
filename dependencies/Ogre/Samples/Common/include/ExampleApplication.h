@@ -30,10 +30,7 @@ Description: Base class for all the OGRE examples
 #  define OGRE_STATIC_GL
 #  if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #    define OGRE_STATIC_Direct3D9
-     // dx10 will only work on vista, so be careful about statically linking
-#    if OGRE_USE_D3D10
-#      define OGRE_STATIC_Direct3D10
-#    endif
+     // dx11 will only work on vista, so be careful about statically linking
 #    if OGRE_USE_D3D11
 #      define OGRE_STATIC_Direct3D11
 #    endif
@@ -200,7 +197,11 @@ protected:
 		String pluginsPath;
 		// only use plugins.cfg if not static
 #ifndef OGRE_STATIC_LIB
+#if OGRE_DEBUG_MODE
+		pluginsPath = mResourcePath + "plugins_d.cfg";
+#else
 		pluginsPath = mResourcePath + "plugins.cfg";
+#endif
 #endif
 		
         mRoot = OGRE_NEW Root(pluginsPath, 
@@ -377,7 +378,11 @@ protected:
     {
         // Load resource paths from config file
         ConfigFile cf;
-        cf.load(mResourcePath + "resources.cfg");
+#if OGRE_DEBUG_MODE
+        cf.load(mResourcePath + "resources_d.cfg");
+#else
+		cf.load(mResourcePath + "resources.cfg");
+#endif
 
         // Go through all sections & settings in the file
         ConfigFile::SectionIterator seci = cf.getSectionIterator();

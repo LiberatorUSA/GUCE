@@ -28,7 +28,7 @@ if "%2" == "clean" rmdir /Q/S %BUILD_DIR%
 mkdir %BUILD_DIR%
 pushd %BUILD_DIR%
 rem call CMake
-cmake -DOGRE_INSTALL_SAMPLES_SOURCE:BOOL=TRUE -DOGRE_INSTALL_DOCS:BOOL=TRUE -G%GENERATOR% ..\..\..
+cmake -DOGRE_INSTALL_SAMPLES_SOURCE:BOOL=TRUE -DOGRE_INSTALL_DOCS:BOOL=TRUE -DOGRE_INSTALL_DEPENDENCIES:BOOL=TRUE -G%GENERATOR% ..\..\..
 if errorlevel 1 goto cmakeerror
 
 rem Read OGRE version
@@ -68,7 +68,7 @@ rmdir /S/Q CMakeFiles
 
 rem Patch up absolute references to pdbs & debug directories
 rem The former should be fixed in a future version of CMake, but the latter is because we configure these files in manually
-dir /b /s *.vcproj *.vcproj.user > filestopatch.txt
+dir /b /s *.vcproj *.vcproj.user *.vcxproj *.vcxproj.user  > filestopatch.txt
 for /F "delims=" %%f in ('type filestopatch.txt') do (
 cscript //nologo ..\..\removeabsolutepaths.vbs "%%f"
 )
@@ -81,9 +81,9 @@ rem Package up
 set SDKNAME=OgreSDK_%COMPILER%_v%OGREVERSION%
 rmdir /S/Q %SDKNAME%
 move %BUILD_DIR%\sdk %SDKNAME%
-del /Q/F %SDKNAME%.7z
+del /Q/F %SDKNAME%.exe
 rem create self-extracting 7zip archive
-7z a -r -y -sfx %SDKNAME%.exe %SDKNAME%
+7z a -r -y -sfx7z.sfx %SDKNAME%.exe %SDKNAME%
 
 echo Done! Test %SDKNAME%.exe and then release
 goto end

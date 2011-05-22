@@ -16,7 +16,7 @@
 if(WIN32 OR APPLE)
 	set(OGRE_CMAKE_DIR "CMake")
 else()
-	set(OGRE_CMAKE_DIR "lib/OGRE/cmake")
+	set(OGRE_CMAKE_DIR "${OGRE_LIB_DIRECTORY}/OGRE/cmake")
 endif()
 
 set(INST_FILES
@@ -34,6 +34,7 @@ set(STATIC_INST_FILES
   Packages/FindFreeImage.cmake
   Packages/FindFreetype.cmake
   Packages/FindOpenGLES.cmake
+  Packages/FindOpenGLES2.cmake
   Packages/FindPOCO.cmake
   Packages/FindTBB.cmake
   Packages/FindZLIB.cmake

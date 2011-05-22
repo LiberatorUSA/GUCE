@@ -30,6 +30,8 @@ THE SOFTWARE.
 #include "OgreGLESRenderSystem.h"
 #include "OgreGLESTextureManager.h"
 #include "OgreGLESDefaultHardwareBufferManager.h"
+#include "OgreGLESDepthBuffer.h"
+#include "OgreGLESHardwarePixelBuffer.h"
 #include "OgreGLESHardwareBufferManager.h"
 #include "OgreGLESHardwareIndexBuffer.h"
 #include "OgreGLESHardwareVertexBuffer.h"
@@ -63,6 +65,8 @@ THE SOFTWARE.
 	PFNGLBLENDEQUATIONOESPROC glBlendEquationOES;
 	PFNGLBLENDFUNCSEPARATEOESPROC glBlendFuncSeparateOES;
 	PFNGLBLENDEQUATIONSEPARATEOESPROC glBlendEquationSeparateOES;
+    PFNGLMAPBUFFEROESPROC glMapBufferOES;
+    PFNGLUNMAPBUFFEROESPROC glUnmapBufferOES;
 #	endif
 
 #endif
@@ -72,6 +76,9 @@ THE SOFTWARE.
 
 // Convenience macro from ARB_vertex_buffer_object spec
 #define VBO_BUFFER_OFFSET(i) ((char *)NULL + (i))
+
+// Copy this definition from desktop GL.  Used for polygon modes.
+#define GL_FILL    0x1B02
 
 namespace Ogre {
     GLESRenderSystem::GLESRenderSystem()
@@ -102,6 +109,8 @@ namespace Ogre {
 			::glBlendEquationOES = (PFNGLBLENDEQUATIONOESPROC)eglGetProcAddress("glBlendEquationOES");
 			::glBlendFuncSeparateOES = (PFNGLBLENDFUNCSEPARATEOESPROC)eglGetProcAddress("glBlendFuncSeparateOES");
 			::glBlendEquationSeparateOES = (PFNGLBLENDEQUATIONSEPARATEOESPROC)eglGetProcAddress("glBlendEquationSeparateOES");
+            ::glMapBufferOES = (PFNGLMAPBUFFEROESPROC)eglGetProcAddress("glMapBufferOES");
+            ::glUnmapBufferOES = (PFNGLUNMAPBUFFEROESPROC)eglGetProcAddress("glUnmapBufferOES");
 #endif
         GL_CHECK_ERROR;
         size_t i;
@@ -135,6 +144,7 @@ namespace Ogre {
         mTextureMipmapCount = 0;
         mMinFilter = FO_LINEAR;
         mMipFilter = FO_POINT;
+        mPolygonMode = GL_FILL;
     }
 
     GLESRenderSystem::~GLESRenderSystem()
@@ -206,7 +216,9 @@ namespace Ogre {
 			rsc->setVendor(GPU_IMAGINATION_TECHNOLOGIES);
 		else if (strstr(vendorName, "Apple Computer, Inc."))
 			rsc->setVendor(GPU_APPLE);  // iPhone Simulator
-		if (strstr(vendorName, "Nokia"))
+		else if (strstr(vendorName, "NVIDIA"))
+			rsc->setVendor(GPU_NVIDIA);
+		else if (strstr(vendorName, "Nokia"))
 			rsc->setVendor(GPU_NOKIA);
         else
             rsc->setVendor(GPU_UNKNOWN);
@@ -238,7 +250,6 @@ namespace Ogre {
 
         // OpenGL ES - Check for these extensions too
         // For 1.1, http://www.khronos.org/registry/gles/api/1.1/glext.h
-        // For 2.0, http://www.khronos.org/registry/gles/api/2.0/gl2ext.h
 
         if (mGLSupport->checkExtension("GL_IMG_texture_compression_pvrtc") ||
             mGLSupport->checkExtension("GL_AMD_compressed_3DC_texture") ||
@@ -316,13 +327,6 @@ namespace Ogre {
         // Infinite far plane always supported
         rsc->setCapability(RSC_INFINITE_FAR_PLANE);
 
-        // hardware occlusion support
-        rsc->setCapability(RSC_HWOCCLUSION);
-
-        // Check for Float textures
-        if (mGLSupport->checkExtension("GL_OES_texture_half_float"))
-            rsc->setCapability(RSC_TEXTURE_FLOAT);
-
         // Alpha to coverage always 'supported' when MSAA is available
         // although card may ignore it if it doesn't specifically support A2C
         rsc->setCapability(RSC_ALPHA_TO_COVERAGE);
@@ -341,7 +345,7 @@ namespace Ogre {
 
         mGpuProgramManager = OGRE_NEW GLESGpuProgramManager();
 
-        // set texture the number of texture units
+        // Set texture the number of texture units
         mFixedFunctionTextureUnits = caps->getNumTextureUnits();
 
         if(caps->hasCapability(RSC_VBO))
@@ -361,6 +365,7 @@ namespace Ogre {
 				// Create FBO manager
 				LogManager::getSingleton().logMessage("GL ES: Using GL_OES_framebuffer_object for rendering to textures (best)");
 				mRTTManager = OGRE_NEW_FIX_FOR_WIN32 GLESFBOManager();
+				caps->setCapability(RSC_RTT_SEPARATE_DEPTHBUFFER);
 			}
 		}
 		else
@@ -520,8 +525,65 @@ namespace Ogre {
                 mCurrentContext->setInitialized();
         }
 
+        if( win->getDepthBufferPool() != DepthBuffer::POOL_NO_DEPTH )
+		{
+			//Unlike D3D9, OGL doesn't allow sharing the main depth buffer, so keep them separate.
+			//Only Copy does, but Copy means only one depth buffer...
+			GLESDepthBuffer *depthBuffer = OGRE_NEW GLESDepthBuffer( DepthBuffer::POOL_DEFAULT, this,
+															mCurrentContext, 0, 0,
+															win->getWidth(), win->getHeight(),
+															win->getFSAA(), 0, true );
+
+			mDepthBufferPool[depthBuffer->getPoolId()].push_back( depthBuffer );
+
+			win->attachDepthBuffer( depthBuffer );
+		}
+
         return win;
     }
+
+	//---------------------------------------------------------------------
+	DepthBuffer* GLESRenderSystem::_createDepthBufferFor( RenderTarget *renderTarget )
+	{
+		GLESDepthBuffer *retVal = 0;
+
+		// Only FBO & pbuffer support different depth buffers, so everything
+		// else creates dummy (empty) containers
+		// retVal = mRTTManager->_createDepthBufferFor( renderTarget );
+		GLESFrameBufferObject *fbo = 0;
+        renderTarget->getCustomAttribute("FBO", &fbo);
+
+		if( fbo )
+		{
+			// Presence of an FBO means the manager is an FBO Manager, that's why it's safe to downcast
+			// Find best depth & stencil format suited for the RT's format
+			GLuint depthFormat, stencilFormat;
+			static_cast<GLESFBOManager*>(mRTTManager)->getBestDepthStencil( fbo->getFormat(),
+																		&depthFormat, &stencilFormat );
+
+			GLESRenderBuffer *depthBuffer = OGRE_NEW GLESRenderBuffer( depthFormat, fbo->getWidth(),
+																fbo->getHeight(), fbo->getFSAA() );
+
+			GLESRenderBuffer *stencilBuffer = depthBuffer;
+			if( stencilBuffer != GL_NONE )
+			{
+				stencilBuffer = OGRE_NEW GLESRenderBuffer( stencilFormat, fbo->getWidth(),
+													fbo->getHeight(), fbo->getFSAA() );
+			}
+
+			//No "custom-quality" multisample for now in GL
+			retVal = OGRE_NEW GLESDepthBuffer( 0, this, mCurrentContext, depthBuffer, stencilBuffer,
+										fbo->getWidth(), fbo->getHeight(), fbo->getFSAA(), 0, false );
+		}
+
+		return retVal;
+	}
+	//---------------------------------------------------------------------
+	void GLESRenderSystem::_getDepthStencilFormatFor( GLenum internalColourFormat, GLenum *depthFormat,
+													GLenum *stencilFormat )
+	{
+		mRTTManager->getBestDepthStencil( internalColourFormat, depthFormat, stencilFormat );
+	}
 
     MultiRenderTarget* GLESRenderSystem::createMultiRenderTarget(const String & name)
     {
@@ -539,6 +601,44 @@ namespace Ogre {
         {
             if (i->second == pWin)
             {
+				GLESContext *windowContext;
+				pWin->getCustomAttribute("GLCONTEXT", &windowContext);
+
+				//1 Window <-> 1 Context, should be always true
+				assert( windowContext );
+
+				bool bFound = false;
+				//Find the depth buffer from this window and remove it.
+				DepthBufferMap::iterator itMap = mDepthBufferPool.begin();
+				DepthBufferMap::iterator enMap = mDepthBufferPool.end();
+
+				while( itMap != enMap && !bFound )
+				{
+					DepthBufferVec::iterator itor = itMap->second.begin();
+					DepthBufferVec::iterator end  = itMap->second.end();
+
+					while( itor != end )
+					{
+						// A DepthBuffer with no depth & stencil pointers is a dummy one,
+						// look for the one that matches the same GL context
+						GLESDepthBuffer *depthBuffer = static_cast<GLESDepthBuffer*>(*itor);
+						GLESContext *glContext = depthBuffer->getGLContext();
+
+						if( glContext == windowContext &&
+							depthBuffer->getDepthBuffer() || depthBuffer->getStencilBuffer() )
+						{
+							bFound = true;
+
+							delete *itor;
+							itMap->second.erase( itor );
+							break;
+						}
+						++itor;
+					}
+
+					++itMap;
+				}
+
                 mRenderTargets.erase(i);
                 OGRE_DELETE pWin;
                 break;
@@ -629,7 +729,7 @@ namespace Ogre {
         glLoadMatrixf(mat);
         GL_CHECK_ERROR;
 
-        // also mark clip planes dirty
+        // Also mark clip planes dirty
         if (!mClipPlanes.empty())
         {
             mClipPlanesDirty = true;
@@ -842,15 +942,15 @@ namespace Ogre {
         {
             if (!tex.isNull())
             {
-                // note used
+                // Note used
                 tex->touch();
+
+                // Store the number of mipmaps
+                mTextureMipmapCount = tex->getNumMipmaps();
             }
 
             glEnable(GL_TEXTURE_2D);
             GL_CHECK_ERROR;
-
-            // Store the number of mipmaps
-            mTextureMipmapCount = tex->getNumMipmaps();
             
             if (!tex.isNull())
             {
@@ -865,7 +965,6 @@ namespace Ogre {
         }
         else
         {
-            // mTextureCount--;
             glEnable(GL_TEXTURE_2D);
             glDisable(GL_TEXTURE_2D);
             GL_CHECK_ERROR;
@@ -1319,15 +1418,15 @@ namespace Ogre {
                 return GL_ONE_MINUS_SRC_ALPHA;
         };
 
-        // to keep compiler happy
+        // To keep compiler happy
         return GL_ONE;
     }
 
 	void GLESRenderSystem::_setSceneBlending(SceneBlendFactor sourceFactor, SceneBlendFactor destFactor, SceneBlendOperation op)
 	{
         GL_CHECK_ERROR;
-		GLint sourceBlend = getBlendMode(sourceFactor);
-		GLint destBlend = getBlendMode(destFactor);
+		GLenum sourceBlend = getBlendMode(sourceFactor);
+		GLenum destBlend = getBlendMode(destFactor);
 		if(sourceFactor == SBF_ONE && destFactor == SBF_ZERO)
 		{
 			glDisable(GL_BLEND);
@@ -1386,10 +1485,10 @@ namespace Ogre {
         if (mGLSupport->checkExtension("GL_OES_blend_equation_separate") &&
             mGLSupport->checkExtension("GL_OES_blend_func_separate"))
         {
-            GLint sourceBlend = getBlendMode(sourceFactor);
-            GLint destBlend = getBlendMode(destFactor);
-            GLint sourceBlendAlpha = getBlendMode(sourceFactorAlpha);
-            GLint destBlendAlpha = getBlendMode(destFactorAlpha);
+            GLenum sourceBlend = getBlendMode(sourceFactor);
+            GLenum destBlend = getBlendMode(destFactor);
+            GLenum sourceBlendAlpha = getBlendMode(sourceFactorAlpha);
+            GLenum destBlendAlpha = getBlendMode(destFactorAlpha);
             
             if(sourceFactor == SBF_ONE && destFactor == SBF_ZERO && 
                sourceFactorAlpha == SBF_ONE && destFactorAlpha == SBF_ZERO)
@@ -1494,6 +1593,8 @@ namespace Ogre {
             mActiveViewport = vp;
 
             GLsizei x, y, w, h;
+
+			// Calculate the "lower-left" corner of the viewport
             w = vp->getActualWidth();
             h = vp->getActualHeight();
             x = vp->getActualLeft();
@@ -1827,7 +1928,19 @@ namespace Ogre {
 
     void GLESRenderSystem::_setPolygonMode(PolygonMode level)
     {
-        // Not supported
+        switch(level)
+        {
+        case PM_POINTS:
+            mPolygonMode = GL_POINTS;
+            break;
+        case PM_WIREFRAME:
+            mPolygonMode = GL_LINE_STRIP;
+            break;
+        default:
+        case PM_SOLID:
+            mPolygonMode = GL_FILL;
+            break;
+        }
     }
 
     void GLESRenderSystem::setStencilCheckEnabled(bool enabled)
@@ -2022,8 +2135,7 @@ namespace Ogre {
         VertexDeclaration::VertexElementList::const_iterator elem, elemEnd;
 
         elemEnd = decl.end();
-
-        std::vector<GLuint> attribsBound;
+        vector<GLuint>::type attribsBound;
 
         for (elem = decl.begin(); elem != elemEnd; ++elem)
         {
@@ -2173,7 +2285,7 @@ namespace Ogre {
                                   mDerivedDepthBiasSlopeScale);
                 }
 				GL_CHECK_ERROR;
-                glDrawElements(primType, op.indexData->indexCount, indexType, pBufferData);
+                glDrawElements((_getPolygonMode() == GL_FILL) ? primType : _getPolygonMode(), op.indexData->indexCount, indexType, pBufferData);
                 GL_CHECK_ERROR;
             } while (updatePassIterationRenderState());
         }
@@ -2188,7 +2300,7 @@ namespace Ogre {
                                   mDerivedDepthBiasMultiplier * mCurrentPassIterationNum,
                                   mDerivedDepthBiasSlopeScale);
                 }
-                glDrawArrays(primType, 0, op.vertexData->vertexCount);
+                glDrawArrays((_getPolygonMode() == GL_FILL) ? primType : _getPolygonMode(), 0, op.vertexData->vertexCount);
                 GL_CHECK_ERROR;
             } while (updatePassIterationRenderState());
         }
@@ -2582,6 +2694,17 @@ namespace Ogre {
         {
             _switchContext(newContext);
         }
+
+        // Check the FBO's depth buffer status
+		GLESDepthBuffer *depthBuffer = static_cast<GLESDepthBuffer*>(target->getDepthBuffer());
+
+		if( target->getDepthBufferPool() != DepthBuffer::POOL_NO_DEPTH &&
+			(!depthBuffer || depthBuffer->getGLContext() != mCurrentContext ) )
+		{
+			// Depth is automatically managed and there is no depth buffer attached to this RT
+			// or the Current context doesn't match the one this Depth buffer was created with
+			setDepthBufferFor( target );
+		}
 
 		// Bind frame buffer object
         mRTTManager->bind(target);

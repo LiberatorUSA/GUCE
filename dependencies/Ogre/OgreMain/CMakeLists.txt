@@ -58,6 +58,8 @@ set( HEADER_FILES
   include/OgreDataStream.h
   include/OgreDDSCodec.h
   include/OgreDefaultHardwareBufferManager.h
+  include/OgreDeflate.h
+  include/OgreDepthBuffer.h
   include/OgreDistanceLodStrategy.h
   include/OgreDynLib.h
   include/OgreDynLibManager.h
@@ -227,6 +229,7 @@ set( HEADER_FILES
   include/OgreString.h
   include/OgreStringConverter.h
   include/OgreStringInterface.h
+  include/OgreStringSerialiser.h
   include/OgreStringVector.h
   include/OgreSubEntity.h
   include/OgreSubMesh.h
@@ -252,6 +255,9 @@ set( HEADER_FILES
   include/OgreWorkQueue.h
   include/OgreZip.h
   include/stl_user_config.h
+  include/Tegra2/OgreConfigDialogImp.h
+  include/Tegra2/OgreErrorDialogImp.h
+  include/Tegra2/OgreTimerImp.h
   src/OgreImageResampler.h
   src/OgrePixelConversions.h
   src/OgreSIMDHelper.h
@@ -292,6 +298,8 @@ set( SOURCE_FILES
   src/OgreDDSCodec.cpp
   src/OgreDefaultHardwareBufferManager.cpp
   src/OgreDefaultSceneQueries.cpp
+  src/OgreDeflate.cpp
+  src/OgreDepthBuffer.cpp
   src/OgreDistanceLodStrategy.cpp
   src/OgreDynLib.cpp
   src/OgreDynLibManager.cpp
@@ -350,6 +358,7 @@ set( SOURCE_FILES
   src/OgreOverlayContainer.cpp
   src/OgreOverlayElement.cpp
   src/OgreOverlayElementCommands.cpp
+  src/OgreOverlayElementFactory.cpp
   src/OgreOverlayManager.cpp
   src/OgrePanelOverlayElement.cpp
   src/OgreParticle.cpp
@@ -422,6 +431,7 @@ set( SOURCE_FILES
   src/OgreString.cpp
   src/OgreStringConverter.cpp
   src/OgreStringInterface.cpp
+  src/OgreStringSerialiser.cpp
   src/OgreSubEntity.cpp
   src/OgreSubMesh.cpp
   src/OgreTagPoint.cpp
@@ -443,13 +453,35 @@ set( SOURCE_FILES
   src/OgreWireBoundingBox.cpp
   src/OgreWorkQueue.cpp
   src/OgreZip.cpp
+  src/Tegra2/OgreConfigDialog.cpp
+  src/Tegra2/OgreErrorDialog.cpp
+  src/Tegra2/OgreTimer.cpp
   src/Threading/OgreDefaultWorkQueueStandard.cpp
   src/nedmalloc/nedmalloc.c
 )
 
 
 
-if (GLX)
+if (ANDROID)
+  set( PLATFORM_HEADER_FILES 
+    include/Android/OgreConfigDialogImp.h
+    include/Android/OgreErrorDialogImp.h
+    include/Android/OgreTimerImp.h
+  )
+
+  set( PLATFORM_HEADER_INSTALL "ANDROID" )
+  source_group( "Platform Header Files" FILES ${PLATFORM_HEADER_FILES} )
+
+  set( PLATFORM_SOURCE_FILES 
+    src/Android/OgreConfigDialog.cpp
+    src/Android/OgreErrorDialog.cpp
+    src/Android/OgreTimer.cpp
+  )
+
+  set( PLATFORM_SOURCE_INSTALL "ANDROID" )
+  source_group( "Platform Source Files" FILES ${PLATFORM_SOURCE_FILES} )
+
+elseif (GLX)
   set( PLATFORM_HEADER_FILES 
     include/GLX/OgreConfigDialogImp.h
     include/GLX/OgreErrorDialogImp.h
@@ -606,7 +638,11 @@ GUCE_config_lib( OgreMain )
 
 
 
-include_directories( ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/DeprecationManager ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/FreeImageToolkit ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibJPEG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibMNG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibOpenJPEG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibPNG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibTIFF ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/Metadata ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Half ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Iex ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmImf ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmThread ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Imath ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/ZLib ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ../../freetype/include ../../freetype/include/freetype ../../freetype/include/freetype/config ../../freetype/include/freetype/internal ../../freetype/include/freetype/internal/services ../../freetype/src/winfonts include src src/nedmalloc )
+include_directories( ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/DeprecationManager ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/FreeImageToolkit ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibJPEG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibMNG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibOpenJPEG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibPNG ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibTIFF ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/Metadata ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Half ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Iex ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmImf ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmThread ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Imath ../../../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/ZLib ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ../../freetype/include ../../freetype/include/freetype ../../freetype/include/freetype/config ../../freetype/include/freetype/internal ../../freetype/include/freetype/internal/services ../../freetype/src/winfonts include include/Tegra2 src src/nedmalloc )
+
+if ( ANDROID )
+  include_directories( include/Android )
+endif( ANDROID )
 
 if ( GLX )
   include_directories( include/GLX src/GLX )

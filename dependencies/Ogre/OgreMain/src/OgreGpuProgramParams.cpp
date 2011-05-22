@@ -260,15 +260,27 @@ namespace Ogre
 	void GpuNamedConstantsSerializer::exportNamedConstants(
 		const GpuNamedConstants* pConsts, const String& filename, Endian endianMode)
 	{
+		std::fstream *f = OGRE_NEW_T(std::fstream, MEMCATEGORY_GENERAL)();
+		f->open(filename.c_str(), std::ios::binary | std::ios::out);
+		DataStreamPtr stream(OGRE_NEW FileStreamDataStream(f));
+
+		exportNamedConstants(pConsts, stream, endianMode);
+
+		stream->close();
+	}
+	//---------------------------------------------------------------------
+	void GpuNamedConstantsSerializer::exportNamedConstants(
+		const GpuNamedConstants* pConsts, DataStreamPtr stream, Endian endianMode)
+	{
 		// Decide on endian mode
 		determineEndianness(endianMode);
 
 		String msg;
-		mpfFile = fopen(filename.c_str(), "wb");
-		if (!mpfFile)
+		mStream =stream;
+		if (!stream->isWriteable())
 		{
 			OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE,
-				"Unable to open file " + filename + " for writing",
+				"Unable to write to stream " + stream->getName(),
 				"GpuNamedConstantsSerializer::exportSkeleton");
 		}
 
@@ -293,8 +305,6 @@ namespace Ogre
 			writeInts(((uint32*)&def.elementSize), 1);
 			writeInts(((uint32*)&def.arraySize), 1);		
 		}
-
-		fclose(mpfFile);
 
 	}
 	//---------------------------------------------------------------------
@@ -1452,7 +1462,8 @@ namespace Ogre
 
 		GpuLogicalIndexUse* indexUse = _getFloatConstantLogicalIndexUse(index, sz, deriveVariability(acType));
 
-		_setRawAutoConstant(indexUse->physicalIndex, acType, extraInfo, indexUse->variability, sz);
+        if(indexUse)
+            _setRawAutoConstant(indexUse->physicalIndex, acType, extraInfo, indexUse->variability, sz);
 	}
 	//-----------------------------------------------------------------------------
 	void GpuProgramParameters::_setRawAutoConstant(size_t physicalIndex, 
@@ -1861,9 +1872,22 @@ namespace Ogre
 					_writeRawConstant(i->physicalIndex, source->getSpotlightWorldViewProjMatrix(i->data),i->elementCount);
 					break;
 				case ACT_LIGHT_POSITION_OBJECT_SPACE:
+					vec4 = source->getLightAs4DVector(i->data);
+					vec3 = Vector3(vec4.x, vec4.y, vec4.z);
+					if( vec4.w > 0.0f )
+					{
+						// point light
+						vec3 = source->getInverseWorldMatrix().transformAffine(vec3);
+					}
+					else
+					{
+						// directional light
+						// We need the inverse of the inverse transpose 
+						source->getInverseTransposeWorldMatrix().inverse().extract3x3Matrix(m3);
+						vec3 = (m3 * vec3).normalisedCopy();
+					}
 					_writeRawConstant(i->physicalIndex, 
-						source->getInverseWorldMatrix().transformAffine(
-						source->getLightAs4DVector(i->data)), 
+						Vector4(vec3.x, vec3.y, vec3.z, vec4.w),
 						i->elementCount);
 					break;
 				case ACT_LIGHT_DIRECTION_OBJECT_SPACE:
@@ -1879,11 +1903,26 @@ namespace Ogre
 					_writeRawConstant(i->physicalIndex, vec3.length());
 					break;
 				case ACT_LIGHT_POSITION_OBJECT_SPACE_ARRAY:
+					// We need the inverse of the inverse transpose 
+					source->getInverseTransposeWorldMatrix().inverse().extract3x3Matrix(m3);
 					for (size_t l = 0; l < i->data; ++l)
+					{
+						vec4 = source->getLightAs4DVector(l);
+						vec3 = Vector3(vec4.x, vec4.y, vec4.z);
+						if( vec4.w > 0.0f )
+						{
+							// point light
+							vec3 = source->getInverseWorldMatrix().transformAffine(vec3);
+						}
+						else
+						{
+							// directional light
+							vec3 = (m3 * vec3).normalisedCopy();
+						}
 						_writeRawConstant(i->physicalIndex + l*i->elementCount, 
-						source->getInverseWorldMatrix().transformAffine(
-						source->getLightAs4DVector(l)), 
-						i->elementCount);
+							Vector4(vec3.x, vec3.y, vec3.z, vec4.w),
+							i->elementCount);
+					}
 					break;
 
 				case ACT_LIGHT_DIRECTION_OBJECT_SPACE_ARRAY:
