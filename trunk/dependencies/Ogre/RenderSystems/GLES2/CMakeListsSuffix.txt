@@ -1,0 +1,6 @@
+
+add_library( RenderSystem_GLES2 ${HEADER_FILES} ${SOURCE_FILES} )
+#set_target_properties( RenderSystem_GLES2 PROPERTIES COMPILE_DEFINITIONS GUCE_GUI_BUILD_MODULE )
+add_dependencies( RenderSystem_GLES2 OgreMain )
+target_link_libraries( RenderSystem_GLES2 OgreMain )
+GUCE_config_lib( RenderSystem_GLES2 )

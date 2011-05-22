@@ -29,7 +29,7 @@ THE SOFTWARE.
 #define __CompositorInstance_H__
 
 #include "OgrePrerequisites.h"
-#include "OgreMaterial.h"
+#include "OgreMaterialManager.h"
 #include "OgreTexture.h"
 #include "OgreRenderQueue.h"
 #include "OgreCompositionTechnique.h"
@@ -112,7 +112,7 @@ namespace Ogre {
                 target(target), currentQueueGroupID(0), visibilityMask(0xFFFFFFFF),
                 lodBias(1.0f),
                 onlyInitial(false), hasBeenRendered(false), findVisibleObjects(false), 
-				shadowsEnabled(true)
+				materialScheme(MaterialManager::DEFAULT_SCHEME_NAME), shadowsEnabled(true)
             { 
             }
             /// Target
@@ -247,7 +247,6 @@ namespace Ogre {
 		*/
 		void notifyResized();
 
-
 		/** Get Chain that this instance is part of
         */
         CompositorChain *getChain();
@@ -349,7 +348,10 @@ namespace Ogre {
 		*/
 		void deriveTextureRenderTargetOptions(const String& texname, 
 			bool *hwGammaWrite, uint *fsaa, String* fsaaHint);
-        
+
+		/// Notify this instance that the primary viewport's camera has changed.
+		void notifyCameraChanged(Camera* camera);
+
         friend class CompositorChain;
     };
 	/** @} */

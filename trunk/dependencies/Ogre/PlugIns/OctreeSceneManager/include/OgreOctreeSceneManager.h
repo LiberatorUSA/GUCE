@@ -37,7 +37,7 @@ THE SOFTWARE.
 #ifndef OCTREESCENEMANAGER_H
 #define OCTREESCENEMANAGER_H
 
-#include "OgreTerrainPrerequisites.h"
+#include "OgreOctreePrerequisites.h"
 #include "OgreSceneManager.h"
 #include "OgreRenderOperation.h"
 #include "OgreSphere.h"
@@ -45,7 +45,7 @@ THE SOFTWARE.
 #include <list>
 #include <algorithm>
 
-#include <OgreOctree.h>
+#include "OgreOctree.h"
 
 
 namespace Ogre

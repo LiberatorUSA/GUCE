@@ -39,19 +39,6 @@ THE SOFTWARE.
 namespace Ogre {
 namespace RTShader {
 
-#define SGX_LIB_NORMALMAPLIGHTING					"SGXLib_NormalMapLighting"
-#define SGX_FUNC_CONSTRUCT_TBNMATRIX				"SGX_ConstructTBNMatrix"
-#define SGX_FUNC_TRANSFORMNORMAL					"SGX_TransformNormal"
-#define SGX_FUNC_TRANSFORMPOSITION					"SGX_TransformPosition"
-#define SGX_FUNC_FETCHNORMAL						"SGX_FetchNormal"
-#define SGX_FUNC_LIGHT_DIRECTIONAL_DIFFUSE			"SGX_Light_Directional_Diffuse"
-#define SGX_FUNC_LIGHT_DIRECTIONAL_DIFFUSESPECULAR	"SGX_Light_Directional_DiffuseSpecular"
-#define SGX_FUNC_LIGHT_POINT_DIFFUSE				"SGX_Light_Point_Diffuse"
-#define SGX_FUNC_LIGHT_POINT_DIFFUSESPECULAR		"SGX_Light_Point_DiffuseSpecular"
-#define SGX_FUNC_LIGHT_SPOT_DIFFUSE					"SGX_Light_Spot_Diffuse"
-#define SGX_FUNC_LIGHT_SPOT_DIFFUSESPECULAR			"SGX_Light_Spot_DiffuseSpecular"
-	
-
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
@@ -67,6 +54,11 @@ NormalMapLighting::NormalMapLighting()
 	mVSTexCoordSetIndex				= 0;
 	mSpecularEnable					= false;
 	mNormalMapSpace					= NMS_TANGENT;
+	mNormalMapMinFilter				= FO_LINEAR;
+	mNormalMapMagFilter				= FO_LINEAR;
+	mNormalMapMipFilter				= FO_POINT;
+	mNormalMapAnisotropy			= 1;
+	mNormalMapMipBias				= -1.0;
 
 	msBlankLight.setDiffuseColour(ColourValue::Black);
 	msBlankLight.setSpecularColour(ColourValue::Black);
@@ -93,8 +85,6 @@ void NormalMapLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, co
 	if (mLightParamsList.size() == 0)
 		return;
 
-	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();	
-	const Matrix4& matWorldInv	= source->getInverseWorldMatrix();	
 	Light::LightTypes curLightType = Light::LT_DIRECTIONAL; 
 	unsigned int curSearchLightIndex = 0;
 	const Matrix4& matWorld = source->getWorldMatrix();
@@ -337,7 +327,7 @@ bool NormalMapLighting::resolveGlobalParameters(ProgramSet* programSet)
 	// Resolve input vertex shader tangent.
 	if (mNormalMapSpace == NMS_TANGENT)
 	{
-		mVSInTangent = vsMain->resolveInputParameter(Parameter::SPS_TANGENT, 0, Parameter::SPC_TANGENT, GCT_FLOAT3);
+		mVSInTangent = vsMain->resolveInputParameter(Parameter::SPS_TANGENT, 0, Parameter::SPC_TANGENT_OBJECT_SPACE, GCT_FLOAT3);
 		if (mVSInTangent.get() == NULL)
 			return false;
 
@@ -465,7 +455,7 @@ bool NormalMapLighting::resolveGlobalParameters(ProgramSet* programSet)
 			return false;	
 
 		// Resolve inverse world rotation matrix.
-		mWorldInvRotMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_PER_OBJECT, "gMatInvRotation");
+		mWorldInvRotMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_PER_OBJECT, "inv_world_rotation_matrix");
 		if (mWorldInvRotMatrix.get() == NULL)		
 			return false;	
 		
@@ -489,7 +479,7 @@ bool NormalMapLighting::resolvePerLightParameters(ProgramSet* programSet)
 		switch (mLightParamsList[i].mType)
 		{
 		case Light::LT_DIRECTIONAL:
-			mLightParamsList[i].mDirection = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS, "light_direction_obj_space");
+			mLightParamsList[i].mDirection = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS|GPV_PER_OBJECT, "light_direction_obj_space");
 			if (mLightParamsList[i].mDirection.get() == NULL)
 				return false;
 
@@ -522,7 +512,7 @@ bool NormalMapLighting::resolvePerLightParameters(ProgramSet* programSet)
 			if (mVSInPosition.get() == NULL)
 				return false;
 
-			mLightParamsList[i].mPosition = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS, "light_position_world_space");
+			mLightParamsList[i].mPosition = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS|GPV_PER_OBJECT, "light_position_world_space");
 			if (mLightParamsList[i].mPosition.get() == NULL)
 				return false;
 
@@ -580,7 +570,7 @@ bool NormalMapLighting::resolvePerLightParameters(ProgramSet* programSet)
 			// Resolve inverse world rotation matrix.
 			if (mWorldInvRotMatrix.get() == NULL)
 			{				
-				mWorldInvRotMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_GLOBAL, "inv_world_rotation_matrix");
+				mWorldInvRotMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_PER_OBJECT, "inv_world_rotation_matrix");
 				if (mWorldInvRotMatrix.get() == NULL)		
 					return false;	
 			}				
@@ -591,7 +581,7 @@ bool NormalMapLighting::resolvePerLightParameters(ProgramSet* programSet)
 			if (mVSInPosition.get() == NULL)
 				return false;
 
-			mLightParamsList[i].mPosition = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS, "light_position_world_space");
+			mLightParamsList[i].mPosition = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS|GPV_PER_OBJECT, "light_position_world_space");
 			if (mLightParamsList[i].mPosition.get() == NULL)
 				return false;
 
@@ -617,7 +607,7 @@ bool NormalMapLighting::resolvePerLightParameters(ProgramSet* programSet)
 			if (mLightParamsList[i].mPSInToLightDir.get() == NULL)
 				return false;
 
-			mLightParamsList[i].mDirection = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS, "light_direction_obj_space");
+			mLightParamsList[i].mDirection = vsProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_LIGHTS|GPV_PER_OBJECT, "light_direction_obj_space");
 			if (mLightParamsList[i].mDirection.get() == NULL)
 				return false;
 
@@ -679,7 +669,7 @@ bool NormalMapLighting::resolvePerLightParameters(ProgramSet* programSet)
 			// Resolve inverse world rotation matrix.
 			if (mWorldInvRotMatrix.get() == NULL)
 			{				
-				mWorldInvRotMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_PER_OBJECT, "gMatInvRotation");
+				mWorldInvRotMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_PER_OBJECT, "inv_world_rotation_matrix");
 				if (mWorldInvRotMatrix.get() == NULL)		
 					return false;	
 			}						
@@ -792,7 +782,7 @@ bool NormalMapLighting::addVSInvocation(Function* vsMain, const int groupOrder, 
 		curFuncInvocation->pushOperand(mVSInNormal, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mVSInTangent, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mVSTBNMatrix, Operand::OPS_OUT);	
-		vsMain->addAtomInstace(curFuncInvocation);
+		vsMain->addAtomInstance(curFuncInvocation);
 	}
 	
 
@@ -800,7 +790,7 @@ bool NormalMapLighting::addVSInvocation(Function* vsMain, const int groupOrder, 
 	curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 	curFuncInvocation->pushOperand(mVSInTexcoord, Operand::OPS_IN);
 	curFuncInvocation->pushOperand(mVSOutTexcoord, Operand::OPS_OUT);	
-	vsMain->addAtomInstace(curFuncInvocation);
+	vsMain->addAtomInstance(curFuncInvocation);
 
 	// Compute world space position.
 	if (mVSWorldPosition.get() != NULL)
@@ -809,7 +799,7 @@ bool NormalMapLighting::addVSInvocation(Function* vsMain, const int groupOrder, 
 		curFuncInvocation->pushOperand(mWorldMatrix, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mVSInPosition, Operand::OPS_IN);	
 		curFuncInvocation->pushOperand(mVSWorldPosition, Operand::OPS_OUT);	
-		vsMain->addAtomInstace(curFuncInvocation);
+		vsMain->addAtomInstance(curFuncInvocation);
 	}
 	
 
@@ -822,14 +812,14 @@ bool NormalMapLighting::addVSInvocation(Function* vsMain, const int groupOrder, 
 		curFuncInvocation->pushOperand(mCamPosWorldSpace, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 		curFuncInvocation->pushOperand(mVSWorldPosition, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 		curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_OUT);	
-		vsMain->addAtomInstace(curFuncInvocation);
+		vsMain->addAtomInstance(curFuncInvocation);
 
 		// Transform to object space.
 		curFuncInvocation = OGRE_NEW FunctionInvocation(SGX_FUNC_TRANSFORMNORMAL, groupOrder, internalCounter++); 
 		curFuncInvocation->pushOperand(mWorldInvRotMatrix, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_IN);	
 		curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_OUT);	
-		vsMain->addAtomInstace(curFuncInvocation);
+		vsMain->addAtomInstance(curFuncInvocation);
 
 		// Transform to tangent space.
 		if (mNormalMapSpace == NMS_TANGENT)
@@ -838,7 +828,7 @@ bool NormalMapLighting::addVSInvocation(Function* vsMain, const int groupOrder, 
 			curFuncInvocation->pushOperand(mVSTBNMatrix, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mVSOutView, Operand::OPS_OUT);	
-			vsMain->addAtomInstace(curFuncInvocation);
+			vsMain->addAtomInstance(curFuncInvocation);
 		}
 
 		// Output object space.
@@ -847,7 +837,7 @@ bool NormalMapLighting::addVSInvocation(Function* vsMain, const int groupOrder, 
 			curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 			curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mVSOutView, Operand::OPS_OUT);					
-			vsMain->addAtomInstace(curFuncInvocation);
+			vsMain->addAtomInstance(curFuncInvocation);
 		}
 	}
 
@@ -878,7 +868,7 @@ bool NormalMapLighting::addVSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(mVSTBNMatrix, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(curLightParams->mDirection, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 			curFuncInvocation->pushOperand(curLightParams->mVSOutDirection, Operand::OPS_OUT);	
-			vsMain->addAtomInstace(curFuncInvocation);
+			vsMain->addAtomInstance(curFuncInvocation);
 		}
 		// Output object space.
 		else if (mNormalMapSpace == NMS_OBJECT)
@@ -886,7 +876,7 @@ bool NormalMapLighting::addVSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 			curFuncInvocation->pushOperand(curLightParams->mDirection, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 			curFuncInvocation->pushOperand(curLightParams->mVSOutDirection, Operand::OPS_OUT);					
-			vsMain->addAtomInstace(curFuncInvocation);
+			vsMain->addAtomInstance(curFuncInvocation);
 		}
 	}
 	
@@ -899,14 +889,14 @@ bool NormalMapLighting::addVSIlluminationInvocation(LightParams* curLightParams,
 		curFuncInvocation->pushOperand(curLightParams->mPosition, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 		curFuncInvocation->pushOperand(mVSWorldPosition, Operand::OPS_IN);	
 		curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_OUT);	
-		vsMain->addAtomInstace(curFuncInvocation);
+		vsMain->addAtomInstance(curFuncInvocation);
 
 		// Transform to object space.
 		curFuncInvocation = OGRE_NEW FunctionInvocation(SGX_FUNC_TRANSFORMNORMAL, groupOrder, internalCounter++); 
 		curFuncInvocation->pushOperand(mWorldInvRotMatrix, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_IN);	
 		curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_OUT);	
-		vsMain->addAtomInstace(curFuncInvocation);
+		vsMain->addAtomInstance(curFuncInvocation);
 
 		// Transform to tangent space.		
 		if (mNormalMapSpace == NMS_TANGENT)
@@ -915,7 +905,7 @@ bool NormalMapLighting::addVSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(mVSTBNMatrix, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(curLightParams->mVSOutToLightDir, Operand::OPS_OUT);	
-			vsMain->addAtomInstace(curFuncInvocation);
+			vsMain->addAtomInstance(curFuncInvocation);
 		}
 		
 		// Output object space.
@@ -924,7 +914,7 @@ bool NormalMapLighting::addVSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 			curFuncInvocation->pushOperand(mVSLocalDir, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(curLightParams->mVSOutToLightDir, Operand::OPS_OUT);					
-			vsMain->addAtomInstace(curFuncInvocation);
+			vsMain->addAtomInstance(curFuncInvocation);
 		}
 	}
 
@@ -941,7 +931,7 @@ bool NormalMapLighting::addPSNormalFetchInvocation(Function* psMain, const int g
 	curFuncInvocation->pushOperand(mNormalMapSampler, Operand::OPS_IN);
 	curFuncInvocation->pushOperand(mPSInTexcoord, Operand::OPS_IN);
 	curFuncInvocation->pushOperand(mPSNormal, Operand::OPS_OUT);	
-	psMain->addAtomInstace(curFuncInvocation);		
+	psMain->addAtomInstance(curFuncInvocation);		
 
 	return true;
 }
@@ -957,7 +947,7 @@ bool NormalMapLighting::addPSGlobalIlluminationInvocation(Function* psMain, cons
 		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 		curFuncInvocation->pushOperand(mDerivedSceneColour, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT);	
-		psMain->addAtomInstace(curFuncInvocation);		
+		psMain->addAtomInstance(curFuncInvocation);		
 	}
 	else
 	{
@@ -967,14 +957,14 @@ bool NormalMapLighting::addPSGlobalIlluminationInvocation(Function* psMain, cons
 			curFuncInvocation->pushOperand(mLightAmbientColour, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN);			
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT);	
-			psMain->addAtomInstace(curFuncInvocation);
+			psMain->addAtomInstance(curFuncInvocation);
 		}
 		else
 		{
 			curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 			curFuncInvocation->pushOperand(mDerivedAmbientLightColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);
+			psMain->addAtomInstance(curFuncInvocation);
 		}
 
 		if (mTrackVertexColourType & TVC_EMISSIVE)
@@ -983,7 +973,7 @@ bool NormalMapLighting::addPSGlobalIlluminationInvocation(Function* psMain, cons
 			curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT);	
-			psMain->addAtomInstace(curFuncInvocation);
+			psMain->addAtomInstance(curFuncInvocation);
 		}
 		else
 		{
@@ -991,7 +981,7 @@ bool NormalMapLighting::addPSGlobalIlluminationInvocation(Function* psMain, cons
 			curFuncInvocation->pushOperand(mSurfaceEmissiveColour, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_IN);
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT);	
-			psMain->addAtomInstace(curFuncInvocation);
+			psMain->addAtomInstance(curFuncInvocation);
 		}		
 	}
 
@@ -1000,7 +990,7 @@ bool NormalMapLighting::addPSGlobalIlluminationInvocation(Function* psMain, cons
 		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 
 		curFuncInvocation->pushOperand(mPSSpecular, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_OUT);	
-		psMain->addAtomInstace(curFuncInvocation);	
+		psMain->addAtomInstance(curFuncInvocation);	
 	}
 	
 	return true;
@@ -1018,7 +1008,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 		curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 		curFuncInvocation->pushOperand(curLightParams->mDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 		curFuncInvocation->pushOperand(curLightParams->mDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
-		psMain->addAtomInstace(curFuncInvocation);
+		psMain->addAtomInstance(curFuncInvocation);
 	}
 
 	// Merge specular colour with vertex colour if need to.
@@ -1028,7 +1018,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 		curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 		curFuncInvocation->pushOperand(curLightParams->mSpecularColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 		curFuncInvocation->pushOperand(curLightParams->mSpecularColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
-		psMain->addAtomInstace(curFuncInvocation);
+		psMain->addAtomInstance(curFuncInvocation);
 	}
 
 	switch (curLightParams->mType)
@@ -1048,7 +1038,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);
+			psMain->addAtomInstance(curFuncInvocation);
 		}
 
 		else
@@ -1059,7 +1049,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(curLightParams->mDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));					
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);	
+			psMain->addAtomInstance(curFuncInvocation);	
 		}	
 		break;
 
@@ -1078,7 +1068,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);		
+			psMain->addAtomInstance(curFuncInvocation);		
 		}
 		else
 		{
@@ -1089,7 +1079,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(curLightParams->mDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));					
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);	
+			psMain->addAtomInstance(curFuncInvocation);	
 		}
 
 		break;
@@ -1111,7 +1101,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);			
+			psMain->addAtomInstance(curFuncInvocation);			
 		}
 		else
 		{
@@ -1124,7 +1114,7 @@ bool NormalMapLighting::addPSIlluminationInvocation(LightParams* curLightParams,
 			curFuncInvocation->pushOperand(curLightParams->mDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));					
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_IN, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
 			curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_OUT, (Operand::OPM_X |  Operand::OPM_Y | Operand::OPM_Z));	
-			psMain->addAtomInstace(curFuncInvocation);	
+			psMain->addAtomInstance(curFuncInvocation);	
 		}
 		break;
 	}
@@ -1140,19 +1130,19 @@ bool NormalMapLighting::addPSFinalAssignmentInvocation( Function* psMain, const 
 	curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, FFP_PS_COLOUR_BEGIN + 1, internalCounter++); 								
 	curFuncInvocation->pushOperand(mPSTempDiffuseColour, Operand::OPS_IN);	
 	curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_OUT);	
-	psMain->addAtomInstace(curFuncInvocation);	
+	psMain->addAtomInstance(curFuncInvocation);	
 
 	curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, FFP_PS_COLOUR_BEGIN + 1, internalCounter++); 								
 	curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN);	
 	curFuncInvocation->pushOperand(mPSOutDiffuse, Operand::OPS_OUT);	
-	psMain->addAtomInstace(curFuncInvocation);
+	psMain->addAtomInstance(curFuncInvocation);
 
 	if (mSpecularEnable)
 	{
 		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, FFP_PS_COLOUR_BEGIN + 1, internalCounter++); 
 		curFuncInvocation->pushOperand(mPSTempSpecularColour, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(mPSSpecular, Operand::OPS_OUT);			
-		psMain->addAtomInstace(curFuncInvocation);	
+		psMain->addAtomInstance(curFuncInvocation);	
 	}
 
 	return true;
@@ -1173,6 +1163,10 @@ void NormalMapLighting::copyFrom(const SubRenderState& rhs)
 	mSpecularEnable = rhsLighting.mSpecularEnable;
 	mNormalMapSpace = rhsLighting.mNormalMapSpace;
 	mNormalMapTextureName = rhsLighting.mNormalMapTextureName;
+	mNormalMapMinFilter = rhsLighting.mNormalMapMinFilter;
+	mNormalMapMagFilter = rhsLighting.mNormalMapMagFilter;
+	mNormalMapMipFilter = rhsLighting.mNormalMapMipFilter;
+	mNormalMapMipBias = rhsLighting.mNormalMapMipBias;
 }
 
 //-----------------------------------------------------------------------
@@ -1188,7 +1182,9 @@ bool NormalMapLighting::preAddToRenderState(RenderState* renderState, Pass* srcP
 	TextureUnitState* normalMapTexture = dstPass->createTextureUnitState();
 
 	normalMapTexture->setTextureName(mNormalMapTextureName);	
-	normalMapTexture->setTextureMipmapBias(-1.0);
+	normalMapTexture->setTextureFiltering(mNormalMapMinFilter, mNormalMapMagFilter, mNormalMapMipFilter);
+	normalMapTexture->setTextureAnisotropy(mNormalMapAnisotropy);
+	normalMapTexture->setTextureMipmapBias(mNormalMapMipBias);
 	mNormalMapSamplerIndex = dstPass->getNumTextureUnitStates() - 1;
 
 	setTrackVertexColourType(srcPass->getVertexColourTracking());			
@@ -1295,7 +1291,7 @@ const String& NormalMapLightingFactory::getType() const
 
 //-----------------------------------------------------------------------
 SubRenderState*	NormalMapLightingFactory::createInstance(ScriptCompiler* compiler, 
-														PropertyAbstractNode* prop, Pass* pass)
+														PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator)
 {
 	if (prop->name == "lighting_stage")
 	{
@@ -1321,7 +1317,7 @@ SubRenderState*	NormalMapLightingFactory::createInstance(ScriptCompiler* compile
 					return NULL;
 				}
 
-				unsigned int textureCoordinateIndex = 0;
+				
 				SubRenderState* subRenderState = SubRenderStateFactory::createInstance();
 				NormalMapLighting* normalMapSubRenderState = static_cast<NormalMapLighting*>(subRenderState);
 				
@@ -1353,11 +1349,68 @@ SubRenderState*	NormalMapLightingFactory::createInstance(ScriptCompiler* compile
 
 				// Read texture coordinate index.
 				if (prop->values.size() >= 4)
-				{					
+				{	
+					unsigned int textureCoordinateIndex = 0;
+
 					++it;
 					if (SGScriptTranslator::getUInt(*it, &textureCoordinateIndex))
 					{
 						normalMapSubRenderState->setTexCoordIndex(textureCoordinateIndex);
+					}
+				}
+
+				// Read texture filtering format.
+				if (prop->values.size() >= 5)
+				{					
+					++it;
+					if (false == SGScriptTranslator::getString(*it, &strValue))
+					{
+						compiler->addError(ScriptCompiler::CE_STRINGEXPECTED, prop->file, prop->line);
+						return NULL;
+					}
+
+					if (strValue == "none")
+					{
+						normalMapSubRenderState->setNormalMapFiltering(FO_POINT, FO_POINT, FO_NONE);
+					}
+
+					else if (strValue == "bilinear")
+					{
+						normalMapSubRenderState->setNormalMapFiltering(FO_LINEAR, FO_LINEAR, FO_POINT);
+					}
+
+					else if (strValue == "trilinear")
+					{
+						normalMapSubRenderState->setNormalMapFiltering(FO_LINEAR, FO_LINEAR, FO_LINEAR);
+					}
+
+					else if (strValue == "anisotropic")
+					{
+						normalMapSubRenderState->setNormalMapFiltering(FO_ANISOTROPIC, FO_ANISOTROPIC, FO_LINEAR);
+					}
+				}
+
+				// Read max anisotropy value.
+				if (prop->values.size() >= 6)
+				{	
+					unsigned int maxAnisotropy = 0;
+
+					++it;
+					if (SGScriptTranslator::getUInt(*it, &maxAnisotropy))
+					{
+						normalMapSubRenderState->setNormalMapAnisotropy(maxAnisotropy);
+					}
+				}
+
+				// Read mip bias value.
+				if (prop->values.size() >= 7)
+				{	
+					Real mipBias = 0;
+
+					++it;
+					if (SGScriptTranslator::getReal(*it, &mipBias))
+					{
+						normalMapSubRenderState->setNormalMapMipBias(mipBias);
 					}
 				}
 								

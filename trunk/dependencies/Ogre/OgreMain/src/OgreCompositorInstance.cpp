@@ -347,8 +347,6 @@ void CompositorInstance::collectPasses(TargetOperation &finalState, CompositionT
 			}
 
 			finalState.findVisibleObjects = true;
-			finalState.materialScheme = target->getMaterialScheme();
-			finalState.shadowsEnabled = target->getShadowsEnabled();
 
             break;
 		}
@@ -435,7 +433,8 @@ void CompositorInstance::_compileTargetOperations(CompiledState &compiledState)
         ts.onlyInitial = target->getOnlyInitial();
         ts.visibilityMask = target->getVisibilityMask();
         ts.lodBias = target->getLodBias();
-		ts.shadowsEnabled = target->getShadowsEnabled();
+        ts.shadowsEnabled = target->getShadowsEnabled();
+        ts.materialScheme = target->getMaterialScheme();
         /// Check for input mode previous
         if(target->getInputMode() == CompositionTargetPass::IM_PREVIOUS)
         {
@@ -458,7 +457,9 @@ void CompositorInstance::_compileOutputOperation(TargetOperation &finalState)
     /// Logical-and together the visibilityMask, and multiply the lodBias
     finalState.visibilityMask &= tpass->getVisibilityMask();
     finalState.lodBias *= tpass->getLodBias();
-    
+    finalState.materialScheme = tpass->getMaterialScheme();
+    finalState.shadowsEnabled = tpass->getShadowsEnabled();
+
     if(tpass->getInputMode() == CompositionTargetPass::IM_PREVIOUS)
     {
         /// Collect target state for previous compositor
@@ -733,7 +734,9 @@ void CompositorInstance::createResources(bool forResizeOnly)
 			rendTarget = tex->getBuffer()->getRenderTarget();
 			mLocalTextures[def->name] = tex;
 		}
-        
+
+		//Set DepthBuffer pool for sharing
+		rendTarget->setDepthBufferPool( def->depthBufferId );
         
         /// Set up viewport over entire texture
         rendTarget->setAutoUpdated( false );
@@ -741,23 +744,31 @@ void CompositorInstance::createResources(bool forResizeOnly)
 		// We may be sharing / reusing this texture, so test before adding viewport
 		if (rendTarget->getNumViewports() == 0)
 		{
+			Viewport* v;
 			Camera* camera = mChain->getViewport()->getCamera();
+			if (!camera)
+			{
+				v = rendTarget->addViewport( camera );
+			}
+			else
+			{
+				// Save last viewport and current aspect ratio
+				Viewport* oldViewport = camera->getViewport();
+				Real aspectRatio = camera->getAspectRatio();
 
-			// Save last viewport and current aspect ratio
-			Viewport* oldViewport = camera->getViewport();
-			Real aspectRatio = camera->getAspectRatio();
+				v = rendTarget->addViewport( camera );
 
-			Viewport* v = rendTarget->addViewport( camera );
+				// Should restore aspect ratio, in case of auto aspect ratio
+				// enabled, it'll changed when add new viewport.
+				camera->setAspectRatio(aspectRatio);
+				// Should restore last viewport, i.e. never disturb user code
+				// which might based on that.
+				camera->_notifyViewport(oldViewport);
+			}
+
 			v->setClearEveryFrame( false );
 			v->setOverlaysEnabled( false );
 			v->setBackgroundColour( ColourValue( 0, 0, 0, 0 ) );
-
-			// Should restore aspect ratio, in case of auto aspect ratio
-			// enabled, it'll changed when add new viewport.
-			camera->setAspectRatio(aspectRatio);
-			// Should restore last viewport, i.e. never disturb user code
-			// which might based on that.
-			camera->_notifyViewport(oldViewport);
 		}
     }
 
@@ -951,9 +962,73 @@ RenderTarget *CompositorInstance::getTargetForTex(const String &name)
 	LocalMRTMap::iterator mi = mLocalMRTs.find(name);
 	if (mi != mLocalMRTs.end())
 		return mi->second;
-	else
-		OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Non-existent local texture name", 
-			"CompositorInstance::getTargetForTex");
+	
+	//Try reference : Find the instance and check if it is before us
+	CompositionTechnique::TextureDefinition* texDef = mTechnique->getTextureDefinition(name);
+	if (texDef != 0 && !texDef->refCompName.empty()) 
+	{
+		//This is a reference - find the compositor and referenced texture definition
+		const CompositorPtr& refComp = CompositorManager::getSingleton().getByName(texDef->refCompName);
+		if (refComp.isNull())
+		{
+			OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, "Referencing non-existent compositor",
+				"CompositorInstance::getTargetForTex");
+		}
+		CompositionTechnique::TextureDefinition* refTexDef = refComp->getSupportedTechnique()->getTextureDefinition(texDef->refTexName);
+		if (refTexDef == 0)
+		{
+			OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, "Referencing non-existent compositor texture",
+				"CompositorInstance::getTargetForTex");
+		}
+
+		switch (refTexDef->scope) 
+		{
+			case CompositionTechnique::TS_CHAIN: 
+			{
+				//Find the instance and check if it is before us
+				CompositorInstance* refCompInst = 0;
+				CompositorChain::InstanceIterator it = mChain->getCompositors();
+				bool beforeMe = true;
+				while (it.hasMoreElements())
+				{
+					CompositorInstance* nextCompInst = it.getNext();
+					if (nextCompInst->getCompositor()->getName() == texDef->refCompName)
+					{
+						refCompInst = nextCompInst;
+						break;
+					}
+					if (nextCompInst == this)
+					{
+						//We encountered ourselves while searching for the compositor -
+						//we are earlier in the chain.
+						beforeMe = false;
+					}
+				}
+				
+				if (refCompInst == 0 || !refCompInst->getEnabled()) 
+				{
+					OGRE_EXCEPT(Exception::ERR_INVALID_STATE, "Referencing inactive compositor texture",
+						"CompositorInstance::getTargetForTex");
+				}
+				if (!beforeMe)
+				{
+					OGRE_EXCEPT(Exception::ERR_INVALID_STATE, "Referencing compositor that is later in the chain",
+						"CompositorInstance::getTargetForTex");
+				}
+				return refCompInst->getRenderTarget(texDef->refTexName);
+			}
+			case CompositionTechnique::TS_GLOBAL:
+				//Chain and global case - the referenced compositor will know how to handle
+				return refComp->getRenderTarget(texDef->refTexName);
+			case CompositionTechnique::TS_LOCAL:
+			default:
+				OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Referencing local compositor texture",
+					"CompositorInstance::getTargetForTex");
+		}
+	}
+
+	OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Non-existent local texture name", 
+		"CompositorInstance::getTargetForTex");
 
 }
 //-----------------------------------------------------------------------
@@ -1084,6 +1159,33 @@ void CompositorInstance::_fireNotifyResourcesCreated(bool forResizeOnly)
 	Listeners::iterator i, iend=mListeners.end();
 	for(i=mListeners.begin(); i!=iend; ++i)
 		(*i)->notifyResourcesCreated(forResizeOnly);
+}
+//-----------------------------------------------------------------------
+void CompositorInstance::notifyCameraChanged(Camera* camera)
+{
+	// update local texture's viewports.
+	LocalTextureMap::iterator localTexIter = mLocalTextures.begin();
+	LocalTextureMap::iterator localTexIterEnd = mLocalTextures.end();
+	while (localTexIter != localTexIterEnd)
+	{
+		RenderTexture* target = localTexIter->second->getBuffer()->getRenderTarget();
+		// skip target that has no viewport (this means texture is under MRT)
+		if (target->getNumViewports() == 1)
+		{
+			target->getViewport(0)->setCamera(camera);
+		}
+		++localTexIter;
+	}
+
+	// update MRT's viewports.
+	LocalMRTMap::iterator localMRTIter = mLocalMRTs.begin();
+	LocalMRTMap::iterator localMRTIterEnd = mLocalMRTs.end();
+	while (localMRTIter != localMRTIterEnd)
+	{
+		MultiRenderTarget* target = localMRTIter->second;
+		target->getViewport(0)->setCamera(camera);
+		++localMRTIter;
+	}
 }
 //-----------------------------------------------------------------------
 CompositorInstance::RenderSystemOperation::~RenderSystemOperation()

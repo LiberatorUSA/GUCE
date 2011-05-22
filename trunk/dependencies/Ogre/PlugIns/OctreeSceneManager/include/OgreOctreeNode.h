@@ -40,8 +40,8 @@ Enhancements 2003 - 2004 (C) The OGRE Team
 
 #include <OgreSceneNode.h>
 
-#include <OgreOctreeSceneManager.h>
-#include "OgreTerrainPrerequisites.h"
+#include "OgreOctreeSceneManager.h"
+#include "OgreOctreePrerequisites.h"
 
 namespace Ogre
 {

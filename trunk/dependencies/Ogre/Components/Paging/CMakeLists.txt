@@ -16,6 +16,7 @@ PROJECT(OgrePaging)
 # define header and source files for the library
 set (HEADER_FILES
 	include/OgreGrid2DPageStrategy.h
+	include/OgreGrid3DPageStrategy.h
 	include/OgrePage.h
 	include/OgrePageConnection.h
 	include/OgrePageContent.h
@@ -34,6 +35,7 @@ set (HEADER_FILES
 
 set (SOURCE_FILES
 	src/OgreGrid2DPageStrategy.cpp
+	src/OgreGrid3DPageStrategy.cpp
 	src/OgrePage.cpp
 	src/OgrePageContent.cpp
 	src/OgrePageContentCollection.cpp
@@ -53,7 +55,7 @@ include_directories(${OGRE_SOURCE_DIR}/OgreMain/include)
 
 # setup target
 add_library(OgrePaging ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
-set_target_properties(OgrePaging PROPERTIES VERSION ${OGRE_VERSION})
+set_target_properties(OgrePaging PROPERTIES VERSION ${OGRE_SOVERSION})
 target_link_libraries(OgrePaging OgreMain)
 if (OGRE_CONFIG_THREADS)
   target_link_libraries(OgrePaging ${Boost_LIBRARIES})

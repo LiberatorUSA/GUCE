@@ -38,6 +38,8 @@ namespace Ogre {
 #define OGRE_PLATFORM_APPLE 3
 #define OGRE_PLATFORM_SYMBIAN 4
 #define OGRE_PLATFORM_IPHONE 5
+#define OGRE_PLATFORM_ANDROID 6
+#define OGRE_PLATFORM_TEGRA2 7
 
 #define OGRE_COMPILER_MSVC 1
 #define OGRE_COMPILER_GNUC 2
@@ -105,6 +107,12 @@ namespace Ogre {
 #   else
 #       define OGRE_PLATFORM OGRE_PLATFORM_APPLE
 #   endif
+#elif defined(linux) && defined(__arm__)
+// TODO: This is NOT the correct way to detect the Tegra 2 platform but it works for now.
+// It doesn't appear that GCC defines any platform specific macros.
+#   define OGRE_PLATFORM OGRE_PLATFORM_TEGRA2
+#elif defined(__ANDROID__)
+#	define OGRE_PLATFORM OGRE_PLATFORM_ANDROID
 #else
 #   define OGRE_PLATFORM OGRE_PLATFORM_LINUX
 #endif
@@ -155,36 +163,74 @@ namespace Ogre {
 
 // Disable unicode support on MingW for GCC 3, poorly supported in stdlibc++
 // STLPORT fixes this though so allow if found
-// MinGW C++ Toolkit supports unicode and sets the define __MINGW32_TOOLKIT_UNICODE__ in _mingw.h
+// MinGW C++ Toolkit supports unicode and sets the define __MINGW32_TOOLBOX_UNICODE__ in _mingw.h
 // GCC 4 is also fine
-#if defined( __MINGW32__ ) && !defined(_STLPORT_VERSION)
+#if defined(__MINGW32__)
+# if OGRE_COMP_VER < 400
+#  if !defined(_STLPORT_VERSION)
 #   include<_mingw.h>
 #   if defined(__MINGW32_TOOLBOX_UNICODE__) || OGRE_COMP_VER > 345
-#	    define OGRE_UNICODE_SUPPORT 1
+#    define OGRE_UNICODE_SUPPORT 1
 #   else
-#       define OGRE_UNICODE_SUPPORT 0
+#    define OGRE_UNICODE_SUPPORT 0
 #   endif
+#  else
+#   define OGRE_UNICODE_SUPPORT 1
+#  endif
+# else
+#  define OGRE_UNICODE_SUPPORT 1
+# endif
 #else
-#	define OGRE_UNICODE_SUPPORT 1
+#  define OGRE_UNICODE_SUPPORT 1
 #endif
 
-#endif
+#endif // OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+
 //----------------------------------------------------------------------------
 // Symbian Settings
 #if OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN
+#   define _OgreExport 
 #	define OGRE_UNICODE_SUPPORT 1
 #   define OGRE_DEBUG_MODE 0
-#   define _OgreExport
 #   define _OgrePrivate
-#	define CLOCKS_PER_SEC  1000
-// pragma def were found here: http://www.inf.pucrs.br/~eduardob/disciplinas/SistEmbarcados/Mobile/Nokia/Tools/Carbide_vs/WINSCW/Help/PDF/C_Compilers_Reference_3.2.pdf
-#	pragma warn_unusedarg off
-#	pragma warn_emptydecl off
-#	pragma warn_possunwant off
+#	  define CLOCKS_PER_SEC  1000
+//  pragma def were found here: http://www.inf.pucrs.br/~eduardob/disciplinas/SistEmbarcados/Mobile/Nokia/Tools/Carbide_vs/WINSCW/Help/PDF/C_Compilers_Reference_3.2.pdf
+#	  pragma warn_unusedarg off
+#	  pragma warn_emptydecl off
+#	  pragma warn_possunwant off
+// A quick define to overcome different names for the same function
+#   define stricmp strcasecmp
+#   ifdef DEBUG
+#       define OGRE_DEBUG_MODE 1
+#   else
+#       define OGRE_DEBUG_MODE 0
+#   endif
 #endif
 //----------------------------------------------------------------------------
-// Linux/Apple/Symbian Settings
-#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_IPHONE || OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN
+// Android Settings
+/*
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+#   define _OgreExport 
+#	define OGRE_UNICODE_SUPPORT 1
+#   define OGRE_DEBUG_MODE 0
+#   define _OgrePrivate
+#	  define CLOCKS_PER_SEC  1000
+//  pragma def were found here: http://www.inf.pucrs.br/~eduardob/disciplinas/SistEmbarcados/Mobile/Nokia/Tools/Carbide_vs/WINSCW/Help/PDF/C_Compilers_Reference_3.2.pdf
+#	  pragma warn_unusedarg off
+#	  pragma warn_emptydecl off
+#	  pragma warn_possunwant off
+// A quick define to overcome different names for the same function
+#   define stricmp strcasecmp
+#   ifdef DEBUG
+#       define OGRE_DEBUG_MODE 1
+#   else
+#       define OGRE_DEBUG_MODE 0
+#   endif
+#endif
+*/
+//----------------------------------------------------------------------------
+// Linux/Apple/Symbian/Tegra2 Settings
+#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_IPHONE || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_TEGRA2
 
 // Enable GCC symbol visibility
 #   if defined( OGRE_GCC_VISIBILITY )

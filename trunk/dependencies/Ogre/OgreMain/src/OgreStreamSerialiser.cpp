@@ -46,8 +46,8 @@ THE SOFTWARE.
 namespace Ogre
 {
 	//---------------------------------------------------------------------
-	uint32 StreamSerialiser::HEADER_ID = 0x0001;
-	uint32 StreamSerialiser::REVERSE_HEADER_ID = 0x1000;
+	uint32 StreamSerialiser::HEADER_ID = 0x00000001;
+	uint32 StreamSerialiser::REVERSE_HEADER_ID = 0x10000000;
 	uint32 StreamSerialiser::CHUNK_HEADER_SIZE = 
 		sizeof(uint32) + // id
 		sizeof(uint16) + // version
@@ -797,9 +797,19 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	uint32 StreamSerialiser::calculateChecksum(Chunk* c)
 	{
-		uint32 hashVal = FastHash((const char*)&c->id, sizeof(uint32));
-		hashVal = FastHash((const char*)&c->version, sizeof(uint16), hashVal);
-		hashVal = FastHash((const char*)&c->length, sizeof(uint32), hashVal);
+		// Always calculate checksums in little endian to make sure they match 
+		// Otherwise checksums for the same data on different endians will not match
+		uint32 id = c->id;
+		uint16 version = c->version;
+		uint32 length = c->length;
+#if OGRE_ENDIAN == OGRE_ENDIAN_BIG
+		flipEndian(&id, sizeof(uint32));
+		flipEndian(&version, sizeof(uint16));
+		flipEndian(&length, sizeof(uint32));
+#endif
+		uint32 hashVal = FastHash((const char*)&id, sizeof(uint32));
+		hashVal = FastHash((const char*)&version, sizeof(uint16), hashVal);
+		hashVal = FastHash((const char*)&length, sizeof(uint32), hashVal);
 
 		return hashVal;
 	}
