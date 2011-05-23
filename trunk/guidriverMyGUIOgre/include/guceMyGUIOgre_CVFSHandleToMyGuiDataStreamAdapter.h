@@ -17,8 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
 
-#ifndef GUCE_MYGUIOGRE_PLUGINAPI_H
-#define GUCE_MYGUIOGRE_PLUGINAPI_H
+#ifndef GUCE_MYGUIOGRE_CVFSHANDLETOMYGUIDATASTREAMADAPTER_H
+#define GUCE_MYGUIOGRE_CVFSHANDLETOMYGUIDATASTREAMADAPTER_H
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -26,15 +26,15 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#ifndef GUCEF_CORE_ESTRUCTS_H
-#include "EStructs.h"
-#define GUCEF_CORE_ESTRUCTS_H
-#endif /* GUCEF_CORE_ESTRUCTS_H ? */
+#ifndef GUCE_MYGUIOGRE_CIOACCESSTOMYGUIDATASTREAMADAPTER_H
+#include "guceMyGUIOgre_CIOAccessToMyGUIDataStreamAdapter.h"
+#define GUCE_MYGUIOGRE_CIOACCESSTOMYGUIDATASTREAMADAPTER_H
+#endif /* GUCE_MYGUIOGRE_CIOACCESSTOMYGUIDATASTREAMADAPTER_H ? */
 
-#ifndef GUCE_MYGUIOGRE_MACROS_H
-#include "guceMyGUIOgre_macros.h"
-#define GUCE_MYGUIOGRE_MACROS_H
-#endif /* GUCE_MYGUIOGRE_MACROS_H ? */
+#ifndef GUCEF_VFS_CVFS_H
+#include "gucefVFS_CVFS.h"
+#define GUCEF_VFS_CVFS_H
+#endif /* GUCEF_VFS_CVFS_H ? */
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -47,47 +47,28 @@ namespace MYGUIOGRE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
-//      UTILITIES                                                          //
+//      CLASSES                                                            //
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-/*
- *      Prevent C++ name mangling
- */
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-/*---------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C CORE::Int32 GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Load( UInt32 argc, const char** argv ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Unload( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetVersion( GUCEF::CORE::TVersion* versionInfo ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C const char* GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetCopyright( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C const char* GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*---------------------------------------------------------------------------*/                 
-
-#ifdef __cplusplus
-   }
-#endif /* __cplusplus */
+class CVfsHandleToMyGUIDataStreamAdapter : public CIOAccessToMyGUIDataStreamAdapter
+{
+    public:
+    
+    CVfsHandleToMyGUIDataStreamAdapter( GUCEF::VFS::CVFS::CVFSHandlePtr filePtr );
+    
+    virtual ~CVfsHandleToMyGUIDataStreamAdapter();
+    
+    private:
+    
+    CVfsHandleToMyGUIDataStreamAdapter( const CVfsHandleToMyGUIDataStreamAdapter& src );
+    CVfsHandleToMyGUIDataStreamAdapter& operator=( const CVfsHandleToMyGUIDataStreamAdapter& src );
+    
+    private:
+    
+    GUCEF::VFS::CVFS::CVFSHandlePtr m_filePtr;
+};
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -98,9 +79,9 @@ GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
 }; /* namespace MYGUIOGRE */
 }; /* namespace GUCE */
 
-/*--------------------------------------------------------------------------*/
-
-#endif /* GUCE_MYGUIOGRE_PLUGINAPI_H ? */
+/*-------------------------------------------------------------------------*/
+          
+#endif /* GUCE_MYGUIOGRE_CVFSHANDLETOMYGUIDATASTREAMADAPTER_H ? */
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -108,7 +89,7 @@ GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
 //                                                                         //
 //-------------------------------------------------------------------------//
 
-- 04-05-2005 :
-        - Dinand: Initial version.
+- 18-08-2007 :
+        - Initial implementation
 
 -----------------------------------------------------------------------------*/

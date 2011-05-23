@@ -41,6 +41,11 @@
 #define GUCE_GUI_CIGUIDRIVER_H
 #endif /* GUCE_GUI_CIGUIDRIVER_H ? */
 
+#ifndef GUCE_MYGUIOGRE_CDATAMANAGER_H
+#include "guceMyGUIOgre_CDataManager.h"
+#define GUCE_MYGUIOGRE_CDATAMANAGER_H
+#endif /* GUCE_MYGUIOGRE_CDATAMANAGER_H ? */
+
 #ifndef GUCE_MYGUIOGRE_MACROS_H
 #include "guceMyGUIOgre_macros.h"     /* often used guceMYGUIOGRE macros */
 #define GUCE_MYGUIOGRE_MACROS_H
@@ -56,7 +61,7 @@
  *      Forward declarations of classes used here 
  */
 namespace Ogre { class RenderWindow; class RenderTexture; class Root; }
-namespace MyGUI { class Gui; class OgrePlatform; }
+namespace MyGUI { class Gui; class OgrePlatform; class OgreRenderManager; }
 namespace GUCEF { namespace CORE { class CDataNode; } }
 
 /*-------------------------------------------------------------------------//
@@ -146,16 +151,18 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     
     static CGUIDriver* g_instance;
     
-    bool m_initialized;                         /**< flag for manager initialization */    
-    Ogre::RenderWindow* m_window;               /**< window displaying our GUI */
-    MyGUI::Gui* m_guiSystem;                    /**< main GUI system class */
-    MyGUI::OgrePlatform* m_myguiPlatform;       /**< Ogre backend for the GUI system */
-    CMyGUIInputAdapter* m_inputAdapter;         /**< binding between the input system and MyGUI */
+    bool m_initialized;                                   /**< flag for manager initialization */    
+    Ogre::RenderWindow* m_window;                         /**< window displaying our GUI */
+    MyGUI::Gui* m_guiSystem;                              /**< main GUI system class */
+    MyGUI::OgreRenderManager* m_myguiRenderManager;       /**< Ogre rendering backend for the GUI system */
+    CMyGUIInputAdapter* m_inputAdapter;                   /**< binding between the input system and MyGUI */
     GUCEF::CORE::CDataNode m_guiConfig;    
     GUCEF::GUI::CFormFactory m_formFactory;
     GUCEF::GUI::CWidgetFactory m_widgetFactory;
     TGUIContextSet m_contextList;
     CString m_resourceGroup;
+    CString m_guiSystemConfigPath;
+    CDataManager m_myguiDataManager;
 };
 
 /*-------------------------------------------------------------------------//

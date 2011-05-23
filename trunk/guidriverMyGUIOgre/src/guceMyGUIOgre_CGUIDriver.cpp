@@ -94,14 +94,6 @@ namespace MYGUIOGRE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
-//      GLOBAL VARS                                                        //
-//                                                                         //
-//-------------------------------------------------------------------------*/
-
-CGUIDriver* CGUIDriver::g_instance = NULL;
-
-/*-------------------------------------------------------------------------//
-//                                                                         //
 //      TYPES                                                              //
 //                                                                         //
 //-------------------------------------------------------------------------*/
@@ -129,28 +121,42 @@ typedef GUCEF::CORE::CTFactory< GUCEF::GUI::CWidget, CButtonImp >         TButto
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
+//      GLOBAL VARS                                                        //
+//                                                                         //
+//-------------------------------------------------------------------------*/
+
+static TWidgetFactory widgetFactory;
+static TWindowFactory windowFactory;
+static TButtonFactory buttonFactory;
+
+CGUIDriver* CGUIDriver::g_instance = NULL;
+
+/*-------------------------------------------------------------------------//
+//                                                                         //
 //      UTILITIES                                                          //
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
 CGUIDriver::CGUIDriver( void )
-    : CIGUIDriver()           ,
-      m_initialized( false )  ,
-      m_window( NULL )        ,
-      m_guiSystem( NULL )     ,
-      m_myguiPlatform( NULL ) ,
-      m_inputAdapter( NULL )  ,
-      m_guiConfig()           ,
-      m_formFactory()         ,
-      m_widgetFactory()       ,
-      m_contextList()         ,
-      m_resourceGroup()
+    : CIGUIDriver()                ,
+      m_initialized( false )       ,
+      m_window( NULL )             ,
+      m_guiSystem( NULL )          ,
+      m_myguiRenderManager( NULL ) ,
+      m_inputAdapter( NULL )       ,
+      m_guiConfig()                ,
+      m_formFactory()              ,
+      m_widgetFactory()            ,
+      m_contextList()              ,
+      m_resourceGroup()            ,
+      m_guiSystemConfigPath()      ,
+      m_myguiDataManager()
 {GUCE_TRACE;
 
     m_resourceGroup = GetDriverName();
-    m_widgetFactory.RegisterConcreteFactory( "Widget", new TWidgetFactory() );
-    m_widgetFactory.RegisterConcreteFactory( "Window", new TWindowFactory() );
-    m_widgetFactory.RegisterConcreteFactory( "Button", new TButtonFactory() );
+    m_widgetFactory.RegisterConcreteFactory( "Widget", &widgetFactory );
+    m_widgetFactory.RegisterConcreteFactory( "Window", &windowFactory );
+    m_widgetFactory.RegisterConcreteFactory( "Button", &buttonFactory );
     //widgetFactory.RegisterConcreteFactory( "PushButton", new TPushButtonFactory() );
     //widgetFactory.RegisterConcreteFactory( "Editbox", new TEditboxFactory() );
     //widgetFactory.RegisterConcreteFactory( "Listbox", new TListboxFactory() );
@@ -224,20 +230,33 @@ CGUIDriver::Shutdown( void )
     if ( m_initialized )
     {   
         GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutting down MyGUI system" );
+    }
         
+    delete m_inputAdapter;
+    m_inputAdapter = NULL;
+        
+    if ( NULL != m_guiSystem )
+    {
         m_guiSystem->shutdown();
-        delete m_guiSystem;
-        m_guiSystem = NULL;
+    }
+    delete m_guiSystem;
+    m_guiSystem = NULL;
         
-        m_myguiPlatform->shutdown();
-        delete m_myguiPlatform;
-        m_myguiPlatform = NULL;
+    if ( NULL != m_myguiRenderManager )
+    {
+        m_myguiRenderManager->shutdown();
+    }
+    delete m_myguiRenderManager;
+    m_myguiRenderManager = NULL;
        
-        m_window = NULL;        
-        m_initialized = false;
-        
+    m_window = NULL;        
+            
+    if ( m_initialized )
+    {
         GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Shutdown of MyGUI system complete" );
     }
+    
+    m_initialized = false;
     return true;
 }
 
@@ -257,18 +276,26 @@ CGUIDriver::Initialize( CORE::TWindowContextPtr windowContext )
             m_window = windowContext->GetOgreWindowPtr();                
             assert( m_window != NULL );
 
-            m_myguiPlatform = new MyGUI::OgrePlatform();
-            m_myguiPlatform->initialise( m_window, CORE::CGUCEApplication::Instance()->GetSceneManager(), m_resourceGroup );
-                       
+            MyGUI::LogManager::registerSection( MYGUI_PLATFORM_LOG_SECTION, MYGUI_PLATFORM_LOG_FILENAME );
+
+            #ifdef GUCE_CORE_DEBUG_MODE
+            MyGUI::LogManager::setSTDOutputEnabled( true );
+            #endif
+
+            m_myguiRenderManager = new MyGUI::OgreRenderManager();
+            m_myguiRenderManager->initialise( m_window, CORE::CGUCEApplication::Instance()->GetSceneManager() );                       
+            
             m_guiSystem = new MyGUI::Gui();
-            m_guiSystem->initialise( "core.xml" );
+            m_guiSystem->initialise( m_guiSystemConfigPath.STL_String() );
             
             /* feed MyGUI with input events */
             m_inputAdapter = new CMyGUIInputAdapter( m_guiSystem );
+
         }
         catch ( Ogre::Exception& e )
         {
             GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_CRITICAL, "CGUIDriver: Exception while initializing the GUI system: " + e.getFullDescription() );
+            Shutdown();
             return false;
         }    
         m_initialized = true;
@@ -281,6 +308,7 @@ CGUIDriver::Initialize( CORE::TWindowContextPtr windowContext )
         else
         {
             GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUIDriver: Failed to initialize the GUI system" );
+            Shutdown();
             return false;
         }
     }
@@ -305,11 +333,12 @@ CGUIDriver::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )
         const GUCEF::CORE::CDataNode* node = ourRoot->FindChild( "ResourceGroup" );
         if ( NULL != node )
         {
-            CString resourceGroup = node->GetAttributeValue( "Name" );
-            if ( resourceGroup.Length() > 0 )
-            {
-                SetDriverResourceGroup( resourceGroup );
-            }
+            m_guiSystemConfigPath = node->GetAttributeValue( "Name" );
+        }
+        node = ourRoot->FindChild( "GuiSystemConfig" );
+        if ( NULL != node )
+        {
+            m_guiSystemConfigPath = node->GetAttributeValue( "Path" );
         }
     }
     return true;

@@ -190,8 +190,8 @@ CGUIManager::OnNotify( GUCEF::CORE::CNotifier* notifier                  ,
         {        
             // The newly registered driver is GUCE compatible/capable
             // We register it here for use
-            CIGUIDriver& guceDriver = *static_cast< CIGUIDriver* >( basicGucefDriver );
-            RegisterGUIDriver( driverName, guceDriver );
+            GUCE::GUI::CIGUIDriver* guceDriver = static_cast< GUCE::GUI::CIGUIDriver* >( basicGucefDriver );
+            RegisterGUIDriver( driverName, *guceDriver );
         }
     }
     else
