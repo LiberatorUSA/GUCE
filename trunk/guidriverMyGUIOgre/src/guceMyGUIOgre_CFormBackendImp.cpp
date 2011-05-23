@@ -308,9 +308,9 @@ CFormBackendImp::WrapAndHookChildWindows( MyGUI::Widget* widget )
 /*-------------------------------------------------------------------------*/
 
 bool
-CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
+CFormBackendImp::LoadLayout( const GUCEF::CORE::CString& layoutStoragePath )
 {GUCE_TRACE;
-    
+
     MyGUI::VectorWidgetPtr rootWidgets;
     MyGUI::LayoutManager* lmgr = MyGUI::LayoutManager::getInstancePtr();
     
@@ -318,22 +318,9 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
     
     try
     {
-        // Prepare variables we need
-        MyGUI::Version dummyVersion;
-        MyGUI::xml::Document xmlDocument;
-        CIOAccessToMyGUIDataStreamAdapter storageAdapter( layoutStorage );
-        
-        // Parse the xml doc
-        xmlDocument.open( &storageAdapter );        
-        MyGUI::xml::ElementPtr rootElement = xmlDocument.getRoot();
- 
-        // Load the layout from the xml
-        lmgr->setLayoutPrefix( m_widgetNamePrefix.STL_String() );
-        lmgr->_load( rootElement              , 
-                     "DirectLoadFromIOAccess" ,  
-                     dummyVersion             );
-                                   
-        rootWidgets = lmgr->getVectorWidgetPtr();
+        rootWidgets = lmgr->loadLayout( layoutStoragePath.STL_String()  , 
+                                        m_widgetNamePrefix.STL_String() , 
+                                        nullptr                         );
     }
     catch ( Ogre::Exception& e )
     {
@@ -364,7 +351,25 @@ CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
     }
     
     GUCEF_DEBUG_LOG( 0, "CFormBackendImp(" + GUCEF::CORE::PointerToString( this ) + "): Successfully loaded a GUI Form layout" );
-    return true; 
+    return true;        
+}
+
+/*-------------------------------------------------------------------------*/
+    
+bool
+CFormBackendImp::SaveLayout( const GUCEF::CORE::CString& layoutStoragePath )
+{GUCE_TRACE;
+
+    return false;
+}
+
+/*-------------------------------------------------------------------------*/
+
+bool
+CFormBackendImp::LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage )
+{GUCE_TRACE;
+
+    return false; 
 }
 
 /*-------------------------------------------------------------------------*/
