@@ -50,13 +50,13 @@ namespace MYGUIOGRE {
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Load( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX
+CORE::Int32 GUCEF_PLUGIN_CALLSPEC_PREFIX 
+GUCEFPlugin_Load( UInt32 argc, const char** argv ) GUCEF_PLUGIN_CALLSPEC_SUFFIX
 {GUCE_TRACE;
     
-    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Load called on plugin guceMyGUIOgre" );
+    GUCEF_SYSTEM_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "Load called on plugin guceMyGUIOgre" );    
     
-    CModule::Load();
+    return CModule::Load() ? 1 : 0;
 }
 
 /*--------------------------------------------------------------------------*/

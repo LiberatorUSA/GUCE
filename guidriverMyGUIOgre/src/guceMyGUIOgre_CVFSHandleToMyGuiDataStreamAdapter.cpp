@@ -17,24 +17,13 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
 
-#ifndef GUCE_MYGUIOGRE_PLUGINAPI_H
-#define GUCE_MYGUIOGRE_PLUGINAPI_H
-
 /*-------------------------------------------------------------------------//
 //                                                                         //
 //      INCLUDES                                                           //
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#ifndef GUCEF_CORE_ESTRUCTS_H
-#include "EStructs.h"
-#define GUCEF_CORE_ESTRUCTS_H
-#endif /* GUCEF_CORE_ESTRUCTS_H ? */
-
-#ifndef GUCE_MYGUIOGRE_MACROS_H
-#include "guceMyGUIOgre_macros.h"
-#define GUCE_MYGUIOGRE_MACROS_H
-#endif /* GUCE_MYGUIOGRE_MACROS_H ? */
+#include "guceMyGUIOgre_CVfsHandleToMyGUIDataStreamAdapter.h"
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -51,43 +40,19 @@ namespace MYGUIOGRE {
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-/*
- *      Prevent C++ name mangling
- */
-#ifdef __cplusplus
-extern "C" {
-#endif
+CVfsHandleToMyGUIDataStreamAdapter::CVfsHandleToMyGUIDataStreamAdapter( GUCEF::VFS::CVFS::CVFSHandlePtr filePtr )
+    : CIOAccessToMyGUIDataStreamAdapter( *filePtr->GetAccess() ) ,
+      m_filePtr( filePtr )
+{GUCE_TRACE;
 
-/*---------------------------------------------------------------------------*/
+}
 
-GUCE_MYGUIOGRE_EXPORT_C CORE::Int32 GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Load( UInt32 argc, const char** argv ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
+/*-------------------------------------------------------------------------*/
+    
+CVfsHandleToMyGUIDataStreamAdapter::~CVfsHandleToMyGUIDataStreamAdapter()
+{GUCE_TRACE;
 
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Unload( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetVersion( GUCEF::CORE::TVersion* versionInfo ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C const char* GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetCopyright( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*--------------------------------------------------------------------------*/
-
-GUCE_MYGUIOGRE_EXPORT_C const char* GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
-
-/*---------------------------------------------------------------------------*/                 
-
-#ifdef __cplusplus
-   }
-#endif /* __cplusplus */
+}
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -98,17 +63,4 @@ GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
 }; /* namespace MYGUIOGRE */
 }; /* namespace GUCE */
 
-/*--------------------------------------------------------------------------*/
-
-#endif /* GUCE_MYGUIOGRE_PLUGINAPI_H ? */
-
-/*-------------------------------------------------------------------------//
-//                                                                         //
-//      Info & Changes                                                     //
-//                                                                         //
-//-------------------------------------------------------------------------//
-
-- 04-05-2005 :
-        - Dinand: Initial version.
-
------------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*/

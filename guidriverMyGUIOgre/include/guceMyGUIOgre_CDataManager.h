@@ -17,8 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  */
 
-#ifndef GUCE_MYGUIOGRE_PLUGINAPI_H
-#define GUCE_MYGUIOGRE_PLUGINAPI_H
+#ifndef GUCE_MYGUIOGRE_CDATAMANAGER_H
+#define GUCE_MYGUIOGRE_CDATAMANAGER_H 
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -26,15 +26,33 @@
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-#ifndef GUCEF_CORE_ESTRUCTS_H
-#include "EStructs.h"
-#define GUCEF_CORE_ESTRUCTS_H
-#endif /* GUCEF_CORE_ESTRUCTS_H ? */
+#ifndef __MYGUI_INSTANCE_H__
+#include "MyGUI_Instance.h"
+#define __MYGUI_INSTANCE_H__
+#endif /* __MYGUI_INSTANCE_H__ ? */
+
+#ifndef __MYGUI_DATA_MANAGER_H__
+#include "MyGUI_DataManager.h"
+#define __MYGUI_DATA_MANAGER_H__
+#endif /* __MYGUI_DATA_MANAGER_H__ ? */
 
 #ifndef GUCE_MYGUIOGRE_MACROS_H
-#include "guceMyGUIOgre_macros.h"
+#include "guceMyGUIOgre_macros.h"     /* often used guceMYGUIOGRE macros */
 #define GUCE_MYGUIOGRE_MACROS_H
 #endif /* GUCE_MYGUIOGRE_MACROS_H ? */
+
+/*-------------------------------------------------------------------------//
+//                                                                         //
+//      CLASSES                                                            //
+//                                                                         //
+//-------------------------------------------------------------------------*/
+
+/*
+ *      Forward declarations of classes used here 
+ */
+namespace Ogre { class RenderWindow; class RenderTexture; class Root; }
+namespace MyGUI { class Gui; class OgrePlatform; class OgreRenderManager; }
+namespace GUCEF { namespace CORE { class CDataNode; } }
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -47,47 +65,39 @@ namespace MYGUIOGRE {
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
-//      UTILITIES                                                          //
+//      CLASSES                                                            //
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-/*
- *      Prevent C++ name mangling
- */
-#ifdef __cplusplus
-extern "C" {
-#endif
+class CDataManager : public MyGUI::DataManager
+{
+    public:
 
-/*---------------------------------------------------------------------------*/
+    MYGUI_INSTANCE_HEADER( CDataManager )    
 
-GUCE_MYGUIOGRE_EXPORT_C CORE::Int32 GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Load( UInt32 argc, const char** argv ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
+    virtual MyGUI::IDataStream* getData( const std::string& _name );
 
-/*--------------------------------------------------------------------------*/
+    virtual bool isDataExist( const std::string& _name );
 
-GUCE_MYGUIOGRE_EXPORT_C void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_Unload( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
+    virtual const MyGUI::VectorString& getDataListNames( const std::string& pattern );
 
-/*--------------------------------------------------------------------------*/
+    virtual const std::string& getDataPath( const std::string& name );
 
-GUCE_MYGUIOGRE_EXPORT_C void GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetVersion( GUCEF::CORE::TVersion* versionInfo ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
+    void SetGuiDataRoot( const CORE::CString& guiDataRootPath );
 
-/*--------------------------------------------------------------------------*/
+    const CORE::CString GetGuiDataRoot( void ) const;
 
-GUCE_MYGUIOGRE_EXPORT_C const char* GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetCopyright( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
+    private:
 
-/*--------------------------------------------------------------------------*/
+    CDataManager( const CDataManager& src );
+    CDataManager& operator=( const CDataManager& src );
 
-GUCE_MYGUIOGRE_EXPORT_C const char* GUCEF_PLUGIN_CALLSPEC_PREFIX 
-GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
+    const MyGUI::VectorString& getDataListNames( const std::string& pattern, bool fullpath );
 
-/*---------------------------------------------------------------------------*/                 
+    private:
 
-#ifdef __cplusplus
-   }
-#endif /* __cplusplus */
+    CString m_guiDataRoot;
+};
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -95,12 +105,12 @@ GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
 //                                                                         //
 //-------------------------------------------------------------------------*/
 
-}; /* namespace MYGUIOGRE */
-}; /* namespace GUCE */
+} /* namespace MYGUIOGRE */
+} /* namespace GUCE */
 
-/*--------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*/
 
-#endif /* GUCE_MYGUIOGRE_PLUGINAPI_H ? */
+#endif /* GUCE_MYGUIOGRE_CDATAMANAGER_H ? */
 
 /*-------------------------------------------------------------------------//
 //                                                                         //
@@ -108,7 +118,7 @@ GUCEFPlugin_GetDescription( void ) GUCEF_PLUGIN_CALLSPEC_SUFFIX;
 //                                                                         //
 //-------------------------------------------------------------------------//
 
-- 04-05-2005 :
-        - Dinand: Initial version.
+- 08-04-2007 :
+        - Initial implementation
 
------------------------------------------------------------------------------*/
+---------------------------------------------------------------------------*/

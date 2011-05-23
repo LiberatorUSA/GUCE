@@ -127,9 +127,13 @@ CGUCEFVFSArchive::open( const Ogre::String& filename, bool readOnly ) const
     GUCEF::VFS::CVFS::CVFSHandlePtr fh = _vfs->GetFile( path, mode );
     if ( fh != NULL )
     {                                                    
-            CVFSHandleToDataStream* stream = new CVFSHandleToDataStream( fh );
-            return Ogre::DataStreamPtr( stream );
+        GUCEF_DEBUG_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEFVFSArchive: Obtained file Vfs handle, wrapping as Ogre::DataStream for file " +  filename );
+        
+        CVFSHandleToDataStream* stream = new CVFSHandleToDataStream( fh );
+        return Ogre::DataStreamPtr( stream );
     }
+
+    GUCEF_ERROR_LOG( GUCEF::CORE::LOGLEVEL_NORMAL, "CGUCEFVFSArchive: Failed to obtain file Vfs handle for file " +  filename );
     return Ogre::DataStreamPtr();                
 }
 
