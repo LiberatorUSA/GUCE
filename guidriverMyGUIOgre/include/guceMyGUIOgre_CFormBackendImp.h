@@ -80,6 +80,10 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CFormBackendImp : public GUCEF::GUI::CFormBacken
     
     virtual ~CFormBackendImp();
 
+    virtual bool LoadLayout( const GUCEF::CORE::CString& layoutStoragePath );
+    
+    virtual bool SaveLayout( const GUCEF::CORE::CString& layoutStoragePath );
+
     virtual bool LoadLayout( GUCEF::CORE::CIOAccess& layoutStorage );
     
     virtual bool SaveLayout( GUCEF::CORE::CIOAccess& layoutStorage );
