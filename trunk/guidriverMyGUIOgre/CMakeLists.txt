@@ -16,6 +16,7 @@ set( HEADER_FILES
   include/guceMyGUIOgre_CButtonImp.h
   include/guceMyGUIOgre_CCheckboxImp.h
   include/guceMyGUIOgre_CComboboxImp.h
+  include/guceMyGUIOgre_CDataManager.h
   include/guceMyGUIOgre_CEditboxImp.h
   include/guceMyGUIOgre_CFileOpenDialogImp.h
   include/guceMyGUIOgre_CFileSaveDialogImp.h
@@ -41,6 +42,7 @@ set( HEADER_FILES
   include/guceMyGUIOgre_CTabContentPaneImp.h
   include/guceMyGUIOgre_CTabControlImp.h
   include/guceMyGUIOgre_CTreeviewImp.h
+  include/guceMyGUIOgre_CVFSHandleToMyGuiDataStreamAdapter.h
   include/guceMyGUIOgre_CVFSInfoProvider.h
   include/guceMyGUIOgre_CWidgetImp.h
   include/guceMyGUIOgre_CWindowImp.h
@@ -55,6 +57,7 @@ set( SOURCE_FILES
   src/guceMyGUIOgre_CButtonImp.cpp
   src/guceMyGUIOgre_CCheckboxImp.cpp
   src/guceMyGUIOgre_CComboboxImp.cpp
+  src/guceMyGUIOgre_CDataManager.cpp
   src/guceMyGUIOgre_CEditboxImp.cpp
   src/guceMyGUIOgre_CFileOpenDialogImp.cpp
   src/guceMyGUIOgre_CFileSaveDialogImp.cpp
@@ -78,6 +81,7 @@ set( SOURCE_FILES
   src/guceMyGUIOgre_CTabContentPaneImp.cpp
   src/guceMyGUIOgre_CTabControlImp.cpp
   src/guceMyGUIOgre_CTreeviewImp.cpp
+  src/guceMyGUIOgre_CVFSHandleToMyGuiDataStreamAdapter.cpp
   src/guceMyGUIOgre_CVFSInfoProvider.cpp
   src/guceMyGUIOgre_CWidgetImp.cpp
   src/guceMyGUIOgre_CWindowImp.cpp
