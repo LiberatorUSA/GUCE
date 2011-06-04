@@ -174,7 +174,6 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/include \
   $(MY_MODULE_PATH)/include/elements \
   $(MY_MODULE_PATH)/include/falagard \
-  $(MY_MODULE_PATH)/../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib \
   $(MY_MODULE_PATH)/../../../dependencies/freetype/include \
   $(MY_MODULE_PATH)/../../../dependencies/freetype/include/freetype \
   $(MY_MODULE_PATH)/../../../dependencies/freetype/include/freetype/config \

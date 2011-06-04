@@ -26,6 +26,7 @@ LOCAL_SRC_FILES := \
   src/guceMyGUIOgre_CButtonImp.cpp \
   src/guceMyGUIOgre_CCheckboxImp.cpp \
   src/guceMyGUIOgre_CComboboxImp.cpp \
+  src/guceMyGUIOgre_CDataManager.cpp \
   src/guceMyGUIOgre_CEditboxImp.cpp \
   src/guceMyGUIOgre_CFileOpenDialogImp.cpp \
   src/guceMyGUIOgre_CFileSaveDialogImp.cpp \
@@ -49,6 +50,7 @@ LOCAL_SRC_FILES := \
   src/guceMyGUIOgre_CTabContentPaneImp.cpp \
   src/guceMyGUIOgre_CTabControlImp.cpp \
   src/guceMyGUIOgre_CTreeviewImp.cpp \
+  src/guceMyGUIOgre_CVFSHandleToMyGuiDataStreamAdapter.cpp \
   src/guceMyGUIOgre_CVFSInfoProvider.cpp \
   src/guceMyGUIOgre_CWidgetImp.cpp \
   src/guceMyGUIOgre_CWindowImp.cpp \
@@ -63,27 +65,10 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefDRN/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefGUI/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/include \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/DeprecationManager \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/FreeImageToolkit \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibJPEG \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibMNG \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibOpenJPEG \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibPNG \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibTIFF \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/Metadata \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Half \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Iex \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmImf \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmThread \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Imath \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/ZLib \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefINPUT/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefMT/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefPATCHER/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefVFS/include \
-  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip \
   $(MY_MODULE_PATH)/../dependencies/Ogre/OgreMain/include \
