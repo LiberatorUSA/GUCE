@@ -87,6 +87,10 @@ class CDataManager : public MyGUI::DataManager
 
     const CORE::CString GetGuiDataRoot( void ) const;
 
+    void SetResourceGroup( const CORE::CString& guiResourceGroup );
+
+    const CORE::CString& GetResourceGroup( void ) const;
+
     private:
 
     CDataManager( const CDataManager& src );
@@ -97,6 +101,7 @@ class CDataManager : public MyGUI::DataManager
     private:
 
     CString m_guiDataRoot;
+    CString m_resourceGroup;
 };
 
 /*-------------------------------------------------------------------------//

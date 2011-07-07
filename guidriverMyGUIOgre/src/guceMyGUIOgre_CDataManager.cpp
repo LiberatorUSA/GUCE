@@ -72,6 +72,24 @@ CDataManager::GetGuiDataRoot( void ) const
 
 /*-------------------------------------------------------------------------*/
 
+void
+CDataManager::SetResourceGroup( const CORE::CString& guiResourceGroup )
+{GUCE_TRACE;
+
+    m_resourceGroup = guiResourceGroup;
+}
+
+/*-------------------------------------------------------------------------*/
+
+const CORE::CString&
+CDataManager::GetResourceGroup( void ) const
+{GUCE_TRACE;
+
+    return m_resourceGroup;
+}
+
+/*-------------------------------------------------------------------------*/
+
 MyGUI::IDataStream* 
 CDataManager::getData( const std::string& name )
 {GUCE_TRACE;
