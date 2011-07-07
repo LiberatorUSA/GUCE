@@ -24,7 +24,7 @@
 //-------------------------------------------------------------------------*/
 
 #include "MyGUI.h"
-#include "MyGUI_OgrePlatform.h"
+#include "MyGUI.OgrePlatform.h"
 
 #ifndef GUCEF_CORE_CLOGMANAGER_H
 #include "CLogManager.h"
@@ -148,12 +148,11 @@ CGUIDriver::CGUIDriver( void )
       m_formFactory()              ,
       m_widgetFactory()            ,
       m_contextList()              ,
-      m_resourceGroup()            ,
       m_guiSystemConfigPath()      ,
       m_myguiDataManager()
 {GUCE_TRACE;
 
-    m_resourceGroup = GetDriverName();
+    SetDriverResourceGroup( GetDriverName() );
     m_widgetFactory.RegisterConcreteFactory( "Widget", &widgetFactory );
     m_widgetFactory.RegisterConcreteFactory( "Window", &windowFactory );
     m_widgetFactory.RegisterConcreteFactory( "Button", &buttonFactory );
@@ -282,14 +281,21 @@ CGUIDriver::Initialize( CORE::TWindowContextPtr windowContext )
             MyGUI::LogManager::setSTDOutputEnabled( true );
             #endif
 
+            // Set the path used during the initialization phase as the root for all files
+            CDataManager::getInstance().SetGuiDataRoot( m_guiSystemConfigPath );
+
             m_myguiRenderManager = new MyGUI::OgreRenderManager();
             m_myguiRenderManager->initialise( m_window, CORE::CGUCEApplication::Instance()->GetSceneManager() );                       
             
             m_guiSystem = new MyGUI::Gui();
-            m_guiSystem->initialise( m_guiSystemConfigPath.STL_String() );
+            m_guiSystem->initialise( "core.xml" );
             
             /* feed MyGUI with input events */
             m_inputAdapter = new CMyGUIInputAdapter( m_guiSystem );
+
+            // Clear the path after initialization and use normal full paths
+            // from this point onward
+            CDataManager::getInstance().SetGuiDataRoot( CString() );
 
         }
         catch ( Ogre::Exception& e )
@@ -333,7 +339,7 @@ CGUIDriver::LoadConfig( const GUCEF::CORE::CDataNode& rootNode )
         const GUCEF::CORE::CDataNode* node = ourRoot->FindChild( "ResourceGroup" );
         if ( NULL != node )
         {
-            m_guiSystemConfigPath = node->GetAttributeValue( "Name" );
+            SetDriverResourceGroup( node->GetAttributeValue( "Name" ) );
         }
         node = ourRoot->FindChild( "GuiSystemConfig" );
         if ( NULL != node )
@@ -514,7 +520,7 @@ void
 CGUIDriver::SetDriverResourceGroup( const CString& resourceGroup )
 {GUCE_TRACE;
 
-    m_resourceGroup = resourceGroup;
+    CDataManager::getInstance().SetResourceGroup( resourceGroup );
 }
 
 /*-------------------------------------------------------------------------*/
@@ -523,7 +529,7 @@ const CString&
 CGUIDriver::GetDriverResourceGroup( void ) const
 {GUCE_TRACE;
 
-    return m_resourceGroup;
+    return CDataManager::getInstance().GetResourceGroup();
 }
 
 /*-------------------------------------------------------------------------//

@@ -160,7 +160,6 @@ class GUCE_MYGUIOGRE_EXPORT_CPP CGUIDriver : public GUCE::GUI::CIGUIDriver
     GUCEF::GUI::CFormFactory m_formFactory;
     GUCEF::GUI::CWidgetFactory m_widgetFactory;
     TGUIContextSet m_contextList;
-    CString m_resourceGroup;
     CString m_guiSystemConfigPath;
     CDataManager m_myguiDataManager;
 };

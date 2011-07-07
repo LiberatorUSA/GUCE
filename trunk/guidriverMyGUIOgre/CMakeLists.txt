@@ -49,6 +49,13 @@ set( HEADER_FILES
   include/guceMyGUIOgre_ETypes.h
   include/guceMyGUIOgre_macros.h
   include/guceMyGUIOgre_pluginAPI.h
+  include/MyGUI.OgrePlatform.h
+  include/MyGUI_LastHeader.h
+  include/MyGUI_OgreDiagnostic.h
+  include/MyGUI_OgreRenderManager.h
+  include/MyGUI_OgreRTTexture.h
+  include/MyGUI_OgreTexture.h
+  include/MyGUI_OgreVertexBuffer.h
 )
 
 set( SOURCE_FILES 
@@ -86,6 +93,10 @@ set( SOURCE_FILES
   src/guceMyGUIOgre_CWidgetImp.cpp
   src/guceMyGUIOgre_CWindowImp.cpp
   src/guceMyGUIOgre_pluginAPI.cpp
+  src/MyGUI_OgreRenderManager.cpp
+  src/MyGUI_OgreRTTexture.cpp
+  src/MyGUI_OgreTexture.cpp
+  src/MyGUI_OgreVertexBuffer.cpp
 )
 
 # Make sure the PLATFORM_HEADER_FILES variable is always defined
@@ -105,8 +116,8 @@ set( ALL_FILES ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFO
 
 
 add_library( guidriverMyGUIOgre ${ALL_FILES} )
-add_dependencies( guidriverMyGUIOgre guceCORE guceGUI gucefCORE gucefMT MyGUIEngine MyGUI.OgrePlatform )
-target_link_libraries( guidriverMyGUIOgre guceCORE guceGUI gucefCORE gucefMT MyGUIEngine MyGUI.OgrePlatform )
+add_dependencies( guidriverMyGUIOgre guceCORE guceGUI gucefCORE gucefMT MyGUIEngine )
+target_link_libraries( guidriverMyGUIOgre guceCORE guceGUI gucefCORE gucefMT MyGUIEngine )
 set_target_properties( guidriverMyGUIOgre PROPERTIES COMPILE_DEFINITIONS GUCE_MYGUIOGRE_BUILD_MODULE )
 GUCE_config_lib( guidriverMyGUIOgre )
 
@@ -115,7 +126,11 @@ GUCE_config_lib( guidriverMyGUIOgre )
 
 
 
-include_directories( ../../../GUCEF/trunk/common/include ../../../GUCEF/trunk/gucefCOM/include ../../../GUCEF/trunk/gucefCOMCORE/include ../../../GUCEF/trunk/gucefCORE/include ../../../GUCEF/trunk/gucefDRN/include ../../../GUCEF/trunk/gucefGUI/include ../../../GUCEF/trunk/gucefIMAGE/include ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/DeprecationManager ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/FreeImageToolkit ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibJPEG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibMNG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibOpenJPEG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibPNG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibTIFF ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/Metadata ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Half ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Iex ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmImf ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmThread ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Imath ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/ZLib ../../../GUCEF/trunk/gucefINPUT/include ../../../GUCEF/trunk/gucefMT/include ../../../GUCEF/trunk/gucefPATCHER/include ../../../GUCEF/trunk/gucefVFS/include ../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ../dependencies/Ogre/OgreMain/include ../dependencies/Ogre/OgreMain/src ../dependencies/Ogre/OgreMain/src/nedmalloc ../dependencies/freetype/include ../dependencies/freetype/include/freetype ../dependencies/freetype/include/freetype/config ../dependencies/freetype/include/freetype/internal ../dependencies/freetype/include/freetype/internal/services ../dependencies/freetype/src/winfonts ../guceCORE/include ../guceGUI/include dependencies/MyGUI/MyGUIEngine/include dependencies/MyGUI/Platforms/Ogre/OgrePlatform/include include )
+include_directories( ../../../GUCEF/trunk/common/include ../../../GUCEF/trunk/gucefCOM/include ../../../GUCEF/trunk/gucefCOMCORE/include ../../../GUCEF/trunk/gucefCORE/include ../../../GUCEF/trunk/gucefDRN/include ../../../GUCEF/trunk/gucefGUI/include ../../../GUCEF/trunk/gucefIMAGE/include ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/DeprecationManager ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/FreeImageToolkit ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibJPEG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibMNG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibOpenJPEG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibPNG ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/LibTIFF ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/Metadata ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Half ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Iex ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmImf ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/IlmThread ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/OpenEXR/Imath ../../../GUCEF/trunk/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage/Source/ZLib ../../../GUCEF/trunk/gucefINPUT/include ../../../GUCEF/trunk/gucefMT/include ../../../GUCEF/trunk/gucefPATCHER/include ../../../GUCEF/trunk/gucefVFS/include ../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ../dependencies/Ogre/OgreMain/include ../dependencies/Ogre/OgreMain/src ../dependencies/Ogre/OgreMain/src/nedmalloc ../dependencies/freetype/include ../dependencies/freetype/include/freetype ../dependencies/freetype/include/freetype/config ../dependencies/freetype/include/freetype/internal ../dependencies/freetype/include/freetype/internal/services ../dependencies/freetype/src/winfonts ../guceCORE/include ../guceGUI/include dependencies/MyGUI/MyGUIEngine/include include )
+
+if ( ANDROID )
+  include_directories( ../../../GUCEF/trunk/gucefCORE/include/android )
+endif( ANDROID )
 
 if ( LINUX )
   include_directories( ../../../GUCEF/trunk/gucefCORE/include/linux )

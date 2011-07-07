@@ -5,6 +5,7 @@
 	@module
 */
 
+#include "guceMyGUIOgre_CDataManager.h"
 #include "MyGUI_OgreRenderManager.h"
 #include "MyGUI_OgreTexture.h"
 #include "MyGUI_OgreVertexBuffer.h"
@@ -300,7 +301,7 @@ namespace MyGUI
 		MapTexture::const_iterator item = mTextures.find(_name);
 		MYGUI_PLATFORM_ASSERT(item == mTextures.end(), "Texture '" << _name << "' already exist");
 
-		OgreTexture* texture = new OgreTexture(_name, OgreDataManager::getInstance().getGroup());
+		OgreTexture* texture = new OgreTexture(_name, GUCE::MYGUIOGRE::CDataManager::getInstance().GetResourceGroup());
 		mTextures[_name] = texture;
 		return texture;
 	}
