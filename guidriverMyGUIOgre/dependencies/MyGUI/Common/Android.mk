@@ -40,6 +40,7 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib \
   $(MY_MODULE_PATH)/../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip \
   $(MY_MODULE_PATH)/../../../../dependencies/Ogre/OgreMain/include \
+  $(MY_MODULE_PATH)/../../../../dependencies/Ogre/OgreMain/include/Android \
   $(MY_MODULE_PATH)/../../../../dependencies/Ogre/OgreMain/src \
   $(MY_MODULE_PATH)/../../../../dependencies/Ogre/OgreMain/src/nedmalloc \
   $(MY_MODULE_PATH)/../../../../dependencies/freetype/include \
@@ -48,17 +49,16 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../../../../dependencies/freetype/include/freetype/internal \
   $(MY_MODULE_PATH)/../../../../dependencies/freetype/include/freetype/internal/services \
   $(MY_MODULE_PATH)/../../../../dependencies/freetype/src/winfonts \
-  $(MY_MODULE_PATH)/../MyGUIEngine/include \
-  $(MY_MODULE_PATH)/../Platforms/Ogre/OgrePlatform/include
+  $(MY_MODULE_PATH)/../MyGUIEngine/include
 
 
 LOCAL_SHARED_LIBRARIES := \
-  OgreMain \
   MyGUIEngine \
-  MyGUI.OgrePlatform
+  OgreMain
 
 
 LOCAL_LDLIBS := \
+  -lMyGUI.OgrePlatform \
   -lOIS
 
 include $(BUILD_SHARED_LIBRARY)

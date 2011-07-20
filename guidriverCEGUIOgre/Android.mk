@@ -88,9 +88,9 @@ LOCAL_C_INCLUDES := \
 
 
 LOCAL_SHARED_LIBRARIES := \
+  CEGUI \
   guceCORE \
-  guceGUI \
-  CEGUI
+  guceGUI
 
 include $(BUILD_SHARED_LIBRARY)
 

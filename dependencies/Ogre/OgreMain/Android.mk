@@ -53,6 +53,8 @@ LOCAL_SRC_FILES := \
   src/OgreDDSCodec.cpp \
   src/OgreDefaultHardwareBufferManager.cpp \
   src/OgreDefaultSceneQueries.cpp \
+  src/OgreDeflate.cpp \
+  src/OgreDepthBuffer.cpp \
   src/OgreDistanceLodStrategy.cpp \
   src/OgreDynLib.cpp \
   src/OgreDynLibManager.cpp \
@@ -111,6 +113,7 @@ LOCAL_SRC_FILES := \
   src/OgreOverlayContainer.cpp \
   src/OgreOverlayElement.cpp \
   src/OgreOverlayElementCommands.cpp \
+  src/OgreOverlayElementFactory.cpp \
   src/OgreOverlayManager.cpp \
   src/OgrePanelOverlayElement.cpp \
   src/OgreParticle.cpp \
@@ -183,6 +186,7 @@ LOCAL_SRC_FILES := \
   src/OgreString.cpp \
   src/OgreStringConverter.cpp \
   src/OgreStringInterface.cpp \
+  src/OgreStringSerialiser.cpp \
   src/OgreSubEntity.cpp \
   src/OgreSubMesh.cpp \
   src/OgreTagPoint.cpp \
@@ -204,6 +208,9 @@ LOCAL_SRC_FILES := \
   src/OgreWireBoundingBox.cpp \
   src/OgreWorkQueue.cpp \
   src/OgreZip.cpp \
+  src/Android/OgreConfigDialog.cpp \
+  src/Android/OgreErrorDialog.cpp \
+  src/Android/OgreTimer.cpp \
   src/Threading/OgreDefaultWorkQueueStandard.cpp \
   src/nedmalloc/nedmalloc.c
 
@@ -223,13 +230,13 @@ LOCAL_C_INCLUDES := \
 
 
 LOCAL_SHARED_LIBRARIES := \
-  zziplib \
-  freetype
+  freetype \
+  zziplib
 
 
 LOCAL_LDLIBS := \
-  -lzlib \
-  -lFreeImage
+  -lFreeImage \
+  -lzlib
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -54,7 +54,11 @@ LOCAL_SRC_FILES := \
   src/guceMyGUIOgre_CVFSInfoProvider.cpp \
   src/guceMyGUIOgre_CWidgetImp.cpp \
   src/guceMyGUIOgre_CWindowImp.cpp \
-  src/guceMyGUIOgre_pluginAPI.cpp
+  src/guceMyGUIOgre_pluginAPI.cpp \
+  src/MyGUI_OgreRenderManager.cpp \
+  src/MyGUI_OgreRTTexture.cpp \
+  src/MyGUI_OgreTexture.cpp \
+  src/MyGUI_OgreVertexBuffer.cpp
 
 LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/include \
@@ -62,6 +66,7 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCOM/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCOMCORE/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCORE/include \
+  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCORE/include/android \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefDRN/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefGUI/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/include \
@@ -82,17 +87,15 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../dependencies/freetype/src/winfonts \
   $(MY_MODULE_PATH)/../guceCORE/include \
   $(MY_MODULE_PATH)/../guceGUI/include \
-  $(MY_MODULE_PATH)/dependencies/MyGUI/MyGUIEngine/include \
-  $(MY_MODULE_PATH)/dependencies/MyGUI/Platforms/Ogre/OgrePlatform/include
+  $(MY_MODULE_PATH)/dependencies/MyGUI/MyGUIEngine/include
 
 
 LOCAL_SHARED_LIBRARIES := \
+  MyGUIEngine \
   guceCORE \
   guceGUI \
   gucefCORE \
-  gucefMT \
-  MyGUIEngine \
-  MyGUI.OgrePlatform
+  gucefMT
 
 include $(BUILD_SHARED_LIBRARY)
 

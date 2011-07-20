@@ -40,6 +40,7 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCOM/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCOMCORE/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCORE/include \
+  $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefCORE/include/android \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefDRN/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefGUI/include \
   $(MY_MODULE_PATH)/../../../GUCEF/trunk/gucefIMAGE/include \
@@ -64,11 +65,11 @@ LOCAL_C_INCLUDES := \
 LOCAL_SHARED_LIBRARIES := \
   guceCORE \
   gucefCORE \
-  gucefMT \
   gucefGUI \
   gucefIMAGE \
-  gucefVFS \
-  gucefINPUT
+  gucefINPUT \
+  gucefMT \
+  gucefVFS
 
 include $(BUILD_SHARED_LIBRARY)
 
