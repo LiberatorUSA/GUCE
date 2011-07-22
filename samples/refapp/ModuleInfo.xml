@@ -1,0 +1,15 @@
+<ModuleInfoEntry>
+    <Module Name="GUCE_RefApp" Type="SharedLibrary" Platform="mswin;linux">
+        <Dependencies>
+            <Dependency Name="guceCORE" />
+            <Dependency Name="guceGUI" />
+        </Dependencies>
+        <Linker>
+            <Dependency Name="guceCORE" />
+            <Dependency Name="guceGUI" />
+        </Linker>
+        <Preprocessor>
+            <Define String="GUCE_REFAPP_BUILD_MODULE" />
+        </Preprocessor>
+    </Module>
+</ModuleInfoEntry>

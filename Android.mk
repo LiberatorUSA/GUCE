@@ -228,6 +228,3 @@ include $(MY_MODULE_PATH)/Android.mk
 MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/guidriverCEGUIOgre
 include $(MY_MODULE_PATH)/Android.mk
 
-MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/samples/refapp
-include $(MY_MODULE_PATH)/Android.mk
-
