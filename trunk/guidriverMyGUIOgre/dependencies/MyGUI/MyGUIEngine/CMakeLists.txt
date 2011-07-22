@@ -286,4 +286,4 @@ GUCE_config_lib( MyGUIEngine )
 
 
 
-include_directories( ../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ../../../../dependencies/freetype/include ../../../../dependencies/freetype/include/freetype ../../../../dependencies/freetype/include/freetype/config ../../../../dependencies/freetype/include/freetype/internal ../../../../dependencies/freetype/include/freetype/internal/services ../../../../dependencies/freetype/src/winfonts include )
+include_directories( ../../../../dependencies/freetype/include ../../../../dependencies/freetype/include/freetype ../../../../dependencies/freetype/include/freetype/config ../../../../dependencies/freetype/include/freetype/internal ../../../../dependencies/freetype/include/freetype/internal/services ../../../../dependencies/freetype/src/winfonts include )

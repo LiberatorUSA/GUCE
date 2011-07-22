@@ -1,0 +1,8 @@
+pcretest.c
+pcredemo.c
+pcregrep.c
+dftables.c
+ltmain.sh
+pcrecpp_unittest.cc
+pcre_scanner_unittest.cc
+pcre_stringpiece_unittest.cc

@@ -1,2 +1,0 @@
-pcretest.c
-pcredemo.c

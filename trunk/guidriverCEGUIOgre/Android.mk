@@ -79,9 +79,9 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../dependencies/freetype/include/freetype/internal \
   $(MY_MODULE_PATH)/../dependencies/freetype/include/freetype/internal/services \
   $(MY_MODULE_PATH)/../dependencies/freetype/src/winfonts \
+  $(MY_MODULE_PATH)/../dependencies/pcre \
   $(MY_MODULE_PATH)/../guceCORE/include \
   $(MY_MODULE_PATH)/../guceGUI/include \
-  $(MY_MODULE_PATH)/dependency/CEGUI/dependencies/pcre \
   $(MY_MODULE_PATH)/dependency/CEGUI/include \
   $(MY_MODULE_PATH)/dependency/CEGUI/include/elements \
   $(MY_MODULE_PATH)/dependency/CEGUI/include/falagard

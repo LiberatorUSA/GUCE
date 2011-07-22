@@ -373,7 +373,7 @@ GUCE_config_lib( CEGUI )
 
 
 
-include_directories( ../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ../../../dependencies/freetype/include ../../../dependencies/freetype/include/freetype ../../../dependencies/freetype/include/freetype/config ../../../dependencies/freetype/include/freetype/internal ../../../dependencies/freetype/include/freetype/internal/services ../../../dependencies/freetype/src/winfonts dependencies/pcre include include/elements include/falagard )
+include_directories( ../../../dependencies/freetype/include ../../../dependencies/freetype/include/freetype ../../../dependencies/freetype/include/freetype/config ../../../dependencies/freetype/include/freetype/internal ../../../dependencies/freetype/include/freetype/internal/services ../../../dependencies/freetype/src/winfonts ../../../dependencies/pcre include include/elements include/falagard )
 
 if ( OSX )
   include_directories( src/implementations/mac )
