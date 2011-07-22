@@ -1,6 +1,0 @@
-
-add_library( freetype ${ALL_FILES} )
-add_dependencies( freetype zlib )
-target_link_libraries( freetype zlib )
-set_target_properties( freetype PROPERTIES COMPILE_DEFINITIONS "FT2_BUILD_LIBRARY;FT_CONFIG_OPTION_SYSTEM_ZLIB;FT_DVEDIT_DLL_API;FT_DVEDIT_BUILD_DLL" )
-GUCE_config_lib( freetype )

@@ -2,7 +2,11 @@
 property table. See ucpinternal.h for a description of the layout.
 This version was made from the Unicode 5.0.0 tables. */
 
-static cnode ucp_table[] = {
+/* DV Edit: need this include for the cnode type */
+#include "pcre_internal.h"
+#include "ucpinternal.h"
+
+static cnode ucp_table[ 3062 ] = {
   { 0x09800000, 0x0000001f },
   { 0x09000020, 0x74000000 },
   { 0x09800021, 0x54000002 },

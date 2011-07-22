@@ -1,0 +1,7 @@
+<ModuleInfoEntry>
+    <Module Name="pcre" Type="SharedLibrary" Platform="All">
+        <Preprocessor>
+            <Define String="DLL_EXPORT" />
+        </Preprocessor>
+    </Module>
+</ModuleInfoEntry>

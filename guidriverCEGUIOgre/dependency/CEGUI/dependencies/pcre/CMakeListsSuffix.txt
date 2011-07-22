@@ -1,6 +1,0 @@
-
-add_library( pcre ${ALL_FILES} )
-#add_dependencies( pcre )
-#target_link_libraries( pcre )
-set_target_properties( pcre PROPERTIES COMPILE_DEFINITIONS "PCRE_DEFINITION;DLL_EXPORT" )
-GUCE_config_lib( pcre )

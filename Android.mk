@@ -30,7 +30,10 @@ include $(MY_MODULE_PATH)/Android.mk
 MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib
 include $(MY_MODULE_PATH)/Android.mk
 
-MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/guidriverCEGUIOgre/dependency/CEGUI/dependencies/pcre
+MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/dependencies/freetype
+include $(MY_MODULE_PATH)/Android.mk
+
+MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/dependencies/pcre
 include $(MY_MODULE_PATH)/Android.mk
 
 MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/../../GUCEF/trunk/gucefCORE
@@ -40,9 +43,6 @@ MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/../../GUCEF/trunk/gucefMT
 include $(MY_MODULE_PATH)/Android.mk
 
 MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/../../GUCEF/trunk/gucefMT_TestApp
-include $(MY_MODULE_PATH)/Android.mk
-
-MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/dependencies/freetype
 include $(MY_MODULE_PATH)/Android.mk
 
 MY_MODULE_PATH := $(PROJECT_ROOT_PATH)/dependencies/Ogre/RenderSystems/GLES2
