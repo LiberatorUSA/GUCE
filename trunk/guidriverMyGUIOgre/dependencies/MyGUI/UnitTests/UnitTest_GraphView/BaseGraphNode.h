@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __BASE_GRAPH_NODE_H__
 #define __BASE_GRAPH_NODE_H__
@@ -14,12 +13,13 @@
 namespace wraps
 {
 
-	class BaseGraphNode : public BaseLayout
+	class BaseGraphNode :
+		public BaseLayout
 	{
 	public:
 		BaseGraphNode(const std::string& _layout) :
+			BaseLayout("", nullptr),
 			mLayout(_layout),
-	  		BaseLayout("", nullptr),
 			mView(nullptr)
 		{
 		}
@@ -87,7 +87,7 @@ namespace wraps
 		}
 
 	/*internal:*/
-		void _initialise(MyGUI::WidgetPtr _parent, IGraphController* _view)
+		void _initialise(MyGUI::Widget* _parent, IGraphController* _view)
 		{
 			mView = _view;
 			if ( ! mLayout.empty())
@@ -96,11 +96,11 @@ namespace wraps
 			}
 			initialise();
 
-			MyGUI::WindowPtr window = mMainWidget->castType<MyGUI::Window>(false);
+			MyGUI::Window* window = mMainWidget->castType<MyGUI::Window>(false);
 			if (window != nullptr)
 			{
-				window->eventWindowChangeCoord = MyGUI::newDelegate(this, &BaseGraphNode::notifyWindowChangeCoord);
-				window->eventWindowButtonPressed = MyGUI::newDelegate(this, &BaseGraphNode::notifyWindowButtonPressed);
+				window->eventWindowChangeCoord += MyGUI::newDelegate(this, &BaseGraphNode::notifyWindowChangeCoord);
+				window->eventWindowButtonPressed += MyGUI::newDelegate(this, &BaseGraphNode::notifyWindowButtonPressed);
 			}
 
 			// перекрывающийся стиль
@@ -117,7 +117,7 @@ namespace wraps
 		virtual void initialise() = 0;
 		virtual void shutdown() = 0;
 
-		void notifyWindowChangeCoord(MyGUI::WindowPtr _sender)
+		void notifyWindowChangeCoord(MyGUI::Window* _sender)
 		{
 			MyGUI::IntCoord coord = _sender->getCoord();
 			if ((coord.left < 0) || (coord.top < 0))
@@ -130,7 +130,7 @@ namespace wraps
 			mView->changePosition(this);
 		}
 
-		void notifyWindowButtonPressed(MyGUI::WindowPtr _sender, const std::string& _name)
+		void notifyWindowButtonPressed(MyGUI::Window* _sender, const std::string& _name)
 		{
 			if (_name == "close")
 				mView->close(this);
@@ -148,28 +148,27 @@ namespace wraps
 		void addConnection(BaseGraphConnection* _connection)
 		{
 			_connection->_setOwnerNode(this);
-			_connection->_getMainWidget()->eventMouseButtonPressed = MyGUI::newDelegate(this, &BaseGraphNode::notifyMouseButtonPressed);
-			_connection->_getMainWidget()->eventMouseButtonReleased = MyGUI::newDelegate(this, &BaseGraphNode::notifyMouseButtonReleased);
-			_connection->_getMainWidget()->eventMouseDrag = MyGUI::newDelegate(this, &BaseGraphNode::notifyMouseDrag);
+			_connection->_getMainWidget()->eventMouseButtonPressed += MyGUI::newDelegate(this, &BaseGraphNode::notifyMouseButtonPressed);
+			_connection->_getMainWidget()->eventMouseButtonReleased += MyGUI::newDelegate(this, &BaseGraphNode::notifyMouseButtonReleased);
+			_connection->_getMainWidget()->eventMouseDrag += MyGUI::newDelegate(this, &BaseGraphNode::notifyMouseDrag);
 			_connection->_getMainWidget()->setUserData(_connection);
 		}
 
-		void notifyMouseButtonPressed(MyGUI::WidgetPtr _sender, int _left, int _top, MyGUI::MouseButton _id)
+		void notifyMouseButtonPressed(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id)
 		{
 			if (_id == MyGUI::MouseButton::Left)
-			{
 				mView->startDrag(*_sender->getUserData<BaseGraphConnection*>());
-			}
 		}
 
-		void notifyMouseButtonReleased(MyGUI::WidgetPtr _sender, int _left, int _top, MyGUI::MouseButton _id)
+		void notifyMouseButtonReleased(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id)
 		{
 			mView->stopDrag(*_sender->getUserData<BaseGraphConnection*>());
 		}
 
-		void notifyMouseDrag(MyGUI::WidgetPtr _sender, int _left, int _top)
+		void notifyMouseDrag(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id)
 		{
-			mView->updateDrag(*_sender->getUserData<BaseGraphConnection*>());
+			if (_id == MyGUI::MouseButton::Left)
+				mView->updateDrag(*_sender->getUserData<BaseGraphConnection*>());
 		}
 
 	private:

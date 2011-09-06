@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -24,13 +23,20 @@
 #include "MyGUI_ResourceImageSet.h"
 #include "MyGUI_ResourceManager.h"
 #include "MyGUI_LanguageManager.h"
+#include "MyGUI_Constants.h"
 
 namespace MyGUI
 {
 
-	std::string ResourceImageSet::mTextureEmpty;
-	IntSize ResourceImageSet::mSizeEmpty;
 	std::vector<IntPoint> ResourceImageSet::mFramesEmpty;
+
+	ResourceImageSet::ResourceImageSet()
+	{
+	}
+
+	ResourceImageSet::~ResourceImageSet()
+	{
+	}
 
 	void ResourceImageSet::deserialization(xml::ElementPtr _node, Version _version)
 	{
@@ -92,7 +98,7 @@ namespace MyGUI
 				return ImageIndexInfo(group.texture, group.size, index.rate, index.frames);
 			}
 		}
-		return ImageIndexInfo(mTextureEmpty, mSizeEmpty, 0, mFramesEmpty);
+		return ImageIndexInfo(Constants::getEmptyString(), Constants::getZeroIntSize(), 0, mFramesEmpty);
 	}
 
 	ImageIndexInfo ResourceImageSet::getIndexInfo(size_t _group, const std::string& _index)
@@ -107,7 +113,7 @@ namespace MyGUI
 				return ImageIndexInfo(group.texture, group.size, index.rate, index.frames);
 			}
 		}
-		return ImageIndexInfo(mTextureEmpty, mSizeEmpty, 0, mFramesEmpty);
+		return ImageIndexInfo(Constants::getEmptyString(), Constants::getZeroIntSize(), 0, mFramesEmpty);
 	}
 
 	ImageIndexInfo ResourceImageSet::getIndexInfo(const std::string& _group, size_t _index)
@@ -122,7 +128,7 @@ namespace MyGUI
 				return ImageIndexInfo(group.texture, group.size, index.rate, index.frames);
 			}
 		}
-		return ImageIndexInfo(mTextureEmpty, mSizeEmpty, 0, mFramesEmpty);
+		return ImageIndexInfo(Constants::getEmptyString(), Constants::getZeroIntSize(), 0, mFramesEmpty);
 	}
 
 	ImageIndexInfo ResourceImageSet::getIndexInfo(size_t _group, size_t _index)
@@ -136,7 +142,7 @@ namespace MyGUI
 				return ImageIndexInfo(group.texture, group.size, index.rate, index.frames);
 			}
 		}
-		return ImageIndexInfo(mTextureEmpty, mSizeEmpty, 0, mFramesEmpty);
+		return ImageIndexInfo(Constants::getEmptyString(), Constants::getZeroIntSize(), 0, mFramesEmpty);
 	}
 
 	ImageIndexInfo ResourceImageSet::getIndexInfo(const IntSize& _group, size_t _index)
@@ -151,7 +157,7 @@ namespace MyGUI
 				return ImageIndexInfo(group.texture, group.size, index.rate, index.frames);
 			}
 		}
-		return ImageIndexInfo(mTextureEmpty, mSizeEmpty, 0, mFramesEmpty);
+		return ImageIndexInfo(Constants::getEmptyString(), Constants::getZeroIntSize(), 0, mFramesEmpty);
 	}
 
 	ImageIndexInfo ResourceImageSet::getIndexInfo(const IntSize& _group, const std::string& _index)
@@ -167,7 +173,60 @@ namespace MyGUI
 				return ImageIndexInfo(group.texture, group.size, index.rate, index.frames);
 			}
 		}
-		return ImageIndexInfo(mTextureEmpty, mSizeEmpty, 0, mFramesEmpty);
+		return ImageIndexInfo(Constants::getEmptyString(), Constants::getZeroIntSize(), 0, mFramesEmpty);
+	}
+
+	size_t ResourceImageSet::getGroupIndex(const std::string& _name)
+	{
+		for (size_t index = 0; index < mGroups.size(); ++index)
+		{
+			if (mGroups[index].name == _name)
+				return index;
+		}
+		return ITEM_NONE;
+	}
+
+	size_t ResourceImageSet::getGroupIndex(const IntSize& _size)
+	{
+		for (size_t index = 0; index < mGroups.size(); ++index)
+		{
+			if (mGroups[index].size == _size)
+				return index;
+		}
+		return ITEM_NONE;
+	}
+
+	size_t ResourceImageSet::getImageIndex(GroupImage& _group, const std::string& _name)
+	{
+		VectorIndexImage& indexes = _group.indexes;
+		for (size_t index = 0; index < indexes.size(); ++index)
+		{
+			if (indexes[index].name == _name)
+				return index;
+		}
+		return ITEM_NONE;
+	}
+
+	const IntSize& ResourceImageSet::getGroupSize(size_t _index)
+	{
+		if (_index >= mGroups.size())
+			return Constants::getZeroIntSize();
+		return mGroups[_index].size;
+	}
+
+	const IntSize& ResourceImageSet::getGroupSize(const std::string& _group)
+	{
+		for (size_t index = 0; index < mGroups.size(); ++index)
+		{
+			if (mGroups[index].name == _group)
+				return mGroups[index].size;
+		}
+		return Constants::getZeroIntSize();
+	}
+
+	EnumeratorGroupImage ResourceImageSet::getEnumerator() const
+	{
+		return EnumeratorGroupImage(mGroups);
 	}
 
 } // namespace MyGUI

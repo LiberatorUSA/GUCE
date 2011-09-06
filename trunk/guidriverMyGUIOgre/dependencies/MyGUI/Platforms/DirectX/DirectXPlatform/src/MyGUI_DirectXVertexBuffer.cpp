@@ -2,7 +2,6 @@
 	@file
 	@author		Losev Vasiliy aka bool
 	@date		06/2009
-	@module
 */
 
 #include "MyGUI_DirectXVertexBuffer.h"
@@ -16,7 +15,7 @@ namespace MyGUI
 	const size_t VERTEX_IN_QUAD = 6;
 	const size_t RENDER_ITEM_STEEP_REALLOCK = 5 * VERTEX_IN_QUAD;
 
-	DirectXVertexBuffer::DirectXVertexBuffer(IDirect3DDevice9 *_device, DirectXRenderManager *_pRenderManager) :
+	DirectXVertexBuffer::DirectXVertexBuffer(IDirect3DDevice9* _device, DirectXRenderManager* _pRenderManager) :
 		mNeedVertexCount(0),
 		mVertexCount(RENDER_ITEM_STEEP_REALLOCK),
 		mpD3DDevice(_device),
@@ -30,7 +29,7 @@ namespace MyGUI
 		destroy();
 	}
 
-	void DirectXVertexBuffer::setVertextCount(size_t _count)
+	void DirectXVertexBuffer::setVertexCount(size_t _count)
 	{
 		if (_count != mNeedVertexCount)
 		{
@@ -39,7 +38,7 @@ namespace MyGUI
 		}
 	}
 
-	size_t DirectXVertexBuffer::getVertextCount()
+	size_t DirectXVertexBuffer::getVertexCount()
 	{
 		return mNeedVertexCount;
 	}
@@ -47,8 +46,8 @@ namespace MyGUI
 	Vertex* DirectXVertexBuffer::lock()
 	{
 		//assert(!mpBuffer && __FUNCTION__);
-		void *lockPtr = nullptr;
-		if (SUCCEEDED(mpBuffer->Lock(0, 0, (void **)&lockPtr, 0)))
+		void* lockPtr = nullptr;
+		if (SUCCEEDED(mpBuffer->Lock(0, 0, (void**)&lockPtr, 0)))
 		{
 			return (Vertex*)lockPtr;
 		}

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -29,7 +28,8 @@
 namespace MyGUI
 {
 
-	class MYGUI_EXPORT MainSkin : public SubSkin
+	class MYGUI_EXPORT MainSkin :
+		public SubSkin
 	{
 		MYGUI_RTTI_DERIVED( MainSkin )
 
@@ -38,8 +38,7 @@ namespace MyGUI
 		virtual ~MainSkin();
 
 	/*internal:*/
-		void _setAlign(const IntSize& _oldsize, bool _update);
-		void _setAlign(const IntCoord& _oldsize, bool _update) { SubSkin::_setAlign(_oldsize, _update); }
+		virtual void _setAlign(const IntSize& _oldsize);
 	};
 
 } // namespace MyGUI

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
 #ifndef __DEMO_KEEPER_H__
 #define __DEMO_KEEPER_H__
@@ -14,7 +13,8 @@
 namespace demo
 {
 
-	class DemoKeeper : public base::BaseManager
+	class DemoKeeper :
+		public base::BaseManager
 	{
 	public:
 		DemoKeeper();
@@ -25,12 +25,12 @@ namespace demo
 		virtual void injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text);
 
 	private:
-		void command(const MyGUI::UString & _key, const MyGUI::UString & _value);
+		void command(const MyGUI::UString& _key, const MyGUI::UString& _value);
 		virtual void setupResources();
 
 	private:
-		Console * mConsole;
-		MyGUI::Edit* mEdit;
+		Console* mConsole;
+		MyGUI::EditBox* mEdit;
 	};
 
 } // namespace demo

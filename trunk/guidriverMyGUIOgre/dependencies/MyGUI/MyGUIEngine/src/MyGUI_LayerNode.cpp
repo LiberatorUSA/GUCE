@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -40,23 +39,16 @@ namespace MyGUI
 
 	LayerNode::~LayerNode()
 	{
-		for (VectorRenderItem::iterator iter=mFirstRenderItems.begin(); iter!=mFirstRenderItems.end(); ++iter)
-		{
+		for (VectorRenderItem::iterator iter = mFirstRenderItems.begin(); iter != mFirstRenderItems.end(); ++iter)
 			delete (*iter);
-		}
 		mFirstRenderItems.clear();
 
-		for (VectorRenderItem::iterator iter=mSecondRenderItems.begin(); iter!=mSecondRenderItems.end(); ++iter)
-		{
+		for (VectorRenderItem::iterator iter = mSecondRenderItems.begin(); iter != mSecondRenderItems.end(); ++iter)
 			delete (*iter);
-		}
 		mSecondRenderItems.clear();
 
-		// удаляем дочерние узлы
-		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter!=mChildItems.end(); ++iter)
-		{
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 			delete (*iter);
-		}
 		mChildItems.clear();
 	}
 
@@ -64,17 +56,23 @@ namespace MyGUI
 	{
 		LayerNode* layer = new LayerNode(mLayer, this);
 		mChildItems.push_back(layer);
+
+		mOutOfDate = true;
+
 		return layer;
 	}
 
 	void LayerNode::destroyChildItemNode(ILayerNode* _node)
 	{
-		for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 		{
 			if ((*iter) == _node)
 			{
 				delete _node;
 				mChildItems.erase(iter);
+
+				mOutOfDate = true;
+
 				return;
 			}
 		}
@@ -83,12 +81,15 @@ namespace MyGUI
 
 	void LayerNode::upChildItemNode(ILayerNode* _item)
 	{
-		for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 		{
 			if ((*iter) == _item)
 			{
 				mChildItems.erase(iter);
 				mChildItems.push_back(_item);
+
+				mOutOfDate = true;
+
 				return;
 			}
 		}
@@ -99,7 +100,7 @@ namespace MyGUI
 	{
 		// проверяем на сжатие пустот
 		bool need_compression = false;
-		for (VectorRenderItem::iterator iter=mFirstRenderItems.begin(); iter!=mFirstRenderItems.end(); ++iter)
+		for (VectorRenderItem::iterator iter = mFirstRenderItems.begin(); iter != mFirstRenderItems.end(); ++iter)
 		{
 			if ((*iter)->getCompression())
 			{
@@ -112,115 +113,134 @@ namespace MyGUI
 			updateCompression();
 
 		// сначала отрисовываем свое
-		for (VectorRenderItem::iterator iter=mFirstRenderItems.begin(); iter!=mFirstRenderItems.end(); ++iter)
-		{
+		for (VectorRenderItem::iterator iter = mFirstRenderItems.begin(); iter != mFirstRenderItems.end(); ++iter)
 			(*iter)->renderToTarget(_target, _update);
-		}
-		for (VectorRenderItem::iterator iter=mSecondRenderItems.begin(); iter!=mSecondRenderItems.end(); ++iter)
-		{
+
+		for (VectorRenderItem::iterator iter = mSecondRenderItems.begin(); iter != mSecondRenderItems.end(); ++iter)
 			(*iter)->renderToTarget(_target, _update);
-		}
 
 		// теперь отрисовываем дочерние узлы
-		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter!=mChildItems.end(); ++iter)
-		{
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 			(*iter)->renderToTarget(_target, _update);
-		}
 
 		mOutOfDate = false;
 	}
 
-	ILayerItem* LayerNode::getLayerItemByPoint(int _left, int _top)
+	ILayerItem* LayerNode::getLayerItemByPoint(int _left, int _top) const
 	{
 		// сначала пикаем детей
-		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+		for (VectorILayerNode::const_iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 		{
-			ILayerItem * item = (*iter)->getLayerItemByPoint(_left, _top);
-			if (nullptr != item) return item;
+			ILayerItem* item = (*iter)->getLayerItemByPoint(_left, _top);
+			if (nullptr != item)
+				return item;
 		}
 
-		for (VectorLayerItem::iterator iter=mLayerItems.begin(); iter!=mLayerItems.end(); ++iter)
+		for (VectorLayerItem::const_iterator iter = mLayerItems.begin(); iter != mLayerItems.end(); ++iter)
 		{
-			ILayerItem * item = (*iter)->getLayerItemByPoint(_left, _top);
-			if (nullptr != item) return item;
+			ILayerItem* item = (*iter)->getLayerItemByPoint(_left, _top);
+			if (nullptr != item)
+				return item;
 		}
 
 		return nullptr;
 	}
 
-	RenderItem* LayerNode::addToRenderItem(ITexture* _texture, ISubWidget* _item)
+	RenderItem* LayerNode::addToRenderItem(ITexture* _texture, bool _firstQueue, bool _manualRender)
 	{
-		bool first = _item->castType<ISubWidgetText>(false) == nullptr;
 		// для первичной очереди нужен порядок
-		if (first)
+		if (_firstQueue)
 		{
-			if (mFirstRenderItems.empty())
+			if (mFirstRenderItems.empty() || _manualRender)
 			{
 				// создаем новый буфер
-				RenderItem * item = new RenderItem();
+				RenderItem* item = new RenderItem();
 				item->setTexture(_texture);
+				item->setManualRender(_manualRender);
 				mFirstRenderItems.push_back(item);
+
+				mOutOfDate = false;
 
 				return item;
 			}
 
-			// если последний буфер пустой, то мона не создавать
-			if (mFirstRenderItems.back()->getNeedVertexCount() == 0)
+			// если в конце пустой буфер, то нуна найти последний пустой с краю
+			// либо с нужной текстурой за пустым
+			VectorRenderItem::reverse_iterator iter = mFirstRenderItems.rbegin();
+			if ((*iter)->getNeedVertexCount() == 0)
 			{
-				// пустых может быть сколько угодно, нужен самый первый из пустых
-				for (VectorRenderItem::iterator iter=mFirstRenderItems.begin(); iter!=mFirstRenderItems.end(); ++iter)
+				while (true)
 				{
-					if ((*iter)->getNeedVertexCount() == 0)
+					VectorRenderItem::reverse_iterator next = iter + 1;
+					if (next != mFirstRenderItems.rend())
 					{
-						// а теперь внимание, если перед пустым наш, то его и юзаем
-						if (iter != mFirstRenderItems.begin())
+						if ((*next)->getNeedVertexCount() == 0)
 						{
-							VectorRenderItem::iterator prev = iter - 1;
-							if ((*prev)->getTexture() == _texture)
-							{
-								return (*prev);
-							}
+							iter = next;
+							continue;
 						}
-						(*iter)->setTexture(_texture);
-						return (*iter);
+						else if ((*next)->getTexture() == _texture)
+						{
+							iter = next;
+						}
 					}
-				}
-			}
 
-			// та же текстура
-			if (mFirstRenderItems.back()->getTexture() == _texture)
+					break;
+				}
+
+				(*iter)->setTexture(_texture);
+
+				mOutOfDate = false;
+
+				return (*iter);
+			}
+			// последний буфер с нужной текстурой
+			else if ((*iter)->getTexture() == _texture)
 			{
-				return mFirstRenderItems.back();
+				mOutOfDate = false;
+
+				return *iter;
 			}
 
 			// создаем новый буфер
-			RenderItem * item = new RenderItem();
+			RenderItem* item = new RenderItem();
 			item->setTexture(_texture);
+			item->setManualRender(_manualRender);
 			mFirstRenderItems.push_back(item);
+
+			mOutOfDate = false;
 
 			return item;
 		}
 
 		// для второй очереди порядок неважен
-		for (VectorRenderItem::iterator iter=mSecondRenderItems.begin(); iter!=mSecondRenderItems.end(); ++iter)
+		for (VectorRenderItem::iterator iter = mSecondRenderItems.begin(); iter != mSecondRenderItems.end(); ++iter)
 		{
 			// либо такая же текстура, либо пустой буфер
 			if ((*iter)->getTexture() == _texture)
 			{
+				mOutOfDate = false;
+
 				return (*iter);
 			}
 			else if ((*iter)->getNeedVertexCount() == 0)
 			{
 				(*iter)->setTexture(_texture);
+
+				mOutOfDate = false;
+
 				return (*iter);
 			}
-
 		}
 		// не найденно создадим новый
-		RenderItem * item = new RenderItem();
+		RenderItem* item = new RenderItem();
 		item->setTexture(_texture);
+		item->setManualRender(_manualRender);
 
 		mSecondRenderItems.push_back(item);
+
+		mOutOfDate = false;
+
 		return mSecondRenderItems.back();
 	}
 
@@ -228,16 +248,21 @@ namespace MyGUI
 	{
 		mLayerItems.push_back(_item);
 		_item->attachItemToNode(mLayer, this);
+
+		mOutOfDate = true;
 	}
 
 	void LayerNode::detachLayerItem(ILayerItem* _item)
 	{
-		for (VectorLayerItem::iterator iter=mLayerItems.begin(); iter!=mLayerItems.end(); ++iter)
+		for (VectorLayerItem::iterator iter = mLayerItems.begin(); iter != mLayerItems.end(); ++iter)
 		{
 			if ((*iter) == _item)
 			{
 				(*iter) = mLayerItems.back();
 				mLayerItems.pop_back();
+
+				mOutOfDate = true;
+
 				return;
 			}
 		}
@@ -251,7 +276,7 @@ namespace MyGUI
 			_item->outOfDate();
 	}
 
-	EnumeratorILayerNode LayerNode::getEnumerator()
+	EnumeratorILayerNode LayerNode::getEnumerator() const
 	{
 		return EnumeratorILayerNode(mChildItems);
 	}
@@ -266,9 +291,9 @@ namespace MyGUI
 			VectorRenderItem::iterator iter2 = iter1 + 1;
 			while (iter2 != mFirstRenderItems.end())
 			{
-				if ((*iter1)->getNeedVertexCount() == 0)
+				if ((*iter1)->getNeedVertexCount() == 0 && !(*iter1)->getManualRender())
 				{
-					RenderItem * tmp = (*iter1);
+					RenderItem* tmp = (*iter1);
 					(*iter1) = (*iter2);
 					(*iter2) = tmp;
 				}
@@ -276,27 +301,41 @@ namespace MyGUI
 				++iter2;
 			}
 		}
+
+		mOutOfDate = true;
 	}
 
-	void LayerNode::dumpStatisticToLog(size_t _level)
+	ILayer* LayerNode::getLayer() const
 	{
-		static const char* spacer = "                                                                                                                        ";
-		std::string offset(" ", _level);
-		MYGUI_LOG(Info, offset << " - Node batch_count='" << mFirstRenderItems.size() + mSecondRenderItems.size() << spacer);
+		return mLayer;
+	}
 
-		for (VectorRenderItem::iterator iter=mFirstRenderItems.begin(); iter!=mFirstRenderItems.end(); ++iter)
+	ILayerNode* LayerNode::getParent() const
+	{
+		return mParent;
+	}
+
+	bool LayerNode::isOutOfDate() const
+	{
+		for (VectorRenderItem::const_iterator item = mFirstRenderItems.begin(); item != mFirstRenderItems.end(); ++item)
 		{
-			MYGUI_LOG(Info, offset << "  * Batch texture='" << ((*iter)->getTexture() == nullptr ? "nullptr" : (*iter)->getTexture()->getName()) << "' vertex_count='" << (*iter)->getVertexCount() << "'" << spacer);
-		}
-		for (VectorRenderItem::iterator iter=mSecondRenderItems.begin(); iter!=mSecondRenderItems.end(); ++iter)
-		{
-			MYGUI_LOG(Info, offset << "  * Batch texture='" << ((*iter)->getTexture() == nullptr ? "nullptr" : (*iter)->getTexture()->getName()) << "' vertex_count='" << (*iter)->getVertexCount() << "'" << spacer);
+			if ((*item)->isOutOfDate())
+				return true;
 		}
 
-		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+		for (VectorRenderItem::const_iterator item = mSecondRenderItems.begin(); item != mSecondRenderItems.end(); ++item)
 		{
-			(*iter)->dumpStatisticToLog(_level + 1);
+			if ((*item)->isOutOfDate())
+				return true;
 		}
+
+		for (VectorILayerNode::const_iterator item = mChildItems.begin(); item != mChildItems.end(); ++item)
+		{
+			if (static_cast<const LayerNode*>(*item)->isOutOfDate())
+				return true;
+		}
+
+		return mOutOfDate;
 	}
 
 } // namespace MyGUI

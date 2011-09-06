@@ -14,9 +14,9 @@
 namespace plugin
 {
 
-	class Plugin : public MyGUI::IPlugin
+	class Plugin :
+		public MyGUI::IPlugin
 	{
-
 	public:
 		Plugin();
 		~Plugin();
@@ -30,17 +30,15 @@ namespace plugin
 
 		//!	Shut down
 		virtual void shutdown();
-		
+
 		//!	Uninstall
 		virtual void uninstall();
 
 		//! Get name
 		virtual const std::string& getName() const;
 
-
 	private:
 		static const std::string LogSection;
-
 	};
 
 } // namespace plugin

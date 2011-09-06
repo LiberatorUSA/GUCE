@@ -2,49 +2,62 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		12/2009
-	@module
 */
 #ifndef __PANEL_CONTROLLERS_H__
 #define __PANEL_CONTROLLERS_H__
 
 #include "BaseLayout/BaseLayout.h"
 #include "PanelView/BasePanelViewItem.h"
+#include "IPropertyField.h"
 
-extern const int PropertyItemHeight;
-
-class PanelControllers : public wraps::BasePanelViewItem
+namespace tools
 {
-public:
+	class PanelControllers :
+		public wraps::BasePanelViewItem
+	{
+	public:
+		PanelControllers();
 
-	PanelControllers();
+		virtual void initialise();
+		virtual void shutdown();
 
-	virtual void initialise();
-	virtual void shutdown();
+		void update(MyGUI::Widget* _currentWidget);
 
-	void update(MyGUI::Widget* _current_widget);
+	private:
+		void notifyAction(const std::string& _name, const std::string& _value, bool _final);
 
-	typedef MyGUI::delegates::CDelegate5<MyGUI::Widget*, const std::string&, const std::string&, const std::string&, int> EventHandle_EventCreatePair;
-	EventHandle_EventCreatePair eventCreatePair;
-	MyGUI::EventHandle_WidgetVoid eventHidePairs;
-private:
-	virtual void notifyChangeWidth(int _width);
+		virtual void notifyChangeWidth(int _width);
 
-	void notifyAdd(MyGUI::Widget* _sender = 0);
-	void notifyDelete(MyGUI::Widget* _sender);
-	void notifySelectItem(MyGUI::List* _sender, size_t _index);
+		void notifyAdd(MyGUI::Widget* _sender = 0);
+		void notifyDelete(MyGUI::Widget* _sender);
+		void notifySelectItem(MyGUI::ListBox* _sender, size_t _index);
 
-	void loadControllerTypes(MyGUI::xml::ElementPtr _node, const std::string& _file, MyGUI::Version _version);
+		void loadControllerTypes(MyGUI::xml::ElementPtr _node, const std::string& _file, MyGUI::Version _version);
+		void destroyPropertyFields();
 
-	MyGUI::ComboBox* mControllerName;
-	MyGUI::Button* mButtonAdd;
-	MyGUI::Button* mButtonDelete;
-	MyGUI::List* mList;
+		void updateSize();
 
-	MyGUI::Widget* current_widget;
+	private:
+		MyGUI::ComboBox* mControllerName;
+		MyGUI::Button* mButtonAdd;
+		MyGUI::Button* mButtonDelete;
+		MyGUI::ListBox* mList;
 
-	int mButtonLeft, mButtonRight, mButtonSpace;
+		MyGUI::Widget* mCurrentWidget;
 
-	std::map<std::string, MyGUI::MapString> mControllersProperties;
-};
+		int mButtonLeft;
+		int mButtonRight;
+		int mButtonSpace;
+
+		typedef std::map<std::string, MyGUI::MapString> MapMapString;
+		MapMapString mControllersProperties;
+
+		typedef std::vector<IPropertyField*> VectorPropertyField;
+		VectorPropertyField mFields;
+
+		size_t mIndexSelected;
+	};
+
+} // namespace tools
 
 #endif // __PANEL_CONTROLLERS_H__

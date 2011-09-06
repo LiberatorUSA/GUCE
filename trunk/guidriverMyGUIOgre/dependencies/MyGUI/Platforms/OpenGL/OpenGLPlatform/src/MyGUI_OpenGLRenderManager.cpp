@@ -2,7 +2,6 @@
 	@file
 	@author		George Evmenov
 	@date		07/2009
-	@module
 */
 
 #include "MyGUI_OpenGLRenderManager.h"
@@ -20,12 +19,17 @@
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT(OpenGLRenderManager)
+	OpenGLRenderManager::OpenGLRenderManager() :
+		mIsInitialise(false),
+		mUpdate(false),
+		mImageLoader(nullptr)
+	{
+	}
 
 	void OpenGLRenderManager::initialise(OpenGLImageLoader* _loader)
 	{
-		MYGUI_PLATFORM_ASSERT(false == mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_PLATFORM_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		mVertexFormat = VertexColourType::ColourABGR;
 
@@ -34,18 +38,18 @@ namespace MyGUI
 
 		glewInit();
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void OpenGLRenderManager::shutdown()
 	{
-		if (false == mIsInitialise) return;
-		MYGUI_PLATFORM_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		destroyAllResources();
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
@@ -73,7 +77,7 @@ namespace MyGUI
 			//MYGUI_PLATFORM_ASSERT(texture_id, "Texture is not created");
 		}
 
-	    glBindTexture(GL_TEXTURE_2D, texture_id);
+		glBindTexture(GL_TEXTURE_2D, texture_id);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, buffer_id);
 
@@ -97,7 +101,7 @@ namespace MyGUI
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-	    glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void OpenGLRenderManager::begin()
@@ -163,14 +167,16 @@ namespace MyGUI
 
 	void OpenGLRenderManager::drawOneFrame()
 	{
+		Gui* gui = Gui::getInstancePtr();
+		if (gui == nullptr)
+			return;
+
 		static Timer timer;
 		static unsigned long last_time = timer.getMilliseconds();
 		unsigned long now_time = timer.getMilliseconds();
 		unsigned long time = now_time - last_time;
 
-		Gui* gui = Gui::getInstancePtr();
-		if (gui != nullptr)
-			gui->_injectFrameEntered((float)((double)(time) / (double)1000));
+		gui->_injectFrameEntered((float)((double)(time) / (double)1000));
 
 		last_time = now_time;
 
@@ -194,13 +200,13 @@ namespace MyGUI
 		mInfo.hOffset = 0;
 		mInfo.vOffset = 0;
 		mInfo.aspectCoef = float(mViewSize.height) / float(mViewSize.width);
-		mInfo.pixScaleX = 1.0 / float(mViewSize.width);
-		mInfo.pixScaleY = 1.0 / float(mViewSize.height);
+		mInfo.pixScaleX = 1.0f / float(mViewSize.width);
+		mInfo.pixScaleY = 1.0f / float(mViewSize.height);
 
 		Gui* gui = Gui::getInstancePtr();
 		if (gui != nullptr)
 		{
-			gui->resizeWindow(mViewSize);
+			gui->_resizeWindow(mViewSize);
 			mUpdate = true;
 		}
 	}
@@ -235,7 +241,7 @@ namespace MyGUI
 
 	void OpenGLRenderManager::destroyAllResources()
 	{
-		for (MapTexture::const_iterator item=mTextures.begin(); item!=mTextures.end(); ++item)
+		for (MapTexture::const_iterator item = mTextures.begin(); item != mTextures.end(); ++item)
 		{
 			delete item->second;
 		}

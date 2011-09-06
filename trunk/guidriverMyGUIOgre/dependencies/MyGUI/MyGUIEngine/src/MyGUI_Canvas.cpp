@@ -2,7 +2,6 @@
 	@file
 	@author		Alexander Ptakhin
 	@date		01/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -35,52 +34,44 @@ namespace MyGUI
 		mTexResizeMode( TRM_PT_CONST_SIZE ),
 		mTexData( 0 ),
 		mTexManaged( true ),
-		mFrameAdvise( false )
+		mFrameAdvise( false ),
+		mInvalidateData(false)
 	{
 		mGenTexName = utility::toString( this, "_Canvas" );
 	}
 
-	void Canvas::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
-	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
-	}
-
-	Canvas::~Canvas()
-	{
-		_destroyTexture( false );
-	}
-
 	void Canvas::createTexture( TextureResizeMode _resizeMode, TextureUsage _usage, PixelFormat _format )
 	{
-		createTexture( getSize(), _resizeMode, _usage, _format );
+		int width = std::max(1, getWidth());
+		int height = std::max(1, getHeight());
+
+		createTexture( width, height, _resizeMode, _usage, _format );
 	}
 
 	void Canvas::createTexture( const IntSize& _size, TextureResizeMode _resizeMode, TextureUsage _usage, PixelFormat _format )
 	{
-		if ( _size.width <= 0 || _size.height <= 0 )
-		{
-			MYGUI_ASSERT( 0, "At least one of dimensions isn't positive!" );
-			return;
-		}
+		int width = std::max(1, _size.width);
+		int height = std::max(1, _size.height);
 
-		createTexture( _size.width, _size.height, _resizeMode, _usage, _format );
+		createTexture( width, height, _resizeMode, _usage, _format );
 	}
 
 	void Canvas::createExactTexture( int _width, int _height, TextureUsage _usage, PixelFormat _format )
 	{
-		MYGUI_ASSERT( _width >= 0 && _height >= 0, "negative size" );
+		int width = std::max(1, _width);
+		int height = std::max(1, _height);
 
 		destroyTexture();
 
 		mTexture = RenderManager::getInstance().createTexture(mGenTexName);
 		mTexture->setInvalidateListener(this);
-		mTexture->createManual( _width, _height, _usage, _format );
+		mTexture->createManual( width, height, _usage, _format );
 
 		mTexManaged = true;
 
 		_setTextureName( mGenTexName );
 		correctUV();
-		requestUpdateCanvas( this, Event( true, true, false ) );
+		requestUpdateCanvas( this, Event( true, true, mInvalidateData ) );
 	}
 
 	void Canvas::resize( const IntSize& _size )
@@ -95,20 +86,21 @@ namespace MyGUI
 
 	void Canvas::createTexture( int _width, int _height, TextureResizeMode _resizeMode, TextureUsage _usage, PixelFormat _format )
 	{
-		MYGUI_ASSERT( _width >= 0 && _height >= 0, "negative size" );
+		int width = std::max(1, _width);
+		int height = std::max(1, _height);
 
 		if ( mReqTexSize.empty() )
-			mReqTexSize = IntSize( _width, _height );
+			mReqTexSize = IntSize( width, height );
 
 		mTexResizeMode = _resizeMode;
 
-		bool create = checkCreate( _width, _height );
+		bool create = checkCreate( width, height );
 
-		_width = Bitwise::firstPO2From(_width);
-		_height = Bitwise::firstPO2From(_height);
+		width = Bitwise::firstPO2From(width);
+		height = Bitwise::firstPO2From(height);
 
 		if ( create )
-			createExactTexture( _width, _height, _usage, _format );
+			createExactTexture( width, height, _usage, _format );
 	}
 
 	void Canvas::setSize( const IntSize& _size )
@@ -127,7 +119,8 @@ namespace MyGUI
 
 	void Canvas::updateTexture()
 	{
-		requestUpdateCanvas( this, Event( false, false, true ) );
+		mInvalidateData = true;
+		frameAdvise( true );
 	}
 
 	bool Canvas::checkCreate( int _width, int _height ) const
@@ -143,6 +136,9 @@ namespace MyGUI
 
 	void Canvas::validate( int& _width, int& _height, TextureUsage& _usage, PixelFormat& _format ) const
 	{
+		_width = std::max(1, _width);
+		_height = std::max(1, _height);
+
 		_width = Bitwise::firstPO2From(_width);
 		_height = Bitwise::firstPO2From(_height);
 
@@ -181,10 +177,14 @@ namespace MyGUI
 	{
 		if ( mTexResizeMode == TRM_PT_VIEW_REQUESTED )
 		{
-			_setUVSet( FloatRect( 0, 0,
-				(float) mReqTexSize.width  / (float) getTextureRealWidth(),
-				(float) mReqTexSize.height / (float) getTextureRealHeight()
-				) );
+			_setUVSet(
+				FloatRect(
+					0,
+					0,
+					(float) mReqTexSize.width  / (float) getTextureRealWidth(),
+					(float) mReqTexSize.height / (float) getTextureRealHeight()
+				)
+			);
 		}
 
 		if ( mTexResizeMode == TRM_PT_CONST_SIZE || mTexResizeMode == TRM_PT_VIEW_ALL )
@@ -205,19 +205,6 @@ namespace MyGUI
 	void Canvas::unlock()
 	{
 		mTexture->unlock();
-	}
-
-	void Canvas::baseChangeWidgetSkin( ResourceSkin* _info )
-	{
-		Base::baseChangeWidgetSkin( _info );
-	}
-
-	void Canvas::initialiseWidgetSkin( ResourceSkin* _info )
-	{
-	}
-
-	void Canvas::shutdownWidgetSkin()
-	{
 	}
 
 	bool Canvas::isTextureSrcSize() const
@@ -267,15 +254,117 @@ namespace MyGUI
 		else // I thought order is important
 		{
 			correctUV();
-			requestUpdateCanvas( this, Event( false, true, false ) );
+			requestUpdateCanvas( this, Event( false, true, mInvalidateData ) );
 		}
 
+		mInvalidateData = false;
 		frameAdvise( false );
 	}
 
 	void Canvas::textureInvalidate(ITexture* _texture)
 	{
 		updateTexture();
+	}
+
+	void Canvas::_setUVSet(const FloatRect& _rect)
+	{
+		if (nullptr != getSubWidgetMain())
+			getSubWidgetMain()->_setUVSet(_rect);
+	}
+
+	bool Canvas::isLocked() const
+	{
+		return mTexture->isLocked();
+	}
+
+	int Canvas::getTextureRealWidth() const
+	{
+		return (int) mTexture->getWidth();
+	}
+
+	int Canvas::getTextureRealHeight() const
+	{
+		return (int) mTexture->getHeight();
+	}
+
+	IntSize Canvas::getTextureRealSize() const
+	{
+		return IntSize( getTextureRealWidth(), getTextureRealHeight() );
+	}
+
+	int Canvas::getTextureSrcWidth() const
+	{
+		return mReqTexSize.width;
+	}
+
+	int Canvas::getTextureSrcHeight() const
+	{
+		return mReqTexSize.height;
+	}
+
+	IntSize Canvas::getTextureSrcSize() const
+	{
+		return mReqTexSize;
+	}
+
+	PixelFormat Canvas::getTextureFormat() const
+	{
+		return mTexture->getFormat();
+	}
+
+	const std::string& Canvas::getTextureName() const
+	{
+		return mTexture->getName();
+	}
+
+	void Canvas::setSize(int _width, int _height)
+	{
+		setSize(IntSize(_width, _height));
+	}
+
+	void Canvas::setCoord(int _left, int _top, int _width, int _height)
+	{
+		setCoord(IntCoord(_left, _top, _width, _height));
+	}
+
+	Canvas::TextureResizeMode Canvas::getResizeMode() const
+	{
+		return mTexResizeMode;
+	}
+
+	void Canvas::setResizeMode(TextureResizeMode _value)
+	{
+		mTexResizeMode = _value;
+	}
+
+	bool Canvas::isTextureCreated() const
+	{
+		return mTexture != nullptr;
+	}
+
+	bool Canvas::isTextureManaged() const
+	{
+		return mTexManaged;
+	}
+
+	ITexture* Canvas::getTexture() const
+	{
+		return mTexture;
+	}
+
+	void Canvas::setTextureManaged(bool _value)
+	{
+		mTexManaged = _value;
+	}
+
+	TextureUsage Canvas::getDefaultTextureUsage()
+	{
+		return TextureUsage::Stream | TextureUsage::Write;
+	}
+
+	PixelFormat Canvas::getDefaultTextureFormat()
+	{
+		return PixelFormat::R8G8B8A8;
 	}
 
 } // namespace MyGUI

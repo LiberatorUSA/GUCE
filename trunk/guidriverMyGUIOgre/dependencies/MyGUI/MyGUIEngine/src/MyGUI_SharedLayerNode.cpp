@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		05/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -35,6 +34,21 @@ namespace MyGUI
 
 	SharedLayerNode::~SharedLayerNode()
 	{
+	}
+
+	void SharedLayerNode::addUsing()
+	{
+		mCountUsing++;
+	}
+
+	void SharedLayerNode::removeUsing()
+	{
+		mCountUsing--;
+	}
+
+	size_t SharedLayerNode::countUsing() const
+	{
+		return mCountUsing;
 	}
 
 } // namespace MyGUI

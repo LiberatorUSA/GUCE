@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __SKELETON_STATE_H__
 #define __SKELETON_STATE_H__
@@ -14,7 +13,8 @@
 namespace animation
 {
 
-	class SkeletonState : public IAnimationNode
+	class SkeletonState :
+		public IAnimationNode
 	{
 	public:
 		SkeletonState() :
@@ -62,7 +62,7 @@ namespace animation
 			}
 		}
 
-		virtual float getLength() const
+		virtual float getLength()
 		{
 			if (!mState)
 			{
@@ -103,7 +103,7 @@ namespace animation
 		}
 
 	private:
-		Ogre::AnimationState * mState;
+		Ogre::AnimationState* mState;
 		typedef std::pair<IAnimationNode*, std::string> PairIn;
 		typedef std::pair<std::string, PairIn> PairOut;
 		typedef std::vector<PairOut> VectorPairOut;

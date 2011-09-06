@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -24,8 +23,7 @@
 #include "MyGUI_ScrollView.h"
 #include "MyGUI_SkinManager.h"
 #include "MyGUI_ISubWidgetText.h"
-#include "MyGUI_VScroll.h"
-#include "MyGUI_HScroll.h"
+#include "MyGUI_ScrollBar.h"
 
 namespace MyGUI
 {
@@ -34,133 +32,54 @@ namespace MyGUI
 	const int SCROLL_VIEW_SCROLL_PAGE = 16; // колличество пикселей для кнопок скрола
 
 	ScrollView::ScrollView() :
-		mIsFocus(false),
-		mIsPressed(false),
-		mScrollClient(nullptr),
-		mContentAlign(Align::Center)
+		mContentAlign(Align::Center),
+		mRealClient(nullptr)
 	{
 		mChangeContentByResize = false;
 		mContentAlign = Align::Center;
 	}
 
-	void ScrollView::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
+	void ScrollView::initialiseOverride()
 	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
+		Base::initialiseOverride();
 
-		initialiseWidgetSkin(_info);
-	}
+		// FIXME нам нужен фокус клавы
+		setNeedKeyFocus(true);
 
-	ScrollView::~ScrollView()
-	{
-		shutdownWidgetSkin();
-	}
-
-	void ScrollView::baseChangeWidgetSkin(ResourceSkin* _info)
-	{
-		shutdownWidgetSkin();
-		Base::baseChangeWidgetSkin(_info);
-		initialiseWidgetSkin(_info);
-	}
-
-	void ScrollView::initialiseWidgetSkin(ResourceSkin* _info)
-	{
-		// нам нужен фокус клавы
-		mNeedKeyFocus = true;
-
-		for (VectorWidgetPtr::iterator iter=mWidgetChildSkin.begin(); iter!=mWidgetChildSkin.end(); ++iter)
+		assignWidget(mClient, "Client");
+		if (mClient != nullptr)
 		{
-			if (*(*iter)->_getInternalData<std::string>() == "Client")
-			{
-				MYGUI_DEBUG_ASSERT( ! mScrollClient, "widget already assigned");
-				mScrollClient = (*iter);
-				mScrollClient->eventMouseSetFocus = newDelegate(this, &ScrollView::notifyMouseSetFocus);
-				mScrollClient->eventMouseLostFocus = newDelegate(this, &ScrollView::notifyMouseLostFocus);
-				mScrollClient->eventMouseWheel = newDelegate(this, &ScrollView::notifyMouseWheel);
-				mClient = mScrollClient;
+			mClient->eventMouseWheel += newDelegate(this, &ScrollView::notifyMouseWheel);
 
-				// создаем холcт, реальный владелец детей
-				mWidgetClient = mScrollClient->createWidget<Widget>("Default", IntCoord(), Align::Default);
-				mWidgetClient->eventMouseWheel = newDelegate(this, &ScrollView::notifyMouseWheel);
-				mWidgetClient->eventMouseSetFocus = newDelegate(this, &ScrollView::notifyMouseSetFocus);
-				mWidgetClient->eventMouseLostFocus = newDelegate(this, &ScrollView::notifyMouseLostFocus);
-			}
-			else if (*(*iter)->_getInternalData<std::string>() == "VScroll")
-			{
-				MYGUI_DEBUG_ASSERT( ! mVScroll, "widget already assigned");
-				mVScroll = (*iter)->castType<VScroll>();
-				mVScroll->eventScrollChangePosition = newDelegate(this, &ScrollView::notifyScrollChangePosition);
-			}
-			else if (*(*iter)->_getInternalData<std::string>() == "HScroll")
-			{
-				MYGUI_DEBUG_ASSERT( ! mHScroll, "widget already assigned");
-				mHScroll = (*iter)->castType<HScroll>();
-				mHScroll->eventScrollChangePosition = newDelegate(this, &ScrollView::notifyScrollChangePosition);
-			}
+			// создаем холcт, реальный владелец детей
+			mRealClient = mClient->createWidget<Widget>("Default", IntCoord(), Align::Default);
+			mRealClient->eventMouseWheel += newDelegate(this, &ScrollView::notifyMouseWheel);
+			setWidgetClient(mRealClient);
 		}
 
-		//MYGUI_ASSERT(nullptr != mScrollClient, "Child Widget Client not found in skin (ScrollView must have Client)");
+		assignWidget(mVScroll, "VScroll");
+		if (mVScroll != nullptr)
+		{
+			mVScroll->eventScrollChangePosition += newDelegate(this, &ScrollView::notifyScrollChangePosition);
+		}
+
+		assignWidget(mHScroll, "HScroll");
+		if (mHScroll != nullptr)
+		{
+			mHScroll->eventScrollChangePosition += newDelegate(this, &ScrollView::notifyScrollChangePosition);
+		}
 
 		updateView();
 	}
 
-	void ScrollView::shutdownWidgetSkin()
+	void ScrollView::shutdownOverride()
 	{
-		mWidgetClient = nullptr;
 		mVScroll = nullptr;
 		mHScroll = nullptr;
-		mScrollClient = nullptr;
-	}
+		mClient = nullptr;
+		mRealClient = nullptr;
 
-	void ScrollView::notifyMouseSetFocus(Widget* _sender, Widget* _old)
-	{
-		if ((_old == mScrollClient) || (mIsFocus))
-			return;
-
-		mIsFocus = true;
-		updateScrollViewState();
-	}
-
-	void ScrollView::notifyMouseLostFocus(Widget* _sender, Widget* _new)
-	{
-		if ((_new == mScrollClient) || (!mIsFocus))
-			return;
-
-		mIsFocus = false;
-		updateScrollViewState();
-	}
-
-	void ScrollView::onKeySetFocus(Widget* _old)
-	{
-		if (!mIsPressed)
-		{
-			mIsPressed = true;
-			updateScrollViewState();
-		}
-
-		Base::onKeySetFocus(_old);
-	}
-
-	void ScrollView::onKeyLostFocus(Widget* _new)
-	{
-		if (mIsPressed)
-		{
-			mIsPressed = false;
-			updateScrollViewState();
-		}
-
-		Base::onKeyLostFocus(_new);
-	}
-
-	void ScrollView::updateScrollViewState()
-	{
-		if (!mEnabled) setState("disabled");
-		else if (mIsPressed)
-		{
-			if (mIsFocus) setState("pushed");
-			else setState("normal_checked");
-		}
-		else if (mIsFocus) setState("highlighted");
-		else setState("normal");
+		Base::shutdownOverride();
 	}
 
 	void ScrollView::setPosition(const IntPoint& _point)
@@ -182,33 +101,33 @@ namespace MyGUI
 		updateView();
 	}
 
-	void ScrollView::notifyScrollChangePosition(VScroll* _sender, size_t _position)
+	void ScrollView::notifyScrollChangePosition(ScrollBar* _sender, size_t _position)
 	{
-		if (mWidgetClient == nullptr)
+		if (mRealClient == nullptr)
 			return;
 
 		if (_sender == mVScroll)
 		{
-			IntPoint point = mWidgetClient->getPosition();
+			IntPoint point = mRealClient->getPosition();
 			point.top = -(int)_position;
-			mWidgetClient->setPosition(point);
+			mRealClient->setPosition(point);
 		}
 		else if (_sender == mHScroll)
 		{
-			IntPoint point = mWidgetClient->getPosition();
+			IntPoint point = mRealClient->getPosition();
 			point.left = -(int)_position;
-			mWidgetClient->setPosition(point);
+			mRealClient->setPosition(point);
 		}
 	}
 
 	void ScrollView::notifyMouseWheel(Widget* _sender, int _rel)
 	{
-		if (mWidgetClient == nullptr)
+		if (mRealClient == nullptr)
 			return;
 
 		if (mVRange != 0)
 		{
-			IntPoint point = mWidgetClient->getPosition();
+			IntPoint point = mRealClient->getPosition();
 			int offset = -point.top;
 			if (_rel < 0) offset += SCROLL_VIEW_MOUSE_WHEEL;
 			else  offset -= SCROLL_VIEW_MOUSE_WHEEL;
@@ -223,12 +142,12 @@ namespace MyGUI
 				{
 					mVScroll->setScrollPosition(offset);
 				}
-				mWidgetClient->setPosition(point);
+				mRealClient->setPosition(point);
 			}
 		}
 		else if (mHRange != 0)
 		{
-			IntPoint point = mWidgetClient->getPosition();
+			IntPoint point = mRealClient->getPosition();
 			int offset = -point.left;
 			if (_rel < 0) offset += SCROLL_VIEW_MOUSE_WHEEL;
 			else  offset -= SCROLL_VIEW_MOUSE_WHEEL;
@@ -243,37 +162,30 @@ namespace MyGUI
 				{
 					mHScroll->setScrollPosition(offset);
 				}
-				mWidgetClient->setPosition(point);
+				mRealClient->setPosition(point);
 			}
 		}
 	}
 
-	Widget* ScrollView::baseCreateWidget(WidgetStyle _style, const std::string& _type, const std::string& _skin, const IntCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
-	{
-		if (mWidgetClient == nullptr)
-			return Base::baseCreateWidget(_style, _type, _skin, _coord, _align, _layer, _name);
-		return mWidgetClient->createWidgetT(_style, _type, _skin, _coord, _align, _layer, _name);
-	}
-
 	IntSize ScrollView::getContentSize()
 	{
-		return mWidgetClient == nullptr ? IntSize() : mWidgetClient->getSize();
+		return mRealClient == nullptr ? IntSize() : mRealClient->getSize();
 	}
 
 	IntPoint ScrollView::getContentPosition()
 	{
-		return mWidgetClient == nullptr ? IntPoint() : (IntPoint() - mWidgetClient->getPosition());
+		return mRealClient == nullptr ? IntPoint() : (IntPoint() - mRealClient->getPosition());
 	}
 
 	void ScrollView::setContentPosition(const IntPoint& _point)
 	{
-		if (mWidgetClient != nullptr)
-			mWidgetClient->setPosition(IntPoint() - _point);
+		if (mRealClient != nullptr)
+			mRealClient->setPosition(IntPoint() - _point);
 	}
 
-	IntSize ScrollView::getViewSize() const
+	IntSize ScrollView::getViewSize()
 	{
-		return mScrollClient == nullptr ? IntSize() : mScrollClient->getSize();
+		return mClient == nullptr ? IntSize() : mClient->getSize();
 	}
 
 	size_t ScrollView::getVScrollPage()
@@ -312,46 +224,120 @@ namespace MyGUI
 
 	void ScrollView::setCanvasSize(const IntSize& _value)
 	{
-		if (mWidgetClient != nullptr)
-			mWidgetClient->setSize(_value); updateView();
+		if (mRealClient != nullptr)
+			mRealClient->setSize(_value);
+		updateView();
 	}
 
-	void ScrollView::setProperty(const std::string& _key, const std::string& _value)
+	IntSize ScrollView::getCanvasSize()
 	{
-		if (_key == "ScrollView_VisibleVScroll") setVisibleVScroll(utility::parseValue<bool>(_value));
-		else if (_key == "ScrollView_VisibleHScroll") setVisibleHScroll(utility::parseValue<bool>(_value));
-		else if (_key == "ScrollView_CanvasAlign") setCanvasAlign(utility::parseValue<Align>(_value));
-		else if (_key == "ScrollView_CanvasSize") setCanvasSize(utility::parseValue<IntSize>(_value));
+		return mRealClient == nullptr ? IntSize() : mRealClient->getSize();
+	}
 
-#ifndef MYGUI_DONT_USE_OBSOLETE
-		else if (_key == "ScrollView_VScroll")
-		{
-			MYGUI_LOG(Warning, "ScrollView_VScroll is obsolete, use ScrollView_VisibleVScroll");
+	void ScrollView::setPropertyOverride(const std::string& _key, const std::string& _value)
+	{
+		if (_key == "VisibleVScroll")
 			setVisibleVScroll(utility::parseValue<bool>(_value));
-		}
-		else if (_key == "ScrollView_HScroll")
-		{
-			MYGUI_LOG(Warning, "ScrollView_HScroll is obsolete, use ScrollView_VisibleHScroll");
+		else if (_key == "VisibleHScroll")
 			setVisibleHScroll(utility::parseValue<bool>(_value));
-		}
-#endif // MYGUI_DONT_USE_OBSOLETE
-
+		else if (_key == "CanvasAlign")
+			setCanvasAlign(utility::parseValue<Align>(_value));
+		else if (_key == "CanvasSize")
+			setCanvasSize(utility::parseValue<IntSize>(_value));
 		else
 		{
-			Base::setProperty(_key, _value);
+			Base::setPropertyOverride(_key, _value);
 			return;
 		}
 		eventChangeProperty(this, _key, _value);
 	}
 
-	const IntCoord& ScrollView::getClientCoord()
+	void ScrollView::setPosition(int _left, int _top)
 	{
-		return mScrollClient == nullptr ? getCoord() : mScrollClient->getCoord();
+		setPosition(IntPoint(_left, _top));
 	}
 
-	IntSize ScrollView::getCanvasSize()
+	void ScrollView::setSize(int _width, int _height)
 	{
-		return mWidgetClient == nullptr ? IntSize() : mWidgetClient->getSize();
+		setSize(IntSize(_width, _height));
+	}
+
+	void ScrollView::setCoord(int _left, int _top, int _width, int _height)
+	{
+		setCoord(IntCoord(_left, _top, _width, _height));
+	}
+
+	bool ScrollView::isVisibleVScroll() const
+	{
+		return mVisibleVScroll;
+	}
+
+	bool ScrollView::isVisibleHScroll() const
+	{
+		return mVisibleHScroll;
+	}
+
+	Align ScrollView::getCanvasAlign() const
+	{
+		return mContentAlign;
+	}
+
+	void ScrollView::setCanvasSize(int _width, int _height)
+	{
+		setCanvasSize(IntSize(_width, _height));
+	}
+
+	Align ScrollView::getContentAlign()
+	{
+		return mContentAlign;
+	}
+
+	void ScrollView::setViewOffset(const IntPoint& _value)
+	{
+		IntPoint value = _value;
+		IntPoint currentOffset = mRealClient->getPosition();
+
+		if (mHRange != 0)
+		{
+			if (value.left > 0)
+				value.left = 0;
+			else if (value.left < -(int)mHRange)
+				value.left = -(int)mHRange;
+		}
+		else
+		{
+			value.left = currentOffset.left;
+		}
+
+		if (mVRange != 0)
+		{
+			if (value.top > 0)
+				value.top = 0;
+			else if (value.top < -(int)mVRange)
+				value.top = -(int)mVRange;
+		}
+		else
+		{
+			value.top = currentOffset.top;
+		}
+
+		if (mHScroll != nullptr)
+			mHScroll->setScrollPosition(-value.left);
+
+		if (mVScroll != nullptr)
+			mVScroll->setScrollPosition(-value.top);
+
+		mRealClient->setPosition(value);
+	}
+
+	IntPoint ScrollView::getViewOffset()
+	{
+		return mRealClient->getPosition();
+	}
+
+	IntCoord ScrollView::getViewCoord()
+	{
+		return mClient == nullptr ? IntCoord() : mClient->getCoord();
 	}
 
 } // namespace MyGUI

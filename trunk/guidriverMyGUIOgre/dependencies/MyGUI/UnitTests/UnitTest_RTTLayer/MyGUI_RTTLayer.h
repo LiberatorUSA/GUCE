@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		12/2009
-	@module
 */
 
 #ifndef __MYGUI_RTT_LAYER_H__
@@ -34,6 +33,7 @@ namespace MyGUI
 		MyGUI::ITexture* mTexture;
 		IntSize mTextureSize;
 		std::string mTextureName;
+		bool mOutOfDate;
 	};
 
 } // namespace MyGUI

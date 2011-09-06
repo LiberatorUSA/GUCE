@@ -1,5 +1,0 @@
-# CMake generation dependency list for this directory.
-../../../MyGUIEngine/CMakeLists.txt
-../../../CMake/Utils/PrecompiledHeader.cmake
-../../../MyGUIEngine/MyGUIEngine.list
-../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __LOOP_CONTROLLER_H__
 #define __LOOP_CONTROLLER_H__
@@ -14,7 +13,8 @@
 namespace animation
 {
 
-	class LoopController : public IAnimationNode
+	class LoopController :
+		public IAnimationNode
 	{
 	public:
 		LoopController() :

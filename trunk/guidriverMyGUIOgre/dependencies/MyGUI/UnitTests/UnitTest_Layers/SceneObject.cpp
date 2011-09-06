@@ -2,11 +2,10 @@
 	@file
 	@author		Albert Semenov
 	@date		12/2009
-	@module
 */
 
-#include "SceneObject.h"
 #include <MyGUI.h>
+#include "SceneObject.h"
 
 #ifdef MYGUI_OGRE_PLATFORM
 
@@ -16,8 +15,8 @@ namespace demo
 	SceneObject::SceneObject() :
 		mTextureCoords(nullptr),
 		mVertices(nullptr),
-		mVertexCount(0),
 		mIndices(nullptr),
+		mVertexCount(0),
 		mIndexCount(0),
 		mUScale(1),
 		mVScale(1),
@@ -38,19 +37,19 @@ namespace demo
 
 	void SceneObject::GetMeshInformation(
 		const Ogre::MeshPtr mesh,
-		size_t &vertex_count,
+		size_t& vertex_count,
 		Ogre::Vector3* &vertices,
-		size_t &index_count,
+		size_t& index_count,
 		unsigned long* &indices,
 		Ogre::Vector2* &coords,
-		const Ogre::Vector3 &position,
-		const Ogre::Quaternion &orient,
-		const Ogre::Vector3 &scale,
+		const Ogre::Vector3& position,
+		const Ogre::Quaternion& orient,
+		const Ogre::Vector3& scale,
 		const std::string& _material)
 	{
 		bool added_shared = false;
 		size_t current_offset = 0;
-		size_t shared_offset = 0;
+		//size_t shared_offset = 0;
 		size_t next_offset = 0;
 		size_t index_offset = 0;
 
@@ -64,9 +63,9 @@ namespace demo
 				continue;
 
 			// We only need to add the shared vertices once
-			if(submesh->useSharedVertices)
+			if (submesh->useSharedVertices)
 			{
-				if( !added_shared )
+				if ( !added_shared )
 				{
 					vertex_count += mesh->sharedVertexData->vertexCount;
 					added_shared = true;
@@ -98,12 +97,12 @@ namespace demo
 
 			Ogre::VertexData* vertex_data = submesh->useSharedVertices ? mesh->sharedVertexData : submesh->vertexData;
 
-			if((!submesh->useSharedVertices)||(submesh->useSharedVertices && !added_shared))
+			if ((!submesh->useSharedVertices) || (submesh->useSharedVertices && !added_shared))
 			{
-				if(submesh->useSharedVertices)
+				if (submesh->useSharedVertices)
 				{
 					added_shared = true;
-					shared_offset = current_offset;
+					//shared_offset = current_offset;
 				}
 
 				const Ogre::VertexElement* coordElem =
@@ -124,7 +123,7 @@ namespace demo
 				//      Ogre::Real* pReal;
 				float* pReal;
 
-				for( size_t j = 0; j < vertex_data->vertexCount; ++j, vertex += vbuf->getVertexSize())
+				for ( size_t j = 0; j < vertex_data->vertexCount; ++j, vertex += vbuf->getVertexSize())
 				{
 					posElem->baseVertexPointerToElement(vertex, &pReal);
 
@@ -152,29 +151,29 @@ namespace demo
 			unsigned short* pShort = reinterpret_cast<unsigned short*>(pLong);
 
 
-			size_t offset = (submesh->useSharedVertices)? shared_offset : current_offset;
+			//size_t offset = (submesh->useSharedVertices)? shared_offset : current_offset;
 
 			// Ogre 1.6 patch (commenting the static_cast...) - index offsets start from 0 for each submesh
 			if ( use32bitindexes )
 			{
-				for ( size_t k = 0; k < numTris*3; ++k)
+				for ( size_t k = 0; k < numTris * 3; ++k)
 				{
-					indices[index_offset++] = pLong[k] /*+ static_cast<unsigned long>(offset)*/;
+					indices[index_offset++] = pLong[k];/*+ static_cast<unsigned long>(offset)*/
 				}
 			}
 			else
 			{
-				for ( size_t k = 0; k < numTris*3; ++k)
+				for ( size_t k = 0; k < numTris * 3; ++k)
 				{
-					indices[index_offset++] = static_cast<unsigned long>(pShort[k]) /*+
-						static_cast<unsigned long>(offset)*/;
+					indices[index_offset++] = static_cast<unsigned long>(pShort[k]);/*+
+						static_cast<unsigned long>(offset)*/
 				}
 			}
 
 			ibuf->unlock();
 			current_offset = next_offset;
 		}
-	} 
+	}
 
 	void SceneObject::clear()
 	{
@@ -205,51 +204,47 @@ namespace demo
 		Ogre::Vector3 closest_result;
 
 		// test for hitting individual triangles on the mesh
-        bool new_closest_found = false;
+		bool new_closest_found = false;
 		int index_found = 0;
-        for (int i = 0; i < static_cast<int>(mIndexCount); i += 3)
-        {
-            // check for a hit against this triangle
-            std::pair<bool, Ogre::Real> hit = Ogre::Math::intersects(_ray, mVertices[mIndices[i]],
-                mVertices[mIndices[i+1]], mVertices[mIndices[i+2]], true, false);
+		for (int i = 0; i < static_cast<int>(mIndexCount); i += 3)
+		{
+			// check for a hit against this triangle
+			std::pair<bool, Ogre::Real> hit = Ogre::Math::intersects(_ray, mVertices[mIndices[i]],
+				mVertices[mIndices[i+1]], mVertices[mIndices[i+2]], true, false);
 
-            // if it was a hit check if its the closest
-            if (hit.first)
-            {
-                if ((closest_distance < 0.0f) ||
-                    (hit.second < closest_distance))
-                {
-                    // this is the closest so far, save it off
-                    closest_distance = hit.second;
+			// if it was a hit check if its the closest
+			if (hit.first)
+			{
+				if ((closest_distance < 0.0f) ||
+					(hit.second < closest_distance))
+				{
+					// this is the closest so far, save it off
+					closest_distance = hit.second;
 					index_found = i;
-                    new_closest_found = true;
-                }
-            }
-        }
+					new_closest_found = true;
+				}
+			}
+		}
 
 		if (new_closest_found)
-        {
-            closest_result = _ray.getPoint(closest_distance);               
-        }
-
-		// return the result
-		if (closest_distance >= 0.0f)
 		{
-			// raycast success
-			Ogre::Vector2 point = getCoordByTriangle(closest_result, mVertices[mIndices[index_found]], mVertices[mIndices[index_found+1]], mVertices[mIndices[index_found+2]]);
-			Ogre::Vector2 point2 = getCoordByRel(point, mTextureCoords[mIndices[index_found]], mTextureCoords[mIndices[index_found+1]], mTextureCoords[mIndices[index_found+2]]);
+			closest_result = _ray.getPoint(closest_distance);
 
-			_x = (int)(point2.x * _texture_width);
-			_y = (int)(point2.y * _texture_height);
+			// return the result
+			if (closest_distance >= 0.0f)
+			{
+				// raycast success
+				Ogre::Vector2 point = getCoordByTriangle(closest_result, mVertices[mIndices[index_found]], mVertices[mIndices[index_found+1]], mVertices[mIndices[index_found+2]]);
+				Ogre::Vector2 point2 = getCoordByRel(point, mTextureCoords[mIndices[index_found]], mTextureCoords[mIndices[index_found+1]], mTextureCoords[mIndices[index_found+2]]);
 
-			return true;
+				_x = (int)(point2.x * _texture_width);
+				_y = (int)(point2.y * _texture_height);
+
+				return true;
+			}
 		}
-		else
-		{
-			// raycast failed
-			return false;
-		} 
 
+		// raycast failed
 		return false;
 	}
 
@@ -296,7 +291,7 @@ namespace demo
 		{
 			float count = 1 / mUScale; // колличество тайлов
 			float x = result.x * count; // пропорцией узнаем положение
-			result.x  = x + 0.5; // смещаем на половину, чтобы центр тайла был в середине
+			result.x  = x + 0.5f; // смещаем на половину, чтобы центр тайла был в середине
 			result.x = fmod(result.x, 1); // отбрасываем до запятой получая от 0 до 1
 		}
 
@@ -304,7 +299,7 @@ namespace demo
 		{
 			float count = 1 / mVScale; // колличество тайлов
 			float y = result.y * count; // пропорцией узнаем положение
-			result.y  = y + 0.5; // смещаем на половину, чтобы центр тайла был в середине
+			result.y  = y + 0.5f; // смещаем на половину, чтобы центр тайла был в середине
 			result.y = fmod(result.y, 1); // отбрасываем до запятой получая от 0 до 1
 		}
 
@@ -371,8 +366,8 @@ namespace demo
 
 		mRaySceneQuery->setRay(ray);
 		mRaySceneQuery->setSortByDistance(true);
-		Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
-		for (Ogre::RaySceneQueryResult::iterator iter = result.begin(); iter!=result.end(); ++iter)
+		Ogre::RaySceneQueryResult& result = mRaySceneQuery->execute();
+		for (Ogre::RaySceneQueryResult::iterator iter = result.begin(); iter != result.end(); ++iter)
 		{
 			if (iter->movable != 0)
 			{

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 
 #ifndef __BASE_MANAGER_H__
@@ -17,7 +16,10 @@
 #include "InputManager.h"
 #include "PointerManager.h"
 
-namespace MyGUI { class DirectXPlatform; }
+namespace MyGUI
+{
+	class DirectXPlatform;
+}
 
 namespace base
 {
@@ -30,20 +32,21 @@ namespace base
 		BaseManager();
 		virtual ~BaseManager();
 
-		virtual void prepare(int argc, char **argv); // инициализация коммандной строки
+		virtual void prepare(); // инициализация коммандной строки
 		bool create(); // создаем начальную точки каркаса приложения
 		void destroy(); // очищаем все параметры каркаса приложения
 		void run();
-		void quit() { mExit = true; }
+		void quit();
 
-		void setWindowCaption(const std::string& _text);
+		void setWindowCaption(const std::wstring& _text);
 		void createDefaultScene() { }
 
-		MyGUI::Gui* getGUI() { return mGUI; }
-		const std::string& getRootMedia() { return mRootMedia; }
-		void setResourceFilename(const std::string& _flename) { mResourceFileName = _flename; }
+		const std::string& getRootMedia();
+		void setResourceFilename(const std::string& _flename);
 		void addResourceLocation(const std::string& _name, bool _recursive = false);
-		diagnostic::StatisticInfo * getStatisticInfo() { return mInfo; }
+
+		diagnostic::StatisticInfo* getStatisticInfo();
+		diagnostic::InputFocusInfo* getFocusInput();
 
 	/*internal:*/
 		void _windowResized();
@@ -79,9 +82,9 @@ namespace base
 		diagnostic::InputFocusInfo* mFocusInfo;
 
 		HWND hWnd;
-	    IDirect3D9 *mD3d;
-		IDirect3DDevice9 *mDevice;
-	    D3DPRESENT_PARAMETERS mD3dpp;
+		IDirect3D9* mD3d;
+		IDirect3DDevice9* mDevice;
+		D3DPRESENT_PARAMETERS mD3dpp;
 		HINSTANCE hInstance;
 
 		bool mExit;

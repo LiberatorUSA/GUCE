@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		04/2009
-	@module
 */
 
 #include <cstring>
@@ -42,7 +41,7 @@ namespace MyGUI
 
 	void OgreTexture::saveToFile(const std::string& _filename)
 	{
-		Ogre::uchar *readrefdata = (Ogre::uchar*)lock(TextureUsage::Read);
+		Ogre::uchar* readrefdata = (Ogre::uchar*)lock(TextureUsage::Read);
 
 		Ogre::Image img;
 		img = img.loadDynamicImage(readrefdata, mTexture->getWidth(), mTexture->getHeight(), mTexture->getFormat());
@@ -60,7 +59,7 @@ namespace MyGUI
 	{
 		if (mTmpData.data != nullptr)
 		{
-			delete[] (uint8*)mTmpData.data;
+			delete [] (uint8*)mTmpData.data;
 			mTmpData.data = nullptr;
 		}
 
@@ -79,12 +78,12 @@ namespace MyGUI
 
 	int OgreTexture::getWidth()
 	{
-		return mTexture->getWidth();
+		return (int)mTexture->getWidth();
 	}
 
 	int OgreTexture::getHeight()
 	{
-		return mTexture->getHeight();
+		return (int)mTexture->getHeight();
 	}
 
 	void* OgreTexture::lock(TextureUsage _access)
@@ -99,7 +98,7 @@ namespace MyGUI
 		// для чтения копируем в пиксель бокс
 		if (mTmpData.data != nullptr)
 		{
-			delete[] (uint8*)mTmpData.data;
+			delete [] (uint8*)mTmpData.data;
 			mTmpData.data = nullptr;
 		}
 
@@ -119,7 +118,7 @@ namespace MyGUI
 		}
 		else if (mTmpData.data != nullptr)
 		{
-			delete[] (uint8*)mTmpData.data;
+			delete [] (uint8*)mTmpData.data;
 			mTmpData.data = nullptr;
 		}
 	}

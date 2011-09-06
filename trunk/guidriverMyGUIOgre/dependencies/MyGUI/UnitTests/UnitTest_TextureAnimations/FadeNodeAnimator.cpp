@@ -1,8 +1,7 @@
 /*!
-    @file
-    @author     Albert Semenov
-    @date       08/2008
-    @module
+	@file
+	@author     Albert Semenov
+	@date       08/2008
 */
 #include "FadeNodeAnimator.h"
 
@@ -41,7 +40,7 @@ namespace demo
 		const MyGUI::RenderTargetInfo& _info,
 		const MyGUI::IntCoord& _coord,
 		bool& _isAnimate
-		)
+	)
 	{
 
 		addTime(_time);
@@ -83,25 +82,25 @@ namespace demo
 			{
 				for (int x = 0; x < getCountX() + 1; ++x)
 				{
-					index = x + y*getCountX();
-					float speed;
+					index = x + y * getCountX();
+					float speed = 1.0f;
 					if (mFadeType == 1) // random not-squares
 					{
-						speed = mSpeed[index % (getCountX() * getCountY())];
+						speed = (float)mSpeed[index % (getCountX() * getCountY())];
 					}
 					if (mFadeType == 2) // from center
 					{
-						float x1 = float(x - getCountX()/2) / getCountX() * 2;
-						float y1 = float(y - getCountY()/2) / getCountY() * 2;
-						speed = sqrt(x1*x1+y1*y1);
+						float x1 = float(x - getCountX() / 2) / getCountX() * 2;
+						float y1 = float(y - getCountY() / 2) / getCountY() * 2;
+						speed = sqrt(x1 * x1 + y1 * y1);
 					}
 					if (mFadeType == 3) // TV
 					{
-						float x1 = float(x - getCountX()/2) / getCountX() * 2;
-						float y1 = float(y - getCountY()/2) / getCountY() * 2;
-						speed = sqrt(x1*x1*x1*x1+y1*y1);
+						float x1 = float(x - getCountX() / 2) / getCountX() * 2;
+						float y1 = float(y - getCountY() / 2) / getCountY() * 2;
+						speed = sqrt(x1 * x1 * x1 * x1 + y1 * y1);
 					}
-					float alpha = pow(mAlpha,speed);
+					float alpha = pow(mAlpha, speed);
 
 					unsigned int colour = 0xFFFFFF | ((unsigned int)(alpha * 255.0f) << 24);
 
@@ -145,7 +144,7 @@ namespace demo
 
 		int count = getCount();
 
-		for (int index=0; index<count; ++index)
+		for (int index = 0; index < count; ++index)
 			mSpeed[index] = ::rand() % 4 + 1;
 	}
 

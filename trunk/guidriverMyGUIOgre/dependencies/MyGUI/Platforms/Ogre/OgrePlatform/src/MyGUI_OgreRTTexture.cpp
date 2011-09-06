@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2009
-	@module
 */
 
 #include <cstring>
@@ -18,21 +17,21 @@ namespace MyGUI
 		mTexture(_texture)
 	{
 		mProjectMatrix = Ogre::Matrix4::IDENTITY;
-		Ogre::Root * root = Ogre::Root::getSingletonPtr();
+		Ogre::Root* root = Ogre::Root::getSingletonPtr();
 		if (root != nullptr)
 		{
 			Ogre::RenderSystem* system = root->getRenderSystem();
 			if (system != nullptr)
 			{
-				int width = mTexture->getWidth();
-				int height = mTexture->getHeight();
+				size_t width = mTexture->getWidth();
+				size_t height = mTexture->getHeight();
 
 				mRenderTargetInfo.maximumDepth = system->getMaximumDepthInputValue();
 				mRenderTargetInfo.hOffset = system->getHorizontalTexelOffset() / float(width);
 				mRenderTargetInfo.vOffset = system->getVerticalTexelOffset() / float(height);
 				mRenderTargetInfo.aspectCoef = float(height) / float(width);
-				mRenderTargetInfo.pixScaleX = 1.0 / float(width);
-				mRenderTargetInfo.pixScaleY = 1.0 / float(height);
+				mRenderTargetInfo.pixScaleX = 1.0f / float(width);
+				mRenderTargetInfo.pixScaleY = 1.0f / float(height);
 			}
 
 			if (mTexture->getBuffer()->getRenderTarget()->requiresTextureFlipping())
@@ -71,7 +70,12 @@ namespace MyGUI
 	{
 		Ogre::RenderSystem* system = Ogre::Root::getSingleton().getRenderSystem();
 		system->_setViewport(mSaveViewport);
+#if OGRE_VERSION >= MYGUI_DEFINE_VERSION(1, 7, 0) && OGRE_NO_VIEWPORT_ORIENTATIONMODE == 0
+		Ogre::OrientationMode orient = mSaveViewport->getOrientationMode();
+		system->_setProjectionMatrix(Ogre::Matrix4::IDENTITY * Ogre::Quaternion(Ogre::Degree(orient * 90.f), Ogre::Vector3::UNIT_Z));
+#else
 		system->_setProjectionMatrix(Ogre::Matrix4::IDENTITY);
+#endif
 	}
 
 	void OgreRTTexture::doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count)

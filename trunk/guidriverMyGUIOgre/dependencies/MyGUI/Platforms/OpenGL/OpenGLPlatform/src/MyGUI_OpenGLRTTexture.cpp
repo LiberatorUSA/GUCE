@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		12/2009
-	@module
 */
 
 #include "MyGUI_OpenGLRTTexture.h"
@@ -33,8 +32,8 @@ namespace MyGUI
 		mRenderTargetInfo.hOffset = 0;
 		mRenderTargetInfo.vOffset = 0;
 		mRenderTargetInfo.aspectCoef = float(mHeight) / float(mWidth);
-		mRenderTargetInfo.pixScaleX = 1.0 / float(mWidth);
-		mRenderTargetInfo.pixScaleY = 1.0 / float(mHeight);
+		mRenderTargetInfo.pixScaleX = 1.0f / float(mWidth);
+		mRenderTargetInfo.pixScaleY = 1.0f / float(mHeight);
 
 		// create a framebuffer object, you need to delete them when program exits.
 		glGenFramebuffersEXT(1, &mFBOID);
@@ -91,7 +90,7 @@ namespace MyGUI
 	{
 		OpenGLRenderManager::getInstance().end();
 
-	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); // unbind
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); // unbind
 
 		glPopAttrib();
 	}

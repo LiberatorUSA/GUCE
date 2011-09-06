@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __COLOUR_WINDOW_BOX_H__
 #define __COLOUR_WINDOW_BOX_H__
@@ -13,8 +12,8 @@
 
 namespace demo
 {
-
-	class ColourWindowBox : public wraps::BaseItemBox<ColourWindowCellView>
+	class ColourWindowBox :
+		public wraps::BaseItemBox<ColourWindowCellView>
 	{
 	public:
 		ColourWindowBox(MyGUI::Widget* _parent);

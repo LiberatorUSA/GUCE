@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __BASE_GRAPH_CONNECTION_H__
 #define __BASE_GRAPH_CONNECTION_H__
@@ -17,11 +16,12 @@ namespace wraps
 	typedef std::vector<BaseGraphConnection*> VectorConnection;
 	typedef MyGUI::Enumerator<VectorConnection> EnumeratorConnection;
 
-	class BaseGraphConnection : public BaseLayout
+	class BaseGraphConnection :
+		public BaseLayout
 	{
 	public:
-		BaseGraphConnection(MyGUI::WidgetPtr _widget) :
-	  		BaseLayout("", _widget),
+		BaseGraphConnection(MyGUI::Widget* _widget) :
+			BaseLayout("", _widget),
 			mOwnerNode(nullptr)
 		{
 			mType = mMainWidget->getUserString("Type");
@@ -33,19 +33,46 @@ namespace wraps
 			mOffset.height *= offset;
 		}
 
-		BaseGraphNode* getOwnerNode() { return mOwnerNode; }
-		const std::string& getType() { return mType; }
-		const std::string& getName() { return mName; }
+		BaseGraphNode* getOwnerNode() const
+		{
+			return mOwnerNode;
+		}
+		const std::string& getType() const
+		{
+			return mType;
+		}
+		const std::string& getName() const
+		{
+			return mName;
+		}
 
-		MyGUI::IntCoord getAbsoluteCoord() { return mMainWidget->getAbsoluteCoord(); }
-		MyGUI::IntSize getOffset() { return mOffset; }
+		MyGUI::IntCoord getAbsoluteCoord() const
+		{
+			return mMainWidget->getAbsoluteCoord();
+		}
+		MyGUI::IntSize getOffset() const
+		{
+			return mOffset;
+		}
 
 		// все присоединениые к нам точки
-		bool isAnyConnection() { return !mConnection.empty() ; }
-		EnumeratorConnection getConnectionEnumerator() { return EnumeratorConnection(mConnection); }
+		bool isAnyConnection() const
+		{
+			return !mConnection.empty();
+		}
+		EnumeratorConnection getConnectionEnumerator() const
+		{
+			return EnumeratorConnection(mConnection);
+		}
 
-		bool isAnyReverseConnection() { return !mReverseConnection.empty() ; }
-		EnumeratorConnection getReverseConnectionEnumerator() { return EnumeratorConnection(mReverseConnection); }
+		bool isAnyReverseConnection() const
+		{
+			return !mReverseConnection.empty();
+		}
+		EnumeratorConnection getReverseConnectionEnumerator() const
+		{
+			return EnumeratorConnection(mReverseConnection);
+		}
 
 		void addConnectionPoint(BaseGraphConnection* _point)
 		{
@@ -62,9 +89,15 @@ namespace wraps
 		}
 
 	/*internal:*/
-		void _setOwnerNode(BaseGraphNode* _owner) { mOwnerNode = _owner; }
+		void _setOwnerNode(BaseGraphNode* _owner)
+		{
+			mOwnerNode = _owner;
+		}
 
-		MyGUI::WidgetPtr _getMainWidget() { return mMainWidget; }
+		MyGUI::Widget* _getMainWidget() const
+		{
+			return mMainWidget;
+		}
 
 		void _addReverseConnectionPoint(BaseGraphConnection* _point)
 		{

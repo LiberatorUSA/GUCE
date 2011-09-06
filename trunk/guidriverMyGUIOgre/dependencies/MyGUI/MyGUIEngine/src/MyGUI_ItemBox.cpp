@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -23,8 +22,7 @@
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_ItemBox.h"
 #include "MyGUI_Button.h"
-#include "MyGUI_VScroll.h"
-#include "MyGUI_HScroll.h"
+#include "MyGUI_ScrollBar.h"
 #include "MyGUI_ResourceSkin.h"
 #include "MyGUI_InputManager.h"
 #include "MyGUI_Gui.h"
@@ -50,69 +48,42 @@ namespace MyGUI
 		mChangeContentByResize = true;
 	}
 
-	void ItemBox::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
+	void ItemBox::initialiseOverride()
 	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
+		Base::initialiseOverride();
 
-		initialiseWidgetSkin(_info);
-	}
+		// FIXME нам нужен фокус клавы
+		setNeedKeyFocus(true);
 
-	ItemBox::~ItemBox()
-	{
-		shutdownWidgetSkin();
-	}
-
-	void ItemBox::baseChangeWidgetSkin(ResourceSkin* _info)
-	{
-		shutdownWidgetSkin();
-		Base::baseChangeWidgetSkin(_info);
-		initialiseWidgetSkin(_info);
-	}
-
-	void ItemBox::initialiseWidgetSkin(ResourceSkin* _info)
-	{
-		// нам нужен фокус клавы
-		mNeedKeyFocus = true;
 		mDragLayer = "DragAndDrop";
 
-		const MapString& properties = _info->getProperties();
-		if (!properties.empty())
+		if (isUserString("DragLayer"))
+			mDragLayer = getUserString("DragLayer");
+
+		assignWidget(mClient, "Client");
+		if (mClient != nullptr)
 		{
-			MapString::const_iterator iter = properties.find("AlignVert");
-			if (iter != properties.end()) mAlignVert = utility::parseBool(iter->second);
-			iter = properties.find("DragLayer");
-			if (iter != properties.end()) mDragLayer = iter->second;
+			mClient->eventMouseWheel += newDelegate(this, &ItemBox::notifyMouseWheel);
+			mClient->eventMouseButtonPressed += newDelegate(this, &ItemBox::notifyMouseButtonPressed);
+			mClient->eventMouseButtonReleased += newDelegate(this, &ItemBox::notifyMouseButtonReleased);
+			setWidgetClient(mClient);
 		}
 
-		for (VectorWidgetPtr::iterator iter=mWidgetChildSkin.begin(); iter!=mWidgetChildSkin.end(); ++iter)
+		assignWidget(mVScroll, "VScroll");
+		if (mVScroll != nullptr)
 		{
-			if (*(*iter)->_getInternalData<std::string>() == "VScroll")
-			{
-				MYGUI_DEBUG_ASSERT( ! mVScroll, "widget already assigned");
-				mVScroll = (*iter)->castType<VScroll>();
-				mVScroll->eventScrollChangePosition = newDelegate(this, &ItemBox::notifyScrollChangePosition);
-			}
-			if (*(*iter)->_getInternalData<std::string>() == "HScroll")
-			{
-				MYGUI_DEBUG_ASSERT( ! mHScroll, "widget already assigned");
-				mHScroll = (*iter)->castType<HScroll>();
-				mHScroll->eventScrollChangePosition = newDelegate(this, &ItemBox::notifyScrollChangePosition);
-			}
-			else if (*(*iter)->_getInternalData<std::string>() == "Client")
-			{
-				MYGUI_DEBUG_ASSERT( ! mWidgetClient, "widget already assigned");
-				mWidgetClient = (*iter);
-				mWidgetClient->eventMouseWheel = newDelegate(this, &ItemBox::notifyMouseWheel);
-				mWidgetClient->eventMouseButtonPressed = newDelegate(this, &ItemBox::notifyMouseButtonPressed);
-				mClient = mWidgetClient;
-			}
+			mVScroll->eventScrollChangePosition += newDelegate(this, &ItemBox::notifyScrollChangePosition);
 		}
-		// сли нет скрола, то клиенская зона не обязательно
-		//MYGUI_ASSERT(nullptr != mWidgetClient, "Child Widget Client not found in skin (ItemBox must have Client) skin ='" << _info->getSkinName() << "'");
+
+		assignWidget(mHScroll, "HScroll");
+		if (mHScroll != nullptr)
+		{
+			mHScroll->eventScrollChangePosition += newDelegate(this, &ItemBox::notifyScrollChangePosition);
+		}
 
 		// подписываем клиент для драгэндропа
-		if (mWidgetClient != nullptr)
-			mWidgetClient->_requestGetContainer = newDelegate(this, &ItemBox::_requestGetContainer);
+		if (mClient != nullptr)
+			mClient->_setContainer(this);
 
 		requestItemSize();
 
@@ -120,12 +91,13 @@ namespace MyGUI
 		updateScrollPosition();
 	}
 
-	void ItemBox::shutdownWidgetSkin()
+	void ItemBox::shutdownOverride()
 	{
 		mVScroll = nullptr;
 		mHScroll = nullptr;
 		mClient = nullptr;
-		mWidgetClient = nullptr;
+
+		Base::shutdownOverride();
 	}
 
 	void ItemBox::setPosition(const IntPoint& _point)
@@ -183,7 +155,7 @@ namespace MyGUI
 		size_t count = (count_visible * mCountItemInLine) + start;
 
 		size_t index = 0;
-		for (size_t pos = start; pos<count; ++pos, ++index)
+		for (size_t pos = start; pos < count; ++pos, ++index)
 		{
 			// дальше нет айтемов
 			if (pos >= mItemsInfo.size()) break;
@@ -225,7 +197,6 @@ namespace MyGUI
 		// еще нет такого виджета, нуно создать
 		if (_index == mVectorItems.size())
 		{
-
 			requestItemSize();
 
 			Widget* item = _getClientWidget()->createWidget<Widget>("Default", IntCoord(0, 0, mSizeItem.width, mSizeItem.height), Align::Default);
@@ -233,15 +204,15 @@ namespace MyGUI
 			// вызываем запрос на создание виджета
 			requestCreateWidgetItem(this, item);
 
-			item->eventMouseWheel = newDelegate(this, &ItemBox::notifyMouseWheel);
-			item->eventRootMouseChangeFocus = newDelegate(this, &ItemBox::notifyRootMouseChangeFocus);
-			item->eventMouseButtonPressed = newDelegate(this, &ItemBox::notifyMouseButtonPressed);
-			item->eventMouseButtonReleased = newDelegate(this, &ItemBox::notifyMouseButtonReleased);
-			item->eventMouseButtonDoubleClick = newDelegate(this, &ItemBox::notifyMouseButtonDoubleClick);
-			item->eventMouseDrag = newDelegate(this, &ItemBox::notifyMouseDrag);
-			item->_requestGetContainer = newDelegate(this, &ItemBox::_requestGetContainer);
-			item->eventKeyButtonPressed = newDelegate(this, &ItemBox::notifyKeyButtonPressed);
-			item->eventKeyButtonReleased = newDelegate(this, &ItemBox::notifyKeyButtonReleased);
+			item->eventMouseWheel += newDelegate(this, &ItemBox::notifyMouseWheel);
+			item->eventRootMouseChangeFocus += newDelegate(this, &ItemBox::notifyRootMouseChangeFocus);
+			item->eventMouseButtonPressed += newDelegate(this, &ItemBox::notifyMouseButtonPressed);
+			item->eventMouseButtonReleased += newDelegate(this, &ItemBox::notifyMouseButtonReleased);
+			item->eventMouseButtonDoubleClick += newDelegate(this, &ItemBox::notifyMouseButtonDoubleClick);
+			item->eventMouseDrag += newDelegate(this, &ItemBox::notifyMouseDrag);
+			item->_setContainer(this);
+			item->eventKeyButtonPressed += newDelegate(this, &ItemBox::notifyKeyButtonPressed);
+			item->eventKeyButtonReleased += newDelegate(this, &ItemBox::notifyKeyButtonReleased);
 
 			item->_setInternalData((size_t)mVectorItems.size());
 
@@ -264,7 +235,6 @@ namespace MyGUI
 	void ItemBox::onKeySetFocus(Widget* _old)
 	{
 		mIsFocus = true;
-		setState("pushed");
 
 		Base::onKeySetFocus(_old);
 	}
@@ -272,7 +242,6 @@ namespace MyGUI
 	void ItemBox::onKeyLostFocus(Widget* _new)
 	{
 		mIsFocus = false;
-		setState("normal");
 
 		Base::onKeyLostFocus(_new);
 	}
@@ -309,11 +278,11 @@ namespace MyGUI
 			return;
 		}
 
-		for (size_t pos=0; pos<mVectorItems.size(); ++pos)
+		for (size_t pos = 0; pos < mVectorItems.size(); ++pos)
 		{
 			Widget* item = mVectorItems[pos];
 			const IntRect& abs_rect = item->getAbsoluteRect();
-			if ((point.left>= abs_rect.left) && (point.left <= abs_rect.right) && (point.top>= abs_rect.top) && (point.top <= abs_rect.bottom))
+			if ((point.left >= abs_rect.left) && (point.left <= abs_rect.right) && (point.top >= abs_rect.top) && (point.top <= abs_rect.bottom))
 			{
 
 				size_t index = calcIndexByWidget(item);
@@ -332,22 +301,14 @@ namespace MyGUI
 		}
 	}
 
-	void ItemBox::_requestGetContainer(Widget* _sender, Widget*& _container, size_t& _index)
+	size_t ItemBox::_getItemIndex(Widget* _item)
 	{
-		if (_sender == _getClientWidget())
-		{
-			_container = this;
-			_index = ITEM_NONE;
-		}
-		else
-		{
-			size_t index = calcIndexByWidget(_sender);
-			if (index < mItemsInfo.size())
-			{
-				_container = this;
-				_index = index;
-			}
-		}
+		if (_item == _getClientWidget())
+			return ITEM_NONE;
+		size_t index = calcIndexByWidget(_item);
+		if (index < mItemsInfo.size())
+			return index;
+		return ITEM_NONE;
 	}
 
 	void ItemBox::_setContainerItemInfo(size_t _index, bool _set, bool _accept)
@@ -506,9 +467,10 @@ namespace MyGUI
 		eventSelectItemAccept(this, index);
 	}
 
-	void ItemBox::setItemBoxAlignVert(bool _vert)
+	void ItemBox::setVerticalAlignment(bool _vert)
 	{
-		if (mAlignVert == _vert) return;
+		if (mAlignVert == _vert)
+			return;
 		mAlignVert = _vert;
 
 		mCountItemInLine = -1;
@@ -539,9 +501,9 @@ namespace MyGUI
 
 	size_t ItemBox::_getContainerIndex(const IntPoint& _point)
 	{
-		for (VectorWidgetPtr::iterator iter=mVectorItems.begin(); iter!=mVectorItems.end(); ++iter)
+		for (VectorWidgetPtr::iterator iter = mVectorItems.begin(); iter != mVectorItems.end(); ++iter)
 		{
-			if ((*iter)->isVisible())
+			if ((*iter)->getVisible())
 			{
 				if ((*iter)->getAbsoluteRect().inside(_point))
 				{
@@ -560,7 +522,7 @@ namespace MyGUI
 		if ( ! _update)
 		{
 			WidgetManager& instance = WidgetManager::getInstance();
-			for (VectorWidgetPtr::iterator iter=mVectorItems.begin(); iter!=mVectorItems.end(); ++iter)
+			for (VectorWidgetPtr::iterator iter = mVectorItems.begin(); iter != mVectorItems.end(); ++iter)
 			{
 				instance.unlinkFromUnlinkers(*iter);
 			}
@@ -569,9 +531,9 @@ namespace MyGUI
 
 	Widget* ItemBox::getWidgetByIndex(size_t _index)
 	{
-		for (VectorWidgetPtr::iterator iter=mVectorItems.begin(); iter!=mVectorItems.end(); ++iter)
+		for (VectorWidgetPtr::iterator iter = mVectorItems.begin(); iter != mVectorItems.end(); ++iter)
 		{
-			if ((*iter)->isVisible())
+			if ((*iter)->getVisible())
 			{
 				size_t index = getIndexByWidget(*iter);
 
@@ -591,9 +553,9 @@ namespace MyGUI
 		Base::onMouseButtonReleased(_left, _top, _id);
 	}
 
-	void ItemBox::onMouseDrag(int _left, int _top)
+	void ItemBox::onMouseDrag(int _left, int _top, MouseButton _id)
 	{
-		Base::onMouseDrag(_left, _top);
+		Base::onMouseDrag(_left, _top, _id);
 	}
 
 	void ItemBox::removeDropItems()
@@ -639,9 +601,9 @@ namespace MyGUI
 		requestDrawItem(this, mItemDrag, data);
 	}
 
-	void ItemBox::notifyMouseDrag(Widget* _sender, int _left, int _top)
+	void ItemBox::notifyMouseDrag(Widget* _sender, int _left, int _top, MouseButton _id)
 	{
-		mouseDrag();
+		mouseDrag(_id);
 	}
 
 	void ItemBox::notifyMouseButtonPressed(Widget* _sender, int _left, int _top, MouseButton _id)
@@ -680,11 +642,11 @@ namespace MyGUI
 
 	void ItemBox::notifyMouseButtonReleased(Widget* _sender, int _left, int _top, MouseButton _id)
 	{
+		bool needEvent = !mStartDrop;
 		mouseButtonReleased(_id);
-		size_t index = calcIndexByWidget(_sender);
-		// солличество айтемов может измениться
-		if (index >= getItemCount()) return;
-		eventNotifyItem(this, IBNotifyItemData(index, IBNotifyItemData::MouseReleased, _left, _top, _id));
+
+		if (needEvent)
+			eventNotifyItem(this, IBNotifyItemData(getIndexByWidget(_sender), IBNotifyItemData::MouseReleased, _left, _top, _id));
 	}
 
 	void ItemBox::notifyRootMouseChangeFocus(Widget* _sender, bool _focus)
@@ -751,7 +713,7 @@ namespace MyGUI
 		}
 	}
 
-	void ItemBox::notifyScrollChangePosition(VScroll* _sender, size_t _index)
+	void ItemBox::notifyScrollChangePosition(ScrollBar* _sender, size_t _index)
 	{
 		if (_sender == mVScroll)
 		{
@@ -775,8 +737,12 @@ namespace MyGUI
 			if (_rel < 0) offset += mSizeItem.height;
 			else offset -= mSizeItem.height;
 
-			if (offset >= mContentSize.height - _getClientWidget()->getHeight()) offset = mContentSize.height - _getClientWidget()->getHeight();
-			else if (offset < 0) offset = 0;
+			if (mContentSize.height <= _getClientWidget()->getHeight())
+				offset = 0;
+			else if (offset >= mContentSize.height - _getClientWidget()->getHeight())
+				offset = mContentSize.height - _getClientWidget()->getHeight();
+			else if (offset < 0)
+				offset = 0;
 
 			if (mContentPosition.top == offset) return;
 
@@ -794,8 +760,12 @@ namespace MyGUI
 			if (_rel < 0) offset += mSizeItem.width;
 			else  offset -= mSizeItem.width;
 
-			if (offset >= mContentSize.width - _getClientWidget()->getWidth()) offset = mContentSize.width - _getClientWidget()->getWidth();
-			else if (offset < 0) offset = 0;
+			if (mContentSize.width <= _getClientWidget()->getWidth())
+				offset = 0;
+			else if (offset >= mContentSize.width - _getClientWidget()->getWidth())
+				offset = mContentSize.width - _getClientWidget()->getWidth();
+			else if (offset < 0)
+				offset = 0;
 
 			if (mContentPosition.left == offset) return;
 
@@ -862,7 +832,7 @@ namespace MyGUI
 		return mContentPosition;
 	}
 
-	IntSize ItemBox::getViewSize() const
+	IntSize ItemBox::getViewSize()
 	{
 		return _getClientWidget()->getSize();
 	}
@@ -894,12 +864,69 @@ namespace MyGUI
 
 	Widget* ItemBox::_getClientWidget()
 	{
-		return mWidgetClient == nullptr ? this : mWidgetClient;
+		return mClient == nullptr ? this : mClient;
 	}
 
-	const Widget* ItemBox::_getClientWidget() const
+	size_t ItemBox::getItemCount() const
 	{
-		return mWidgetClient == nullptr ? this : mWidgetClient;
+		return mItemsInfo.size();
+	}
+
+	void ItemBox::addItem(Any _data)
+	{
+		insertItemAt(ITEM_NONE, _data);
+	}
+
+	size_t ItemBox::getIndexSelected()
+	{
+		return mIndexSelect;
+	}
+
+	void ItemBox::clearIndexSelected()
+	{
+		setIndexSelected(ITEM_NONE);
+	}
+
+	void ItemBox::clearItemDataAt(size_t _index)
+	{
+		setItemDataAt(_index, Any::Null);
+	}
+
+	bool ItemBox::getVerticalAlignment() const
+	{
+		return mAlignVert;
+	}
+
+	Widget* ItemBox::getWidgetDrag()
+	{
+		return mItemDrag;
+	}
+
+	void ItemBox::setPosition(int _left, int _top)
+	{
+		setPosition(IntPoint(_left, _top));
+	}
+
+	void ItemBox::setSize(int _width, int _height)
+	{
+		setSize(IntSize(_width, _height));
+	}
+
+	void ItemBox::setCoord(int _left, int _top, int _width, int _height)
+	{
+		setCoord(IntCoord(_left, _top, _width, _height));
+	}
+
+	void ItemBox::setPropertyOverride(const std::string& _key, const std::string& _value)
+	{
+		if (_key == "VerticalAlignment")
+			setVerticalAlignment(utility::parseValue<bool>(_value));
+		else
+		{
+			Base::setPropertyOverride(_key, _value);
+			return;
+		}
+		eventChangeProperty(this, _key, _value);
 	}
 
 } // namespace MyGUI

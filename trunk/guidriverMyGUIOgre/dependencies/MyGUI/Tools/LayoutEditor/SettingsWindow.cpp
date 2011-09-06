@@ -2,142 +2,94 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		09/2008
-	@module
 */
 
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "SettingsWindow.h"
-//#include "BasisManager.h"
-extern int grid_step;//FIXME_HOOK
 
-SettingsWindow::SettingsWindow() : BaseLayout("SettingsWindow.layout")
+namespace tools
 {
-	assignWidget(mGridEdit, "gridEdit");
-	assignWidget(mButtonOkSettings, "buttonOkSettings");
-	//assignWidget(mComboboxResolution, "comboboxResolution");
-	//assignWidget(mComboboxFullscreen, "comboboxFullscreen");
-	assignWidget(mCheckShowName, "checkShowName");
-	assignWidget(mCheckShowType, "checkShowType");
-	assignWidget(mCheckShowSkin, "checkShowSkin");
-	assignWidget(mCheckEdgeHide, "checkEdgeHide");
-
-	mGridEdit->eventEditSelectAccept = MyGUI::newDelegate(this, &SettingsWindow::notifyNewGridStepAccept);
-	mGridEdit->eventKeyLostFocus = MyGUI::newDelegate(this, &SettingsWindow::notifyNewGridStep);
-	mButtonOkSettings->eventMouseButtonClick = MyGUI::newDelegate(this, &SettingsWindow::notifyOkSettings);
-
-	/*Ogre::ConfigOptionMap map = Ogre::Root::getSingletonPtr()->getRenderSystem()->getConfigOptions();
-	Ogre::ConfigOptionMap::iterator iter = map.find("Video Mode");
-	int selectedIdx = 0;
-	int wid, hei;
-	for (unsigned int j = 0; j<iter->second.possibleValues.size();j++)
+	SettingsWindow::SettingsWindow() :
+		Dialog("SettingsWindow.layout"),
+		mButtonOk(nullptr),
+		mButtonCancel(nullptr),
+		mSettingsResourcesControl(nullptr),
+		mSettingsResourcePathsControl(nullptr),
+		mSettingsGeneralControl(nullptr),
+		mSettingsWidgetsControl(nullptr),
+		mSettingsUpdateResourcesControl(nullptr)
 	{
-		std::string videoMode = iter->second.possibleValues[j];
-		std::string tmp;
-		std::istringstream str(videoMode);
-		str >> wid >> tmp >> hei;
-		if(iter->second.possibleValues[j] == iter->second.currentValue)
-			selectedIdx = j;
-		mComboboxResolution->addItem(MyGUI::utility::toString(wid, " x ", hei));
-	}
-	mComboboxResolution->setIndexSelected(selectedIdx);
+		assignWidget(mButtonOk, "Ok");
+		assignWidget(mButtonCancel, "Cancel");
 
-	iter = map.find("Full Screen");
-	selectedIdx = 0;
-	for (size_t j = 0; j<iter->second.possibleValues.size();j++)
-	{
-		std::string videoMode = iter->second.possibleValues[j];
-		if(iter->second.possibleValues[j] == iter->second.currentValue)
-			selectedIdx = j;
-		mComboboxFullscreen->addItem(videoMode);
-	}
-	mComboboxFullscreen->setIndexSelected(selectedIdx);*/
+		assignBase(mSettingsResourcesControl, "SettingsResourcesControl");
+		assignBase(mSettingsResourcePathsControl, "SettingsResourcePathsControl");
+		assignBase(mSettingsGeneralControl, "SettingsGeneralControl");
+		assignBase(mSettingsWidgetsControl, "SettingsWidgetsControl");
+		assignBase(mSettingsUpdateResourcesControl, "SettingsUpdateResourcesControl");
 
-	mCheckShowName->eventMouseButtonClick = MyGUI::newDelegate(this, &SettingsWindow::notifyToggleCheck);
-	mCheckShowType->eventMouseButtonClick = MyGUI::newDelegate(this, &SettingsWindow::notifyToggleCheck);
-	mCheckShowSkin->eventMouseButtonClick = MyGUI::newDelegate(this, &SettingsWindow::notifyToggleCheck);
-	mCheckEdgeHide->eventMouseButtonClick = MyGUI::newDelegate(this, &SettingsWindow::notifyToggleCheck);
-}
+		mButtonOk->eventMouseButtonClick += MyGUI::newDelegate(this, &SettingsWindow::notifyOk);
+		mButtonCancel->eventMouseButtonClick += MyGUI::newDelegate(this, &SettingsWindow::notifyCancel);
 
-void SettingsWindow::load(MyGUI::xml::ElementEnumerator _field)
-{
-	MyGUI::xml::ElementEnumerator field = _field->getElementEnumerator();
-	while (field.next())
-	{
-		std::string key, value;
+		MyGUI::Window* window = mMainWidget->castType<MyGUI::Window>(false);
+		if (window != nullptr)
+			window->eventWindowButtonPressed += MyGUI::newDelegate(this, &SettingsWindow::notifyWindowButtonPressed);
 
-		if (field->getName() == "Property")
-		{
-			if (!field->findAttribute("key", key)) continue;
-			if (!field->findAttribute("value", value)) continue;
+		loadSettings();
 
-			if (key == "Grid")
-				grid_step = MyGUI::utility::parseInt(value);
-			else if (key == "ShowName")
-				setShowName(MyGUI::utility::parseBool(value));
-			else if (key == "ShowType")
-				setShowType(MyGUI::utility::parseBool(value));
-			else if (key == "ShowSkin")
-				setShowSkin(MyGUI::utility::parseBool(value));
-			else if (key == "EdgeHide")
-				setEdgeHide(MyGUI::utility::parseBool(value));
-		}
+		mMainWidget->setVisible(false);
 	}
 
-	if (grid_step <= 0) grid_step = 1;
-	mGridEdit->setCaption(MyGUI::utility::toString(grid_step));
-}
+	SettingsWindow::~SettingsWindow()
+	{
+	}
 
-void SettingsWindow::save(MyGUI::xml::ElementPtr root)
-{
-	root = root->createChild("SettingsWindow");
-	MyGUI::xml::ElementPtr nodeProp = root->createChild("Property");
-	nodeProp->addAttribute("key", "Grid");
-	nodeProp->addAttribute("value", grid_step);
+	void SettingsWindow::notifyOk(MyGUI::Widget* _sender)
+	{
+		eventEndDialog(this, true);
+	}
 
-	nodeProp = root->createChild("Property");
-	nodeProp->addAttribute("key", "ShowName");
-	nodeProp->addAttribute("value", getShowName());
+	void SettingsWindow::notifyCancel(MyGUI::Widget* _sender)
+	{
+		eventEndDialog(this, false);
+	}
 
-	nodeProp = root->createChild("Property");
-	nodeProp->addAttribute("key", "ShowType");
-	nodeProp->addAttribute("value", getShowType());
+	void SettingsWindow::onDoModal()
+	{
+		loadSettings();
 
-	nodeProp = root->createChild("Property");
-	nodeProp->addAttribute("key", "ShowSkin");
-	nodeProp->addAttribute("value", getShowSkin());
+		MyGUI::IntSize windowSize = mMainWidget->getSize();
+		MyGUI::IntSize parentSize = mMainWidget->getParentSize();
 
-	nodeProp = root->createChild("Property");
-	nodeProp->addAttribute("key", "EdgeHide");
-	nodeProp->addAttribute("value", getEdgeHide());
-}
+		mMainWidget->setPosition((parentSize.width - windowSize.width) / 2, (parentSize.height - windowSize.height) / 2);
+	}
 
-void SettingsWindow::notifyNewGridStep(MyGUI::Widget* _sender, MyGUI::Widget* _new)
-{
-	grid_step = MyGUI::utility::parseInt(_sender->getCaption());
-	if (grid_step <= 0) grid_step = 1;
-	_sender->setCaption(MyGUI::utility::toString(grid_step));
-}
+	void SettingsWindow::onEndModal()
+	{
+	}
 
-void SettingsWindow::notifyNewGridStepAccept(MyGUI::Edit* _sender)
-{
-	notifyNewGridStep(_sender);
-}
+	void SettingsWindow::saveSettings()
+	{
+		mSettingsResourcesControl->saveSettings();
+		mSettingsResourcePathsControl->saveSettings();
+		mSettingsGeneralControl->saveSettings();
+		mSettingsWidgetsControl->saveSettings();
+		mSettingsUpdateResourcesControl->saveSettings();
+	}
 
-void SettingsWindow::notifyOkSettings(MyGUI::Widget* _sender)
-{
-	//bool fullscreen;
-	//int width, height;
-	//std::string tmp;
-	//std::istringstream str(mComboboxResolution->getCaption());
-	//str >> width >> tmp >> height;
-	//fullscreen = (mComboboxFullscreen->getCaption() == "Yes");
-	//BasisManager::getInstance().setFullscreen(fullscreen);//setFullscreen, width, height);
-	mMainWidget->setVisible(false);
-}
+	void SettingsWindow::loadSettings()
+	{
+		mSettingsResourcesControl->loadSettings();
+		mSettingsResourcePathsControl->loadSettings();
+		mSettingsGeneralControl->loadSettings();
+		mSettingsWidgetsControl->loadSettings();
+		mSettingsUpdateResourcesControl->loadSettings();
+	}
 
-void SettingsWindow::notifyToggleCheck(MyGUI::Widget* _sender)
-{
-	MyGUI::Button* checkbox = _sender->castType<MyGUI::Button>();
-	checkbox->setButtonPressed(!checkbox->getButtonPressed());
-	eventWidgetsUpdate();
-}
+	void SettingsWindow::notifyWindowButtonPressed(MyGUI::Window* _sender, const std::string& _name)
+	{
+		if (_name == "close")
+			eventEndDialog(this, false);
+	}
+
+} // namespace tools

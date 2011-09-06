@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 
 #include "MyGUI_LayerItem.h"
@@ -21,7 +20,7 @@ namespace MyGUI
 
 	RTTLayer::~RTTLayer()
 	{
-		for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); )
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); )
 		{
 			if ((*iter) != nullptr)
 			{
@@ -54,7 +53,7 @@ namespace MyGUI
 		mData = _node->createCopy();
 	}
 
-	ILayerNode * RTTLayer::createChildItemNode()
+	ILayerNode* RTTLayer::createChildItemNode()
 	{
 		// создаем рутовый айтем
 		RTTLayerNode* node = new RTTLayerNode(this);
@@ -87,7 +86,7 @@ namespace MyGUI
 	void RTTLayer::destroyChildItemNode(ILayerNode* _item)
 	{
 		// если есть отец, то русть сам и удаляет
-		ILayerNode * parent = _item->getParent();
+		ILayerNode* parent = _item->getParent();
 		if (parent)
 		{
 			parent->destroyChildItemNode(_item);
@@ -95,7 +94,7 @@ namespace MyGUI
 		}
 
 		// айтем рутовый, мы удаляем
-		for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 		{
 			if ((*iter) == _item)
 			{
@@ -110,7 +109,7 @@ namespace MyGUI
 
 	void RTTLayer::renderToTarget(IRenderTarget* _target, bool _update)
 	{
-		for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); )
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); )
 		{
 			if ((*iter) != nullptr)
 			{
@@ -145,15 +144,15 @@ namespace MyGUI
 		}
 	}
 
-	ILayerItem * RTTLayer::getLayerItemByPoint(int _left, int _top)
+	ILayerItem* RTTLayer::getLayerItemByPoint(int _left, int _top) const
 	{
 		if (false == mIsPick) return nullptr;
-		VectorILayerNode::reverse_iterator iter = mChildItems.rbegin();
+		VectorILayerNode::const_reverse_iterator iter = mChildItems.rbegin();
 		while (iter != mChildItems.rend())
 		{
 			if ((*iter) != nullptr)
 			{
-				ILayerItem * item = (*iter)->getLayerItemByPoint(_left, _top);
+				ILayerItem* item = (*iter)->getLayerItemByPoint(_left, _top);
 				if (item != nullptr) return item;
 			}
 			++iter;

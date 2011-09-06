@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 
@@ -24,18 +23,16 @@ namespace demo
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/Demos/Demo_Controllers");
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void DemoKeeper::createScene()
 	{
-		getGUI()->load("Wallpaper0.layout");
-		MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().load("BackHelp.layout");
-		root.at(0)->findWidget("Text")->setCaption("ControllerFadeAlpha and ControllerPosition examples.");
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
+		const MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().loadLayout("HelpPanel.layout");
+		root.at(0)->findWidget("Text")->castType<MyGUI::TextBox>()->setCaption("ControllerFadeAlpha and ControllerPosition examples.");
 
 		mIsAnim = false;
-
-		const MyGUI::IntSize size(128, 128);
 
 		mMenu1 = new State("Menu1.layout", ControllerType::Inertional);
 		mMenu1->eventButtonPress = MyGUI::newDelegate(this, &DemoKeeper::notifyButtonPress);

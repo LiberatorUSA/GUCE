@@ -2,50 +2,59 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		09/2008
-	@module
 */
 #ifndef __PANEL_ITEMS_H__
 #define __PANEL_ITEMS_H__
 
 #include "BaseLayout/BaseLayout.h"
 #include "PanelView/BasePanelViewItem.h"
+#include "WidgetContainer.h"
 
-//#include <Ogre.h>
-
-extern const int PropertyItemHeight;
-
-class PanelItems : public wraps::BasePanelViewItem
+namespace tools
 {
-public:
+	class PanelItems :
+		public wraps::BasePanelViewItem
+	{
+	public:
+		PanelItems();
 
-	PanelItems();
+		virtual void initialise();
+		virtual void shutdown();
 
-	virtual void initialise();
-	virtual void shutdown();
+		void update(MyGUI::Widget* _currentWidget);
 
-	void update(MyGUI::Widget* _current_widget);
+	private:
+		void updateList();
+		void addItem(const std::string& _value);
+		void removeItem(size_t _index);
 
-	void notifyRectangleDoubleClick(MyGUI::Widget* _sender);
+		void notifyAddItem(MyGUI::Widget* _sender = 0);
+		void notifyDeleteItem(MyGUI::Widget* _sender);
+		void notifyUpdateItem(MyGUI::EditBox* _widget);
+		void notifySelectItem(MyGUI::ListBox* _widget, size_t _position);
+		virtual void notifyChangeWidth(int _width);
 
-private:
-	void addSheetToTab(MyGUI::Widget* _tab, std::string _caption = "");
-	void syncItems(bool _apply, bool _add = false, std::string _value = "");
-	void notifyAddItem(MyGUI::Widget* _sender = 0);
-	void notifyDeleteItem(MyGUI::Widget* _sender);
-	void notifySelectSheet(MyGUI::Widget* _sender);
-	void notifyUpdateItem(MyGUI::Edit* _widget);
-	void notifySelectItem(MyGUI::List* _widget, size_t _position);
-	virtual void notifyChangeWidth(int _width);
+		void selectItem(MyGUI::Widget* _widget);
 
-	MyGUI::Edit* mEdit;
-	MyGUI::List* mList;
-	MyGUI::Button* mButtonAdd;
-	MyGUI::Button* mButtonDelete;
-	MyGUI::Button* mButtonSelect;
+		void setContainerProperty(MyGUI::Widget* _widget, const std::string& _key, const std::string& _value);
 
-	MyGUI::Widget* current_widget;
+		void setPropertyValue(MyGUI::Widget* _widget, size_t _index, const std::string& _propertyName, const std::string& _propertyValue);
+		void erasePropertyValue(MyGUI::Widget* _widget, size_t _index, const std::string& _propertyName);
+		void addPropertyValue(MyGUI::Widget* _widget, const std::string& _propertyName, const std::string& _propertyValue);
 
-	int mButtonLeft, mButtonRight, mButtonSpace;
-};
+	private:
+		MyGUI::EditBox* mEdit;
+		MyGUI::ListBox* mList;
+		MyGUI::Button* mButtonAdd;
+		MyGUI::Button* mButtonDelete;
+
+		MyGUI::Widget* mCurrentWidget;
+
+		int mButtonLeft;
+		int mButtonRight;
+		int mButtonSpace;
+	};
+
+} // namespace tools
 
 #endif // __PANEL_ITEMS_H__

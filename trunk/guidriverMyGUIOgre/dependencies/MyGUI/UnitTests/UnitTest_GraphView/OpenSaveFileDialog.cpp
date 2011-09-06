@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "OpenSaveFileDialog.h"
 
 #include "FileSystemInfo/FileSystemInfo.h"
@@ -12,19 +11,19 @@
 namespace common
 {
 
-	OpenSaveFileDialog::OpenSaveFileDialog() : BaseLayout("OpenSaveFileDialog.layout")
+	OpenSaveFileDialog::OpenSaveFileDialog() : BaseLayout("OpenSaveFileDialog2.layout")
 	{
 		assignWidget(mListFiles, "ListFiles");
 		assignWidget(mEditFileName, "EditFileName");
 		assignWidget(mEditCurrentFolder, "EditCurrentFolder");
 		assignWidget(mButtonOpenSave, "ButtonOpenSave");
 
-		mListFiles->eventListChangePosition = MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyListChangePosition);
-		mListFiles->eventListSelectAccept = MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyListSelectAccept);
-		mEditFileName->eventEditSelectAccept = MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyEditSelectAccept);
-		mButtonOpenSave->eventMouseButtonClick = MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyMouseButtonClick);
+		mListFiles->eventListChangePosition += MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyListChangePosition);
+		mListFiles->eventListSelectAccept += MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyListSelectAccept);
+		mEditFileName->eventEditSelectAccept += MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyEditSelectAccept);
+		mButtonOpenSave->eventMouseButtonClick += MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyMouseButtonClick);
 
-		mMainWidget->castType<MyGUI::Window>()->eventWindowButtonPressed = MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyWindowButtonPressed);
+		mMainWidget->castType<MyGUI::Window>()->eventWindowButtonPressed += MyGUI::newDelegate(this, &OpenSaveFileDialog::notifyWindowButtonPressed);
 
 		mModalMode = false;
 
@@ -34,29 +33,29 @@ namespace common
 		update();
 	}
 
-	void OpenSaveFileDialog::notifyWindowButtonPressed(MyGUI::WindowPtr _sender, const std::string& _name)
+	void OpenSaveFileDialog::notifyWindowButtonPressed(MyGUI::Window* _sender, const std::string& _name)
 	{
 		if (_name == "close")
 			eventEndDialog(this, false);
 	}
 
-	void OpenSaveFileDialog::notifyEditSelectAccept(MyGUI::EditPtr _sender)
+	void OpenSaveFileDialog::notifyEditSelectAccept(MyGUI::EditBox* _sender)
 	{
 		accept();
 	}
 
-	void OpenSaveFileDialog::notifyMouseButtonClick(MyGUI::WidgetPtr _sender)
+	void OpenSaveFileDialog::notifyMouseButtonClick(MyGUI::Widget* _sender)
 	{
 		accept();
 	}
 
 	void OpenSaveFileDialog::setDialogInfo(const MyGUI::UString& _caption, const MyGUI::UString& _button)
 	{
-		mMainWidget->setCaption(_caption);
+		mMainWidget->castType<MyGUI::Window>()->setCaption(_caption);
 		mButtonOpenSave->setCaption(_button);
 	}
 
-	void OpenSaveFileDialog::notifyListChangePosition(MyGUI::ListPtr _sender, size_t _index)
+	void OpenSaveFileDialog::notifyListChangePosition(MyGUI::ListBox* _sender, size_t _index)
 	{
 		if (_index == MyGUI::ITEM_NONE)
 		{
@@ -70,7 +69,7 @@ namespace common
 		}
 	}
 
-	void OpenSaveFileDialog::notifyListSelectAccept(MyGUI::ListPtr _sender, size_t _index)
+	void OpenSaveFileDialog::notifyListSelectAccept(MyGUI::ListBox* _sender, size_t _index)
 	{
 		if (_index == MyGUI::ITEM_NONE) return;
 
@@ -122,7 +121,7 @@ namespace common
 		VectorFileInfo infos;
 		getSystemFileList(infos, mCurrentFolder, L"*.*");
 
-		for(VectorFileInfo::iterator item=infos.begin(); item!=infos.end(); ++item)
+		for (VectorFileInfo::iterator item = infos.begin(); item != infos.end(); ++item)
 		{
 			if ((*item).folder)
 				mListFiles->addItem(L"[" + (*item).name + L"]", *item);
@@ -132,7 +131,7 @@ namespace common
 		infos.clear();
 		getSystemFileList(infos, mCurrentFolder, mFileMask);
 
-		for(VectorFileInfo::iterator item=infos.begin(); item!=infos.end(); ++item)
+		for (VectorFileInfo::iterator item = infos.begin(); item != infos.end(); ++item)
 		{
 			if (!(*item).folder)
 				mListFiles->addItem((*item).name, *item);

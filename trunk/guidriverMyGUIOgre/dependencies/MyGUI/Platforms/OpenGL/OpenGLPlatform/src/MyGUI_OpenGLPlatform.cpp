@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2009
-	@module
 */
 
 #include "MyGUI_OpenGLPlatform.h"
@@ -16,6 +15,7 @@ namespace MyGUI
 	{
 		mRenderManager = new OpenGLRenderManager();
 		mDataManager = new OpenGLDataManager();
+		mLogManager = new LogManager();
 	}
 
 	OpenGLPlatform::~OpenGLPlatform()
@@ -23,14 +23,16 @@ namespace MyGUI
 		assert(!mIsInitialise);
 		delete mRenderManager;
 		delete mDataManager;
+		delete mLogManager;
 	}
 
-	void OpenGLPlatform::initialise(OpenGLImageLoader* _loader, const std::string& _logname)
+	void OpenGLPlatform::initialise(OpenGLImageLoader* _loader, const std::string& _logName)
 	{
 		assert(!mIsInitialise);
 		mIsInitialise = true;
 
-		LogManager::registerSection(MYGUI_PLATFORM_LOG_SECTION, _logname);
+		if (!_logName.empty())
+			LogManager::getInstance().createDefaultSource(_logName);
 
 		mRenderManager->initialise(_loader);
 		mDataManager->initialise();
@@ -43,9 +45,6 @@ namespace MyGUI
 
 		mRenderManager->shutdown();
 		mDataManager->shutdown();
-
-		// last platform log
-		LogManager::unregisterSection(MYGUI_PLATFORM_LOG_SECTION);
 	}
 
 	OpenGLRenderManager* OpenGLPlatform::getRenderManagerPtr()

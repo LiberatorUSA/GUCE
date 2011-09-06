@@ -2,39 +2,51 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		09/2008
-	@module
 */
 #ifndef __PANEL_MAIN_PROPERTIES_H__
 #define __PANEL_MAIN_PROPERTIES_H__
 
 #include "BaseLayout/BaseLayout.h"
 #include "PanelView/BasePanelViewItem.h"
-//#include <Ogre.h>
+#include "IPropertyField.h"
+#include "WidgetTypes.h"
+#include "EditorWidgets.h"
 
-extern const int PropertyItemHeight;
-
-class PanelMainProperties : public wraps::BasePanelViewItem
+namespace tools
 {
-public:
+	class PanelMainProperties :
+		public wraps::BasePanelViewItem
+	{
+	public:
+		PanelMainProperties();
 
-	PanelMainProperties();
+		virtual void initialise();
+		virtual void shutdown();
 
-	virtual void initialise();
-	virtual void shutdown();
+		void update(MyGUI::Widget* _currentWidget);
 
-	void notifyToggleRelativeMode(MyGUI::Widget* _sender = nullptr);
-	void update(MyGUI::Widget* _current_widget);
+	private:
+		void notifyActionSkin(const std::string& _type, const std::string& _value, bool _final);
+		void notifyActionLayer(const std::string& _type, const std::string& _value, bool _final);
+		void notifyActionName(const std::string& _type, const std::string& _value, bool _final);
+		void notifyActionType(const std::string& _type, const std::string& _value, bool _final);
+		void notifyActionAlign(const std::string& _type, const std::string& _value, bool _final);
+		void notifyActionTemplate(const std::string& _type, const std::string& _value, bool _final);
 
-	typedef MyGUI::delegates::CDelegate5<MyGUI::Widget*, const std::string&, const std::string&, const std::string&, int> EventHandle_EventCreatePair;
-	EventHandle_EventCreatePair eventCreatePair;
-	typedef MyGUI::delegates::CDelegate1<const std::string&> EventHandle_EventSetPositionText;
-	EventHandle_EventSetPositionText eventSetPositionText;
+		void destroyPropertyFields();
+		void updateSize();
 
-	MyGUI::Widget* getMainWidget() { return mWidgetClient; }
-private:
-	MyGUI::Button* mButtonRelativePosition;
+		bool isSkinExist(const std::string& _skinName);
+		bool checkTemplate(const std::string& _skinName);
 
-	MyGUI::Widget* current_widget;
-};
+		std::string getTargetTemplate(WidgetContainer* _container);
+
+	private:
+		MyGUI::Widget* mCurrentWidget;
+		typedef std::vector<IPropertyField*> VectorPropertyField;
+		VectorPropertyField mFields;
+	};
+
+} // namespace tools
 
 #endif // __PANEL_MAIN_PROPERTIES_H__

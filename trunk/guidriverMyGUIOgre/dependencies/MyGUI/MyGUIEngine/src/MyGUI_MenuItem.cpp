@@ -1,8 +1,7 @@
- /*!
+/*!
 	@file
 	@author		Albert Semenov
 	@date		11/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -22,76 +21,63 @@
 */
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_MenuItem.h"
-#include "MyGUI_SkinManager.h"
-#include "MyGUI_SubWidgetManager.h"
 
 namespace MyGUI
 {
 
 	MenuItem::MenuItem() :
-		mOwner(nullptr)
+		mOwner(nullptr),
+		mMinSize(10, 10),
+		mCheck(nullptr),
+		mCheckValue(false)
 	{
 	}
 
-	void MenuItem::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
+	void MenuItem::initialiseOverride()
 	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
+		Base::initialiseOverride();
 
+		// FIXME проверить смену скина ибо должно один раз вызываться
 		Widget* parent = getParent();
-		MYGUI_ASSERT(parent, "MenuItem must have parent MenuCtrl");
-		if (!parent->isType<MenuCtrl>())
+		MYGUI_ASSERT(parent, "MenuItem must have parent MenuControl");
+		if (!parent->isType<MenuControl>())
 		{
 			Widget* client = parent;
 			parent = client->getParent();
-			MYGUI_ASSERT(parent, "MenuItem must have parent MenuCtrl");
-			MYGUI_ASSERT(parent->getClientWidget() == client, "MenuItem must have parent MenuCtrl");
-			MYGUI_ASSERT(parent->isType<MenuCtrl>(), "MenuItem must have parent MenuCtrl");
+			MYGUI_ASSERT(parent, "MenuItem must have parent MenuControl");
+			MYGUI_ASSERT(parent->getClientWidget() == client, "MenuItem must have parent MenuControl");
+			MYGUI_ASSERT(parent->isType<MenuControl>(), "MenuItem must have parent MenuControl");
 		}
-		mOwner = parent->castType<MenuCtrl>();
+		mOwner = parent->castType<MenuControl>();
 
-		initialiseWidgetSkin(_info);
+		assignWidget(mCheck, "Check");
 
-		// нам нуженфокус клавы
-		this->mNeedKeyFocus = true;
+		//if (isUserString("MinSize"))
+			//mMinSize = IntSize::parse(getUserString("MinSize"));
+
+		//FIXME нам нуженфокус клавы
+		setNeedKeyFocus(true);
+
+		updateCheck();
 	}
 
-	MenuItem::~MenuItem()
+	void MenuItem::shutdownOverride()
 	{
-		shutdownWidgetSkin();
+		// FIXME проверить смену скина ибо должно один раз вызываться
 		mOwner->_notifyDeleteItem(this);
+
+		Base::shutdownOverride();
 	}
 
-	Widget* MenuItem::baseCreateWidget(WidgetStyle _style, const std::string& _type, const std::string& _skin, const IntCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
+	void MenuItem::onWidgetCreated(Widget* _widget)
 	{
-		Widget* widget = Base::baseCreateWidget(_style, _type, _skin, _coord, _align, _layer, _name);
-		MenuCtrl* child = widget->castType<MenuCtrl>(false);
-		if (child) mOwner->_wrapItemChild(this, child);
-		return widget;
-	}
+		Base::onWidgetCreated(_widget);
 
-	void MenuItem::baseChangeWidgetSkin(ResourceSkin* _info)
-	{
-		shutdownWidgetSkin();
-		Button::baseChangeWidgetSkin(_info);
-		initialiseWidgetSkin(_info);
-	}
-
-	void MenuItem::initialiseWidgetSkin(ResourceSkin* _info)
-	{
-	}
-
-	void MenuItem::shutdownWidgetSkin()
-	{
-	}
-
-	void MenuItem::onMouseButtonPressed(int _left, int _top, MouseButton _id)
-	{
-		Base::onMouseButtonPressed(_left, _top, _id);
-	}
-
-	void MenuItem::onMouseButtonReleased(int _left, int _top, MouseButton _id)
-	{
-		Base::onMouseButtonReleased(_left, _top, _id);
+		MenuControl* child = _widget->castType<MenuControl>(false);
+		if (child != nullptr)
+		{
+			mOwner->_wrapItemChild(this, child);
+		}
 	}
 
 	void MenuItem::setCaption(const UString& _value)
@@ -135,7 +121,7 @@ namespace MyGUI
 		return mOwner->getItemIndex(this);
 	}
 
-	MenuCtrl* MenuItem::createItemChild()
+	MenuControl* MenuItem::createItemChild()
 	{
 		return mOwner->createItemChild(this);
 	}
@@ -155,21 +141,61 @@ namespace MyGUI
 		mOwner->setItemChildVisible(this, _visible);
 	}
 
-	MenuCtrl* MenuItem::getItemChild()
+	MenuControl* MenuItem::getItemChild()
 	{
 		return mOwner->getItemChild(this);
 	}
 
-	void MenuItem::setProperty(const std::string& _key, const std::string& _value)
+	void MenuItem::setPropertyOverride(const std::string& _key, const std::string& _value)
 	{
-		if (_key == "MenuItem_Id") setItemId(_value);
-		else if (_key == "MenuItem_Type") setItemType(utility::parseValue<MenuItemType>(_value));
+		if (_key == "MenuItemId")
+			setItemId(_value);
+		else if (_key == "MenuItemType")
+			setItemType(utility::parseValue<MenuItemType>(_value));
+		else if (_key == "MenuItemChecked")
+			setItemChecked(utility::parseValue<bool>(_value));
 		else
 		{
-			Base::setProperty(_key, _value);
+			Base::setPropertyOverride(_key, _value);
 			return;
 		}
 		eventChangeProperty(this, _key, _value);
+	}
+
+	MenuControl* MenuItem::getMenuCtrlParent()
+	{
+		return mOwner;
+	}
+
+	IItemContainer* MenuItem::_getItemContainer()
+	{
+		return mOwner;
+	}
+
+	IntSize MenuItem::_getContentSize()
+	{
+		ISubWidgetText* text = getSubWidgetText();
+		if (text == nullptr)
+			return mMinSize;
+
+		return text->getTextSize() + (getSize() - text->getSize());
+	}
+
+	void MenuItem::updateCheck()
+	{
+		if (mCheck != nullptr)
+			mCheck->setVisible(mCheckValue);
+	}
+
+	bool MenuItem::getItemChecked() const
+	{
+		return mCheckValue;
+	}
+
+	void MenuItem::setItemChecked(bool _value)
+	{
+		mCheckValue = _value;
+		updateCheck();
 	}
 
 } // namespace MyGUI

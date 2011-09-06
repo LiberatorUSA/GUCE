@@ -2,7 +2,6 @@
 	@file
 	@author     George Evmenov
 	@date       08/2009
-	@module
 */
 #include "DemoKeeper.h"
 #include "Base/Main.h"
@@ -17,7 +16,8 @@
 MyGUI::UString gMediaBase;
 typedef std::pair<std::wstring, common::FileInfo> PairFileInfo;
 
-class SampleLayout : public wraps::BaseLayout
+class SampleLayout :
+	public wraps::BaseLayout
 {
 public:
 	SampleLayout();
@@ -26,20 +26,20 @@ public:
 	MyGUI::UString getPath(MyGUI::TreeControl::Node* pNode) const;
 
 private:
-	MyGUI::TreeControl * mpResourcesTree;
+	MyGUI::TreeControl* mpResourcesTree;
 };
 
-SampleLayout * mSampleLayout;
+SampleLayout* mSampleLayout;
 
 SampleLayout::SampleLayout() : BaseLayout("SampleLayout.layout")
 {
 	assignWidget(mpResourcesTree, "ResourcesTree");
-	mpResourcesTree->eventTreeNodePrepare = newDelegate(this, &SampleLayout::notifyTreeNodePrepare);
+	mpResourcesTree->eventTreeNodePrepare += newDelegate(this, &SampleLayout::notifyTreeNodePrepare);
 
 
 	MyGUI::TreeControl::Node* pRoot = mpResourcesTree->getRoot();
 
-#ifdef MYGUI_OGRE_PLATFORM
+/*#ifdef MYGUI_OGRE_PLATFORM
 	Ogre::ArchiveManager::ArchiveMapIterator ArchiveIterator = Ogre::ArchiveManager::getSingleton().getArchiveIterator();
 	while (ArchiveIterator.hasMoreElements())
 	{
@@ -49,11 +49,11 @@ SampleLayout::SampleLayout() : BaseLayout("SampleLayout.layout")
 		pNode->setData(pArchive);
 		pRoot->add(pNode);
 	}
-#else
+#else*/
 	common::VectorFileInfo result;
 	common::getSystemFileList(result, gMediaBase, L"*.*");
 
-	for (common::VectorFileInfo::iterator item=result.begin(); item!=result.end(); ++item)
+	for (common::VectorFileInfo::iterator item = result.begin(); item != result.end(); ++item)
 	{
 		if ((*item).name == L".." || (*item).name == L".")
 			continue;
@@ -63,7 +63,7 @@ SampleLayout::SampleLayout() : BaseLayout("SampleLayout.layout")
 		pRoot->add(pNode);
 	}
 
-#endif
+//#endif
 }
 
 void SampleLayout::notifyTreeNodePrepare(MyGUI::TreeControl* pTreeControl, MyGUI::TreeControl::Node* pNode)
@@ -73,7 +73,7 @@ void SampleLayout::notifyTreeNodePrepare(MyGUI::TreeControl* pTreeControl, MyGUI
 
 	pNode->removeAll();
 
-#ifdef MYGUI_OGRE_PLATFORM
+/*#ifdef MYGUI_OGRE_PLATFORM
 	Ogre::Archive* pArchive = *(pNode->getData<Ogre::Archive*>());
 
 	MyGUI::UString strPath(getPath(pNode));
@@ -128,7 +128,7 @@ void SampleLayout::notifyTreeNodePrepare(MyGUI::TreeControl* pTreeControl, MyGUI
 		pChild->setPrepared(true);
 		pNode->add(pChild);
 	}
-#else
+#else*/
 	PairFileInfo info = *(pNode->getData<PairFileInfo>());
 	// если папка, то добавляем детей
 	if (info.second.folder)
@@ -137,7 +137,7 @@ void SampleLayout::notifyTreeNodePrepare(MyGUI::TreeControl* pTreeControl, MyGUI
 		common::VectorFileInfo result;
 		common::getSystemFileList(result, path, L"*.*");
 
-		for (common::VectorFileInfo::iterator item=result.begin(); item!=result.end(); ++item)
+		for (common::VectorFileInfo::iterator item = result.begin(); item != result.end(); ++item)
 		{
 			if ((*item).name == L".." || (*item).name == L".")
 				continue;
@@ -161,26 +161,19 @@ void SampleLayout::notifyTreeNodePrepare(MyGUI::TreeControl* pTreeControl, MyGUI
 				MyGUI::UString strImage;
 				if (strExtension == "png" || strExtension == "tif" || strExtension == "tiff" || strExtension == "jpg" || strExtension == "jpeg")
 					strImage = "Image";
-				else
-				if (strExtension == "mat" || strExtension == "material")
+				else if (strExtension == "mat" || strExtension == "material")
 					strImage = "Material";
-				else
-				if (strExtension == "layout")
+				else if (strExtension == "layout")
 					strImage = "Layout";
-				else
-				if (strExtension == "ttf" || strExtension == "font" || strExtension == "fontdef")
+				else if (strExtension == "ttf" || strExtension == "font" || strExtension == "fontdef")
 					strImage = "Font";
-				else
-				if (strExtension == "txt" || strExtension == "text")
+				else if (strExtension == "txt" || strExtension == "text")
 					strImage = "Text";
-				else
-				if (strExtension == "xml")
+				else if (strExtension == "xml")
 					strImage = "XML";
-				else
-				if (strExtension == "mesh")
+				else if (strExtension == "mesh")
 					strImage = "Mesh";
-				else
-				if (strExtension == "htm" || strExtension == "html")
+				else if (strExtension == "htm" || strExtension == "html")
 					strImage = "HTML";
 				else
 					strImage = "Unknown";
@@ -192,13 +185,13 @@ void SampleLayout::notifyTreeNodePrepare(MyGUI::TreeControl* pTreeControl, MyGUI
 		}
 	}
 
-#endif
+//#endif
 }
 
 MyGUI::UString SampleLayout::getPath(MyGUI::TreeControl::Node* pNode) const
 {
 	if (!pNode || pNode == mpResourcesTree->getRoot())
-	return MyGUI::UString();
+		return MyGUI::UString();
 
 	MyGUI::UString strPath;
 	while (pNode->getParent() != mpResourcesTree->getRoot())
@@ -217,6 +210,7 @@ namespace demo
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/UnitTests/UnitTest_TreeControl");
+		addResourceLocation(getRootMedia() + "/Common/Tools");
 		gMediaBase = getRootMedia();
 	}
 
@@ -226,13 +220,18 @@ namespace demo
 		factory.registerFactory<MyGUI::TreeControl>("Widget");
 		factory.registerFactory<MyGUI::TreeControlItem>("Widget");
 
-		MyGUI::Gui::getInstance().load("TreeControl_skin.xml");
+		MyGUI::ResourceManager::getInstance().load("FrameworkFonts.xml");
+		MyGUI::ResourceManager::getInstance().load("FrameworkSkin.xml");
+		MyGUI::ResourceManager::getInstance().load("TreeControlSkin.xml");
 
 		mSampleLayout = new SampleLayout();
 	}
 
 	void DemoKeeper::destroyScene()
 	{
+		delete mSampleLayout;
+		mSampleLayout = nullptr;
+
 		MyGUI::FactoryManager& factory = MyGUI::FactoryManager::getInstance();
 		factory.unregisterFactory<MyGUI::TreeControl>("Widget");
 		factory.unregisterFactory<MyGUI::TreeControlItem>("Widget");

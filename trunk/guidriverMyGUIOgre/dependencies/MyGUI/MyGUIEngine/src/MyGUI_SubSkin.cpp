@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -38,8 +37,10 @@ namespace MyGUI
 		mEmptyView(false),
 		mCurrentColour(0xFFFFFFFF),
 		mNode(nullptr),
-		mRenderItem(nullptr)
+		mRenderItem(nullptr),
+		mSeparate(false)
 	{
+		mVertexFormat = RenderManager::getInstance().getVertexFormat();
 	}
 
 	SubSkin::~SubSkin()
@@ -56,7 +57,7 @@ namespace MyGUI
 
 	void SubSkin::setAlpha(float _alpha)
 	{
-		uint32 alpha = ((uint8)(_alpha*255) << 24);
+		uint32 alpha = ((uint8)(_alpha * 255) << 24);
 		mCurrentColour = (mCurrentColour & 0x00FFFFFF) | (alpha & 0xFF000000);
 
 		if (nullptr != mNode)
@@ -68,12 +69,7 @@ namespace MyGUI
 		if (nullptr != mNode) mNode->outOfDate(mRenderItem);
 	}
 
-	void SubSkin::_setAlign(const IntCoord& _oldcoord, bool _update)
-	{
-		_setAlign(_oldcoord.size(), _update);
-	}
-
-	void SubSkin::_setAlign(const IntSize& _oldsize, bool _update)
+	void SubSkin::_setAlign(const IntSize& _oldsize)
 	{
 		// необходимо разобраться
 		bool need_update = true;//_update;
@@ -172,8 +168,8 @@ namespace MyGUI
 
 				float UV_lft_total = mRectTexture.left + UV_lft * UV_sizeX;
 				float UV_top_total = mRectTexture.top + UV_top * UV_sizeY;
-				float UV_rgt_total = mRectTexture.right - (1-UV_rgt) * UV_sizeX;
-				float UV_btm_total = mRectTexture.bottom - (1-UV_btm) * UV_sizeY;
+				float UV_rgt_total = mRectTexture.right - (1 - UV_rgt) * UV_sizeX;
+				float UV_btm_total = mRectTexture.bottom - (1 - UV_btm) * UV_sizeY;
 
 				mCurrentTexture.set(UV_lft_total, UV_top_total, UV_rgt_total, UV_btm_total);
 			}
@@ -191,12 +187,12 @@ namespace MyGUI
 		if (nullptr != mNode) mNode->outOfDate(mRenderItem);
 	}
 
-	void SubSkin::createDrawItem(ITexture* _texture, ILayerNode * _node)
+	void SubSkin::createDrawItem(ITexture* _texture, ILayerNode* _node)
 	{
 		MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
 		mNode = _node;
-		mRenderItem = mNode->addToRenderItem(_texture, this);
+		mRenderItem = mNode->addToRenderItem(_texture, true, mSeparate);
 		mRenderItem->addDrawItem(this, VertexQuad::VertexCount);
 	}
 
@@ -227,8 +223,8 @@ namespace MyGUI
 
 			float UV_lft_total = mRectTexture.left + UV_lft * UV_sizeX;
 			float UV_top_total = mRectTexture.top + UV_top * UV_sizeY;
-			float UV_rgt_total = mRectTexture.right - (1-UV_rgt) * UV_sizeX;
-			float UV_btm_total = mRectTexture.bottom - (1-UV_btm) * UV_sizeY;
+			float UV_rgt_total = mRectTexture.right - (1 - UV_rgt) * UV_sizeX;
+			float UV_btm_total = mRectTexture.bottom - (1 - UV_btm) * UV_sizeY;
 
 			mCurrentTexture.set(UV_lft_total, UV_top_total, UV_rgt_total, UV_btm_total);
 		}
@@ -246,7 +242,7 @@ namespace MyGUI
 	{
 		if (!mVisible || mEmptyView) return;
 
-		VertexQuad* quad = (VertexQuad*)mRenderItem->getCurrentVertextBuffer();
+		VertexQuad* quad = (VertexQuad*)mRenderItem->getCurrentVertexBuffer();
 
 		const RenderTargetInfo& info = mRenderItem->getRenderTarget()->getInfo();
 
@@ -268,7 +264,7 @@ namespace MyGUI
 			mCurrentTexture.right,
 			mCurrentTexture.bottom,
 			mCurrentColour
-			);
+		);
 
 		mRenderItem->setLastVertexCount(VertexQuad::VertexCount);
 	}
@@ -276,7 +272,7 @@ namespace MyGUI
 	void SubSkin::_setColour(const Colour& _value)
 	{
 		uint32 colour = texture_utility::toColourARGB(_value);
-		texture_utility::convertColour(colour, RenderManager::getInstance().getVertexFormat());
+		texture_utility::convertColour(colour, mVertexFormat);
 		mCurrentColour = (colour & 0x00FFFFFF) | (mCurrentColour & 0xFF000000);
 
 		if (nullptr != mNode)

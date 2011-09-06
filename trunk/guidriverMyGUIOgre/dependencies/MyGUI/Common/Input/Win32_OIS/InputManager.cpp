@@ -5,14 +5,15 @@
 	@module
 */
 
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "InputManager.h"
+#include "../InputConverter.h"
 
 namespace input
 {
 
 	// указатель на менеджер, куда транслируються сообщения
-	InputManager * InputManager::msInputManager = 0;
+	InputManager* InputManager::msInputManager = 0;
 
 	// старая процедура, которую мы заменили
 	LRESULT InputManager::msOldWindowProc = NULL;
@@ -40,145 +41,109 @@ namespace input
 		static bool left_button = false;
 		static bool right_button = false;
 
-		if ((uMsg >= WM_MOUSEFIRST) && (uMsg <= __WM_REALMOUSELAST))
+		// на нас кидают файлы
+		if (WM_DROPFILES == uMsg)
+		{
+			HDROP hDrop = (HDROP)wParam;
+			wchar_t buff[MAX_PATH] = { 0 };
+			UINT fcount = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
+
+			for (UINT index = 0; index < fcount; ++index)
+			{
+				DragQueryFileW(hDrop, index, buff, MAX_PATH);
+				msInputManager->onFileDrop(buff);
+			}
+
+			DragFinish(hDrop);
+			return 0;
+		}
+		// нас пытаются закрыть
+		else if (WM_CLOSE == uMsg)
+		{
+			if (!msInputManager->onWinodwClose((size_t)hWnd))
+				return 0;
+		}
+		else if ((uMsg >= WM_MOUSEFIRST) && (uMsg <= __WM_REALMOUSELAST))
 		{
 			switch (uMsg)
 			{
-				case WM_MOUSEMOVE:
-					{
-						int x = GET_LOWORD(lParam);
-						int y = GET_HIWORD(lParam);
+			case WM_MOUSEMOVE:
+			{
+				int x = GET_LOWORD(lParam);
+				int y = GET_HIWORD(lParam);
 
-						if (x < 0) x = 0;
-						else if (x > msInputManager->mWidth) x = msInputManager->mWidth;
-						if (y < 0) y = 0;
-						else if (y > msInputManager->mHeight) y = msInputManager->mHeight;
+				if (x < 0) x = 0;
+				else if (x > msInputManager->mWidth) x = msInputManager->mWidth;
+				if (y < 0) y = 0;
+				else if (y > msInputManager->mHeight) y = msInputManager->mHeight;
 
-						old_x = x;
-						old_y = y;
+				old_x = x;
+				old_y = y;
 
-						if (msSkipMove)
-							msSkipMove = false;
-						else
-							msInputManager->injectMouseMove(old_x, old_y, old_z);
-					}
-
-					break;
-
-				case WM_MOUSEWHEEL:
-					old_z += GET_HIWORD(wParam);
+				if (msSkipMove)
+					msSkipMove = false;
+				else
 					msInputManager->injectMouseMove(old_x, old_y, old_z);
-					break;
+			}
+			break;
 
-				case WM_LBUTTONDOWN:
-					left_button = true;
-					if (!right_button)
-						::SetCapture(hWnd);
-					msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Left);
-					break;
+			case WM_MOUSEWHEEL:
+				old_z += GET_HIWORD(wParam);
+				msInputManager->injectMouseMove(old_x, old_y, old_z);
+				break;
 
-				case WM_LBUTTONDBLCLK:
-					left_button = true;
-					if (!right_button)
-						::SetCapture(hWnd);
-					msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Left);
-					break;
+			case WM_LBUTTONDOWN:
+				left_button = true;
+				if (!right_button)
+					::SetCapture(hWnd);
+				msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Left);
+				break;
 
-				case WM_RBUTTONDOWN:
-					right_button = true;
-					if (!left_button)
-						::SetCapture(hWnd);
-					msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Right);
-					break;
+			case WM_LBUTTONDBLCLK:
+				left_button = true;
+				if (!right_button)
+					::SetCapture(hWnd);
+				msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Left);
+				break;
 
-				case WM_RBUTTONDBLCLK:
-					right_button = true;
-					if (!left_button)
-						::SetCapture(hWnd);
-					msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Right);
-					break;
+			case WM_RBUTTONDOWN:
+				right_button = true;
+				if (!left_button)
+					::SetCapture(hWnd);
+				msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Right);
+				break;
 
-				case WM_MBUTTONDOWN:
-					msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Middle);
-					break;
+			case WM_RBUTTONDBLCLK:
+				right_button = true;
+				if (!left_button)
+					::SetCapture(hWnd);
+				msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Right);
+				break;
 
-				case WM_LBUTTONUP:
-					msInputManager->injectMouseRelease(old_x, old_y, MyGUI::MouseButton::Left);
-					left_button = false;
-					if (!right_button)
-						::SetCapture(0);
-					break;
-				case WM_RBUTTONUP:
-					right_button = false;
-					if (!left_button)
-						::SetCapture(0);
-					msInputManager->injectMouseRelease(old_x, old_y, MyGUI::MouseButton::Right);
-					break;
-				case WM_MBUTTONUP:
-					msInputManager->injectMouseRelease(old_x, old_y, MyGUI::MouseButton::Middle);
-					break;
+			case WM_MBUTTONDOWN:
+				msInputManager->injectMousePress(old_x, old_y, MyGUI::MouseButton::Middle);
+				break;
+
+			case WM_LBUTTONUP:
+				msInputManager->injectMouseRelease(old_x, old_y, MyGUI::MouseButton::Left);
+				left_button = false;
+				if (!right_button)
+					::SetCapture(0);
+				break;
+			case WM_RBUTTONUP:
+				right_button = false;
+				if (!left_button)
+					::SetCapture(0);
+				msInputManager->injectMouseRelease(old_x, old_y, MyGUI::MouseButton::Right);
+				break;
+			case WM_MBUTTONUP:
+				msInputManager->injectMouseRelease(old_x, old_y, MyGUI::MouseButton::Middle);
+				break;
 			}
 		}
 
 		// вызываем полюбому
 		return CallWindowProc((WNDPROC)msOldWindowProc, hWnd, uMsg, wParam, lParam);
-	}
-
-	int InputManager::translateWin32Text(int kc)
-	{
-		static WCHAR deadKey = 0;
-
-		BYTE keyState[256];
-		HKL  layout = GetKeyboardLayout(0);
-		if ( GetKeyboardState(keyState) == 0 )
-			return 0;
-
-		int code = *((int*)&kc);
-		unsigned int vk = MapVirtualKeyEx((UINT)code, 3, layout);
-		if ( vk == 0 )
-			return 0;
-
-		WCHAR buff[3] = { 0, 0, 0 };
-		int ascii = ToUnicodeEx(vk, (UINT)code, keyState, buff, 3, 0, layout);
-		if (ascii == 1 && deadKey != '\0' )
-		{
-			// A dead key is stored and we have just converted a character key
-			// Combine the two into a single character
-			WCHAR wcBuff[3] = { buff[0], deadKey, '\0' };
-			WCHAR out[3];
-
-			deadKey = '\0';
-			if(FoldStringW(MAP_PRECOMPOSED, (LPWSTR)wcBuff, 3, (LPWSTR)out, 3))
-				return out[0];
-		}
-		else if (ascii == 1)
-		{
-			// We have a single character
-			deadKey = '\0';
-			return buff[0];
-		}
-		else if(ascii == 2)
-		{
-			// Convert a non-combining diacritical mark into a combining diacritical mark
-			// Combining versions range from 0x300 to 0x36F; only 5 (for French) have been mapped below
-			// http://www.fileformat.info/info/unicode/block/combining_diacritical_marks/images.htm
-			switch(buff[0])	{
-			case 0x5E: // Circumflex accent: в
-				deadKey = 0x302; break;
-			case 0x60: // Grave accent: а
-				deadKey = 0x300; break;
-			case 0xA8: // Diaeresis: ь
-				deadKey = 0x308; break;
-			case 0xB4: // Acute accent: й
-				deadKey = 0x301; break;
-			case 0xB8: // Cedilla: з
-				deadKey = 0x327; break;
-			default:
-				deadKey = buff[0]; break;
-			}
-		}
-
-		return 0;
 	}
 
 	InputManager::InputManager() :
@@ -205,9 +170,13 @@ namespace input
 		// подсовываем нашу функцию калбеков
 		if (!msOldWindowProc)
 		{
-			msOldWindowProc = GetWindowLong(mHwnd, GWL_WNDPROC);
-			SetWindowLong(mHwnd, GWL_WNDPROC, (long)windowProc);
+			msOldWindowProc = GetWindowLongPtr(mHwnd, GWLP_WNDPROC);
+			SetWindowLongPtr(mHwnd, GWLP_WNDPROC, (LONG_PTR)windowProc);
 		}
+
+		// устанавливаем поддержку дропа файлов
+		LONG_PTR style = GetWindowLongPtr(mHwnd, GWL_EXSTYLE);
+		SetWindowLongPtr(mHwnd, GWL_EXSTYLE, style | WS_EX_ACCEPTFILES);
 
 		std::ostringstream windowHndStr;
 		windowHndStr << _handle;
@@ -226,7 +195,7 @@ namespace input
 		// если мы подменили процедуру, то вернем на место
 		if (msOldWindowProc)
 		{
-			SetWindowLong((HWND)mHwnd, GWL_WNDPROC, (long)msOldWindowProc);
+			SetWindowLongPtr((HWND)mHwnd, GWLP_WNDPROC, (LONG_PTR)msOldWindowProc);
 			msOldWindowProc = 0;
 		}
 
@@ -257,7 +226,7 @@ namespace input
 	{
 		POINT point = { _x, _y };
 		::ClientToScreen(mHwnd, &point);
-		
+
 		msSkipMove = true;
 		::SetCursorPos(point.x, point.y);
 	}
@@ -284,7 +253,7 @@ namespace input
 		else
 		{
 #if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
-			text = (MyGUI::Char)translateWin32Text((int)key.toValue());
+			text = (MyGUI::Char)ScanCodeToText((int)key.toValue());
 #endif
 		}
 

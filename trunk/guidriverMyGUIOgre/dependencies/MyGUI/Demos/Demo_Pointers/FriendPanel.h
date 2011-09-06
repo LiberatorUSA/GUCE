@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 #ifndef __FRIEND_PANEL_H__
 #define __FRIEND_PANEL_H__
@@ -21,8 +20,7 @@ namespace demo
 		FriendPanel();
 
 		bool isIntersect(int _x, int _y);
-		void setVisible(bool _value) { mMainWidget->setVisible(_value); }
-
+		void setVisible(bool _value);
 	};
 
 } // namespace demo

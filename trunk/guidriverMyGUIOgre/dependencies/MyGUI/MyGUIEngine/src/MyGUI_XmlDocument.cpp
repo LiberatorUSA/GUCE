@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -115,14 +114,16 @@ namespace MyGUI
 
 		bool ElementEnumerator::next()
 		{
-			if (m_current == m_end) return false;
+			if (m_current == m_end)
+				return false;
 			else if (m_first)
 			{
 				m_first = false;
 				return true;
 			}
 			++ m_current;
-			if (m_current == m_end) return false;
+			if (m_current == m_end)
+				return false;
 			return true;
 		}
 
@@ -130,15 +131,28 @@ namespace MyGUI
 		{
 			while (next())
 			{
-				if ((*m_current)->getName() == _name) return true;
+				if ((*m_current)->getName() == _name)
+					return true;
 			}
 			return false;
+		}
+
+		ElementPtr ElementEnumerator::operator->() const
+		{
+			assert(m_current != m_end);
+			return (*m_current);
+		}
+
+		ElementPtr ElementEnumerator::current()
+		{
+			assert(m_current != m_end);
+			return (*m_current);
 		}
 
 		//----------------------------------------------------------------------//
 		// class Element
 		//----------------------------------------------------------------------//
-		Element::Element(const std::string &_name, ElementPtr _parent, ElementType _type, const std::string& _content) :
+		Element::Element(const std::string& _name, ElementPtr _parent, ElementType _type, const std::string& _content) :
 			mName(_name),
 			mContent(_content),
 			mParent(_parent),
@@ -148,7 +162,7 @@ namespace MyGUI
 
 		Element::~Element()
 		{
-			for (VectorElement::iterator iter=mChilds.begin(); iter!=mChilds.end(); ++iter)
+			for (VectorElement::iterator iter = mChilds.begin(); iter != mChilds.end(); ++iter)
 			{
 				delete *iter;
 			}
@@ -158,11 +172,17 @@ namespace MyGUI
 		void Element::save(std::ostream& _stream, size_t _level)
 		{
 			// сначала табуляции намутим
-			for (size_t tab=0; tab<_level; ++tab) _stream  << "    ";
+			for (size_t tab = 0; tab < _level; ++tab)
+				_stream  << "    ";
 
 			// теперь заголовок тега
-			if (mType == ElementType::Declaration) _stream << "<?";
-			else _stream << "<";
+			if (mType == ElementType::Declaration)
+				_stream << "<?";
+			else if (mType == ElementType::Comment)
+				_stream << "<!--";
+			else
+				_stream << "<";
+
 			_stream << mName;
 
 			for (VectorAttributes::iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
@@ -174,45 +194,60 @@ namespace MyGUI
 			// если детей нет то закрываем
 			if (empty && mContent.empty())
 			{
-				if (mType == ElementType::Declaration) _stream << "?>\n";
-				else _stream << "/>\n";
+				if (mType == ElementType::Declaration)
+					_stream << "?>\n";
+				else if (mType == ElementType::Comment)
+					_stream << "-->\n";
+				else
+					_stream << "/>\n";
 			}
 			else
 			{
 				_stream << ">";
-				if (!empty) _stream << "\n";
+				if (!empty)
+					_stream << "\n";
 				// если есть тело то сначало оно
 				if (!mContent.empty())
 				{
 					if (!empty)
 					{
-						for (size_t tab=0; tab<=_level; ++tab) _stream  << "    ";
+						for (size_t tab = 0; tab <= _level; ++tab) _stream  << "    ";
 					}
 					_stream << utility::convert_to_xml(mContent);
 
-					if (!empty) _stream << "\n";
+					if (!empty)
+						_stream << "\n";
 				}
 				// если есть детишки путь сохранятся
-				for (size_t child=0; child<mChilds.size(); child++)
+				for (size_t child = 0; child < mChilds.size(); child++)
 				{
 					mChilds[child]->save(_stream, _level + 1);
 				}
 
 				if (!empty)
 				{
-					for (size_t tab=0; tab<_level; ++tab)
+					for (size_t tab = 0; tab < _level; ++tab)
 						_stream  << "    ";
 				}
 				_stream << "</" << mName << ">\n";
 			}
-
 		}
 
-		ElementPtr Element::createChild(const std::string& _name, const std::string& _content)
+		ElementPtr Element::createChild(const std::string& _name, const std::string& _content, ElementType _type)
 		{
-			ElementPtr node = new Element(_name, this, ElementType::Normal, _content);
+			ElementPtr node = new Element(_name, this, _type, _content);
 			mChilds.push_back(node);
 			return node;
+		}
+
+		void Element::removeChild(ElementPtr _child)
+		{
+			VectorElement::iterator item = std::find(mChilds.begin(), mChilds.end(), _child);
+			if (item != mChilds.end())
+			{
+				delete (*item);
+				mChilds.erase(item);
+			}
 		}
 
 		void Element::clear()
@@ -225,7 +260,7 @@ namespace MyGUI
 
 		bool Element::findAttribute(const std::string& _name, std::string& _value)
 		{
-			for (VectorAttributes::iterator iter=mAttributes.begin(); iter!=mAttributes.end(); ++iter)
+			for (VectorAttributes::iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 			{
 				if ( (*iter).first == _name)
 				{
@@ -238,9 +273,10 @@ namespace MyGUI
 
 		std::string Element::findAttribute(const std::string& _name)
 		{
-			for (VectorAttributes::iterator iter=mAttributes.begin(); iter!=mAttributes.end(); ++iter)
+			for (VectorAttributes::iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 			{
-				if ( (*iter).first == _name) return (*iter).second;
+				if ((*iter).first == _name)
+					return (*iter).second;
 			}
 			return "";
 		}
@@ -252,7 +288,7 @@ namespace MyGUI
 
 		void Element::removeAttribute(const std::string& _key)
 		{
-			for (size_t index=0; index<mAttributes.size(); ++index)
+			for (size_t index = 0; index < mAttributes.size(); ++index)
 			{
 				if (mAttributes[index].first == _key)
 				{
@@ -267,7 +303,7 @@ namespace MyGUI
 			Element* elem = new Element(mName, nullptr, mType, mContent);
 			elem->mAttributes = mAttributes;
 
-			for (VectorElement::iterator iter=mChilds.begin(); iter!=mChilds.end(); ++iter)
+			for (VectorElement::iterator iter = mChilds.begin(); iter != mChilds.end(); ++iter)
 			{
 				Element* child = (*iter)->createCopy();
 				child->mParent = elem;
@@ -279,7 +315,7 @@ namespace MyGUI
 
 		void Element::setAttribute(const std::string& _key, const std::string& _value)
 		{
-			for (size_t index=0; index<mAttributes.size(); ++index)
+			for (size_t index = 0; index < mAttributes.size(); ++index)
 			{
 				if (mAttributes[index].first == _key)
 				{
@@ -292,7 +328,10 @@ namespace MyGUI
 
 		void Element::addContent(const std::string& _content)
 		{
-			if (mContent.empty()) mContent = _content;
+			if (mContent.empty())
+			{
+				mContent = _content;
+			}
 			else
 			{
 				mContent += " ";
@@ -300,12 +339,59 @@ namespace MyGUI
 			}
 		}
 
+		void Element::setContent(const std::string& _content)
+		{
+			mContent = _content;
+		}
+
+		const std::string& Element::getName() const
+		{
+			return mName;
+		}
+
+		const std::string& Element::getContent() const
+		{
+			return mContent;
+		}
+
+		const VectorAttributes& Element::getAttributes() const
+		{
+			return mAttributes;
+		}
+
+		ElementPtr Element::getParent() const
+		{
+			return mParent;
+		}
+
+		ElementEnumerator Element::getElementEnumerator()
+		{
+			return ElementEnumerator(mChilds.begin(), mChilds.end());
+		}
+
+		ElementType Element::getType() const
+		{
+			return mType;
+		}
+
 #if MYGUI_COMPILER == MYGUI_COMPILER_MSVC && !defined(STLPORT)
-		inline void open_stream(std::ofstream& _stream, const std::wstring& _wide) { _stream.open(_wide.c_str()); }
-		inline void open_stream(std::ifstream& _stream, const std::wstring& _wide) { _stream.open(_wide.c_str()); }
+		inline void open_stream(std::ofstream& _stream, const std::wstring& _wide)
+		{
+			_stream.open(_wide.c_str());
+		}
+		inline void open_stream(std::ifstream& _stream, const std::wstring& _wide)
+		{
+			_stream.open(_wide.c_str());
+		}
 #else
-		inline void open_stream(std::ofstream& _stream, const std::wstring& _wide) { _stream.open(UString(_wide).asUTF8_c_str()); }
-		inline void open_stream(std::ifstream& _stream, const std::wstring& _wide) { _stream.open(UString(_wide).asUTF8_c_str()); }
+		inline void open_stream(std::ofstream& _stream, const std::wstring& _wide)
+		{
+			_stream.open(UString(_wide).asUTF8_c_str());
+		}
+		inline void open_stream(std::ifstream& _stream, const std::wstring& _wide)
+		{
+			_stream.open(UString(_wide).asUTF8_c_str());
+		}
 #endif
 
 		//----------------------------------------------------------------------//
@@ -437,13 +523,17 @@ namespace MyGUI
 			{
 				// берем новую строку
 				_stream->readline(read, '\n');
-				if (read.empty()) continue;
-				if (read[read.size()-1] == '\r') read.erase(read.size()-1, 1);
-				if (read.empty()) continue;
+				if (read.empty())
+					continue;
+				if (read[read.size()-1] == '\r')
+					read.erase(read.size() - 1, 1);
+				if (read.empty())
+					continue;
 
 				mLine ++;
 				mCol = 0; // потом проверить на многострочных тэгах
-				if (read.empty()) continue;
+				if (read.empty())
+					continue;
 				// текущая строка для разбора и то что еще прочитали
 				line += read;
 
@@ -477,7 +567,8 @@ namespace MyGUI
 			_stream << (char)0xBFu;
 
 			mDeclaration->save(_stream, 0);
-			if (mRoot) mRoot->save(_stream, 0);
+			if (mRoot)
+				mRoot->save(_stream, 0);
 
 			return true;
 		}
@@ -490,38 +581,49 @@ namespace MyGUI
 			mCol = 0;
 		}
 
-		bool Document::parseTag(ElementPtr &_currentNode, std::string _content)
+		bool Document::parseTag(ElementPtr& _currentNode, std::string _content)
 		{
-
 			// убераем лишнее
 			MyGUI::utility::trim(_content);
 
 			if (_content.empty())
 			{
 				// создаем пустой тег
-				if (_currentNode) _currentNode = _currentNode->createChild("");
+				if (_currentNode)
+				{
+					_currentNode = _currentNode->createChild("");
+				}
 				else
 				{
 					_currentNode = new Element("", 0);
 					// если это первый то запоминаем
-					if (!mRoot) mRoot = _currentNode;
+					if (!mRoot)
+						mRoot = _currentNode;
 				}
 				return true;
 			}
 
 			char simbol = _content[0];
-			bool tag_info = false;
+			bool tagDeclaration = false;
 
-			if (simbol == '!') return true; // проверяем на коментарии
-
-			// проверяем на информационный тег
-			if (simbol == '?')
+			// проверяем на коментарии
+			if (simbol == '!')
 			{
-				tag_info = true;
+				if (_currentNode != 0)
+				{
+					//_currentNode->createChild("", _content, ElementType::Comment);
+				}
+				return true;
+			}
+			// проверяем на информационный тег
+			else if (simbol == '?')
+			{
+				tagDeclaration = true;
 				_content.erase(0, 1); // удаляем первый символ
 			}
 
-			size_t start, end;
+			size_t start = 0;
+			size_t end = 0;
 			// проверяем на закрытие тега
 			if (simbol == '/')
 			{
@@ -544,7 +646,7 @@ namespace MyGUI
 				else
 				{
 					end = _content.find_last_not_of(" \t");
-					_content = _content.substr(start, end - start+1);
+					_content = _content.substr(start, end - start + 1);
 				}
 				// проверяем соответствие открывающего и закрывающего тегов
 				if (_currentNode->getName() != _content)
@@ -570,10 +672,13 @@ namespace MyGUI
 					_content.clear();
 				}
 
-				if (_currentNode) _currentNode = _currentNode->createChild(cut);
+				if (_currentNode)
+				{
+					_currentNode = _currentNode->createChild(cut);
+				}
 				else
 				{
-					if (tag_info)
+					if (tagDeclaration)
 					{
 						// информационный тег
 						if (mDeclaration)
@@ -581,7 +686,7 @@ namespace MyGUI
 							mLastError = ErrorType::MoreThanOneXMLDeclaration;
 							return false;
 						}
-						_currentNode = new Element(cut, 0, ElementType::Comment);
+						_currentNode = new Element(cut, 0, ElementType::Declaration);
 						mDeclaration = _currentNode;
 					}
 					else
@@ -599,7 +704,8 @@ namespace MyGUI
 
 				// проверим на пустоту
 				start = _content.find_last_not_of(" \t");
-				if (start == _content.npos) return true;
+				if (start == _content.npos)
+					return true;
 
 				// сразу отделим закрывающийся тэг
 				bool close = false;
@@ -629,13 +735,13 @@ namespace MyGUI
 						return false;
 					}
 					// ищем вторые ковычки
-					end = _content.find_first_of("\"\'", start+1);
+					end = _content.find_first_of("\"\'", start + 1);
 					if (end == _content.npos)
 					{
 						mLastError = ErrorType::IncorrectAttribute;
 						return false;
 					}
-					end = _content.find_first_of("\"\'", end+1);
+					end = _content.find_first_of("\"\'", end + 1);
 					if (end == _content.npos)
 					{
 						mLastError = ErrorType::IncorrectAttribute;
@@ -643,7 +749,7 @@ namespace MyGUI
 					}
 
 					std::string key = _content.substr(0, start);
-					std::string value = _content.substr(start+1, end-start);
+					std::string value = _content.substr(start + 1, end - start);
 
 					// проверка на валидность
 					if (! checkPair(key, value))
@@ -656,11 +762,12 @@ namespace MyGUI
 					_currentNode->addAttribute(key, value);
 
 					// следующий кусок
-					_content = _content.substr(end+1);
+					_content = _content.substr(end + 1);
 
 					// в строке не осталось символов
 					start = _content.find_first_not_of(" \t");
-					if (start == _content.npos) break;
+					if (start == _content.npos)
+						break;
 
 					mCol += start;
 				}
@@ -676,19 +783,23 @@ namespace MyGUI
 			return true;
 		}
 
-		bool Document::checkPair(std::string &_key, std::string &_value)
+		bool Document::checkPair(std::string& _key, std::string& _value)
 		{
 			// в ключе не должно быть ковычек и пробелов
 			MyGUI::utility::trim(_key);
-			if (_key.empty()) return false;
+			if (_key.empty())
+				return false;
 			size_t start = _key.find_first_of(" \t\"\'&");
-			if (start != _key.npos) return false;
+			if (start != _key.npos)
+				return false;
 
 			// в значении, ковычки по бокам
 			MyGUI::utility::trim(_value);
-			if (_value.size() < 2) return false;
+			if (_value.size() < 2)
+				return false;
 			if (((_value[0] != '"') || (_value[_value.length()-1] != '"')) &&
-				((_value[0] != '\'') || (_value[_value.length()-1] != '\''))) return false;
+				((_value[0] != '\'') || (_value[_value.length()-1] != '\'')))
+				return false;
 			bool ok = true;
 			_value = utility::convert_from_xml(_value.substr(1, _value.length() - 2), ok);
 			return ok;
@@ -711,8 +822,10 @@ namespace MyGUI
 				pos = _text.find_first_of(buff, pos);
 
 				// если уже конец, то досвидания
-				if (pos == _text.npos) break;
-
+				if (pos == _text.npos)
+				{
+					break;
+				}
 				// нашли ковычку
 				else if (_text[pos] == '"')
 				{
@@ -720,11 +833,15 @@ namespace MyGUI
 					pos ++;
 				}
 				// если мы в ковычках, то идем дальше
-				else if (kov) pos ++;
-
+				else if (kov)
+				{
+					pos ++;
+				}
 				// мы не в ковычках
-				else break;
-
+				else
+				{
+					break;
+				}
 			}
 
 			return pos;
@@ -771,20 +888,23 @@ namespace MyGUI
 			{
 				// сначала ищем по угловым скобкам
 				size_t start = find(_line, '<');
-				if (start == _line.npos) break;
+				if (start == _line.npos)
+					break;
 				size_t end = _line.npos;
 
 				// пытаемся вырезать многострочный коментарий
 				if ((start + 3 < _line.size()) && (_line[start + 1] == '!') && (_line[start + 2] == '-') && (_line[start + 3] == '-'))
 				{
 					end = _line.find("-->", start + 4);
-					if (end == _line.npos) break;
+					if (end == _line.npos)
+						break;
 					end += 2;
 				}
 				else
 				{
-					end = find(_line, '>', start+1);
-					if (end == _line.npos) break;
+					end = find(_line, '>', start + 1);
+					if (end == _line.npos)
+						break;
 				}
 				// проверяем на наличее тела
 				size_t body = _line.find_first_not_of(" \t<");
@@ -806,12 +926,12 @@ namespace MyGUI
 					}
 				}
 				// вырезаем наш тэг и парсим
-				if (!parseTag(_element, _line.substr(start+1, end-start-1)))
+				if (!parseTag(_element, _line.substr(start + 1, end - start - 1)))
 				{
 					return false;
 				}
 				// и обрезаем текущую строку разбора
-				_line = _line.substr(end+1);
+				_line = _line.substr(end + 1);
 			}
 			return true;
 		}
@@ -819,16 +939,40 @@ namespace MyGUI
 		std::string Document::getLastError()
 		{
 			const std::string& error = mLastError.print();
-			if (error.empty()) return error;
+			if (error.empty())
+				return error;
 			return MyGUI::utility::toString("'", error, "' ,  file='", mLastErrorFile, "' ,  line=", mLine, " ,  col=", mCol);
 		}
 
-		/*Document Document::createCopyFromElement(ElementPtr _node)
+		bool Document::open(const UString& _filename)
 		{
-			Document doc;
-			doc.mRoot = _node->createCopy();
-			return doc;
-		}*/
+			return open(_filename.asWStr());
+		}
+
+		bool Document::save(const UString& _filename)
+		{
+			return save(_filename.asWStr());
+		}
+
+		void Document::clearLastError()
+		{
+			mLastError = ErrorType::MAX;
+		}
+
+		ElementPtr Document::getRoot() const
+		{
+			return mRoot;
+		}
+
+		void Document::setLastFileError(const std::string& _filename)
+		{
+			mLastErrorFile = _filename;
+		}
+
+		void Document::setLastFileError(const std::wstring& _filename)
+		{
+			mLastErrorFile = UString(_filename).asUTF8();
+		}
 
 	} // namespace xml
 

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
 #ifndef __TEXTURE_VIEW_H__
 #define __TEXTURE_VIEW_H__
@@ -13,7 +12,8 @@
 namespace demo
 {
 
-	class TextureView : public wraps::BaseLayout
+	class TextureView :
+		public wraps::BaseLayout
 	{
 	public:
 		TextureView();
@@ -22,8 +22,8 @@ namespace demo
 
 	private:
 		MyGUI::ScrollView* mScrollView;
-		MyGUI::StaticImage* mImageBack;
-		MyGUI::StaticImage* mImageTexture;
+		MyGUI::Widget* mImageBack;
+		MyGUI::ImageBox* mImageTexture;
 	};
 
 } // namespace demo

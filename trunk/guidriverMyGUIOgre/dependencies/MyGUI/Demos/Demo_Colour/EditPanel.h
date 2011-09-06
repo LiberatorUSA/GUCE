@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __EDIT_PANEL_H__
 #define __EDIT_PANEL_H__
@@ -24,7 +23,7 @@ namespace demo
 
 	private:
 		ATTRIBUTE_FIELD_WIDGET_NAME(EditPanel, mEdit, "Edit");
-		MyGUI::Edit* mEdit;
+		MyGUI::EditBox* mEdit;
 	};
 
 } // namespace demo

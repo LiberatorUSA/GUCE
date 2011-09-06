@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -37,12 +36,16 @@ namespace MyGUI
 	{
 	}
 
+	ControllerFadeAlpha::~ControllerFadeAlpha()
+	{
+	}
+
 	void ControllerFadeAlpha::prepareItem(Widget* _widget)
 	{
 		// подготовка виджета, блокируем если только нужно
 		if (!mEnabled) _widget->setEnabledSilent(mEnabled);
 
-		if ((ALPHA_MIN != mAlpha) && (!_widget->isVisible()))
+		if ((ALPHA_MIN != mAlpha) && (!_widget->getVisible()))
 		{
 			_widget->setAlpha(ALPHA_MIN);
 			_widget->setVisible(true);
@@ -97,9 +100,27 @@ namespace MyGUI
 
 	void ControllerFadeAlpha::setProperty(const std::string& _key, const std::string& _value)
 	{
-		if (_key == "Alpha") setAlpha(utility::parseValue<float>(_value));
-		else if (_key == "Coef") setCoef(utility::parseValue<float>(_value));
-		else if (_key == "Enabled") setEnabled(utility::parseValue<bool>(_value));
+		if (_key == "Alpha")
+			setAlpha(utility::parseValue<float>(_value));
+		else if (_key == "Coef")
+			setCoef(utility::parseValue<float>(_value));
+		else if (_key == "Enabled")
+			setEnabled(utility::parseValue<bool>(_value));
+	}
+
+	void ControllerFadeAlpha::setAlpha(float _value)
+	{
+		mAlpha = _value;
+	}
+
+	void ControllerFadeAlpha::setCoef(float _value)
+	{
+		mCoef = _value;
+	}
+
+	void ControllerFadeAlpha::setEnabled(bool _value)
+	{
+		mEnabled = _value;
 	}
 
 } // namespace MyGUI

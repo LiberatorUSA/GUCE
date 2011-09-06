@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		03/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -49,11 +48,12 @@ namespace MyGUI
 
 		void linearMoveFunction(const IntCoord& _startRect, const IntCoord& _destRect, IntCoord& _result, float _k)
 		{
-			_result.set(_startRect.left   - int( float(_startRect.left   - _destRect.left)   * _k ),
-			            _startRect.top    - int( float(_startRect.top    - _destRect.top)    * _k ),
-			            _startRect.width  - int( float(_startRect.width  - _destRect.width)  * _k ),
-			            _startRect.height - int( float(_startRect.height - _destRect.height) * _k )
-			           );
+			_result.set(
+				_startRect.left   - int( float(_startRect.left   - _destRect.left)   * _k ),
+				_startRect.top    - int( float(_startRect.top    - _destRect.top)    * _k ),
+				_startRect.width  - int( float(_startRect.width  - _destRect.width)  * _k ),
+				_startRect.height - int( float(_startRect.height - _destRect.height) * _k )
+			);
 		}
 
 		void inertionalMoveFunction(const IntCoord& _startRect, const IntCoord& _destRect, IntCoord& _result, float _current_time)
@@ -61,9 +61,9 @@ namespace MyGUI
 #ifndef M_PI
 			const float M_PI = 3.141593f;
 #endif
-			float k = sin(M_PI * _current_time - M_PI/2.0f);
-			if (k<0) k = (-pow(-k, 0.7f) + 1)/2;
-			else k = (pow(k, 0.7f) + 1)/2;
+			float k = sin(M_PI * _current_time - M_PI / 2.0f);
+			if (k < 0) k = (-pow(-k, 0.7f) + 1) / 2;
+			else k = (pow(k, 0.7f) + 1) / 2;
 			linearMoveFunction(_startRect, _destRect, _result, k);
 		}
 

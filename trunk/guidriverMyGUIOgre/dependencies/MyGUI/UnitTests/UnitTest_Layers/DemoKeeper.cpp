@@ -2,7 +2,6 @@
 	@file
 	@author     George Evmenov
 	@date       08/2009
-	@module
 */
 #include "DemoKeeper.h"
 #include "Base/Main.h"
@@ -52,7 +51,7 @@ namespace demo
 
 		setupCamera();
 
-		getGUI()->load("rtt_data.xml");
+		MyGUI::ResourceManager::getInstance().load("Resources.xml");
 
 		mCommandManager = new CommandManager();
 		mMonitorPanel = new MonitorPanel();
@@ -102,7 +101,7 @@ namespace demo
 	{
 #ifdef MYGUI_OGRE_PLATFORM
 		Ogre::MeshManager::getSingleton().createPlane(
-			"FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+			"FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 			Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 200, 200, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
 
 		Ogre::Entity* entity = getSceneManager()->createEntity("FloorPlane", "FloorPlane");
@@ -123,7 +122,7 @@ namespace demo
 
 	void DemoKeeper::injectMouseMove(int _absx, int _absy, int _absz)
 	{
-		if (!getGUI())
+		if (MyGUI::Gui::getInstancePtr() == nullptr)
 			return;
 
 		// при зажатой правой вращаем сцену
@@ -144,7 +143,7 @@ namespace demo
 		else
 		{
 			// ввод мыши находить вне гу€
-			if (!getGUI()->injectMouseMove(_absx, _absy, _absz))
+			if (!MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz))
 			{
 			}
 		}
@@ -152,10 +151,10 @@ namespace demo
 
 	void DemoKeeper::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
 	{
-		if (!getGUI())
+		if (MyGUI::Gui::getInstancePtr() == nullptr)
 			return;
 
-		if (!getGUI()->injectMousePress(_absx, _absy, _id))
+		if (!MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id))
 		{
 			// вращаем сцену только когда не над гуем
 			if (_id == MyGUI::MouseButton::Right)
@@ -170,7 +169,7 @@ namespace demo
 
 	void DemoKeeper::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
 	{
-		if (!getGUI())
+		if (MyGUI::Gui::getInstancePtr() == nullptr)
 			return;
 
 		if (_id == MyGUI::MouseButton::Right)
@@ -179,7 +178,7 @@ namespace demo
 			setPointerVisible(true);
 		}
 
-		if (!getGUI()->injectMouseRelease(_absx, _absy, _id))
+		if (!MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id))
 		{
 		}
 	}
@@ -194,7 +193,7 @@ namespace demo
 	void DemoKeeper::updateCamera(int _x, int _y)
 	{
 #ifdef MYGUI_OGRE_PLATFORM
-		gAngleH += (float)_x * -0.1;
+		gAngleH += (float)_x * -0.1f;
 
 		Ogre::Quaternion quatH(Ogre::Radian(Ogre::Degree(gAngleH)), Ogre::Vector3::UNIT_Y);
 		Ogre::Quaternion quatV(Ogre::Radian(Ogre::Degree(gAngleV)), Ogre::Vector3::UNIT_X);

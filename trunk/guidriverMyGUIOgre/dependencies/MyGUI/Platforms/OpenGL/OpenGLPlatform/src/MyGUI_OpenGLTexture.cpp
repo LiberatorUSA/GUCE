@@ -2,7 +2,6 @@
 	@file
 	@author		George Evmenov
 	@date		07/2009
-	@module
 */
 
 #include "MyGUI_OpenGLTexture.h"
@@ -176,12 +175,12 @@ namespace MyGUI
 		// Set unpack alignment to one byte
 		int alignment = 0;
 		glGetIntegerv( GL_UNPACK_ALIGNMENT, &alignment );
-	    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
 		// создаем тукстуру
 		glGenTextures(1, &mTextureID);
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
-        // Set texture parameters
+		// Set texture parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -190,7 +189,7 @@ namespace MyGUI
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Restore old unpack alignment
-	    glPixelStorei( GL_UNPACK_ALIGNMENT, alignment );
+		glPixelStorei( GL_UNPACK_ALIGNMENT, alignment );
 
 		if (!_data)
 		{
@@ -332,6 +331,12 @@ namespace MyGUI
 
 	void OpenGLTexture::saveToFile(const std::string& _filename)
 	{
+		if (mImageLoader)
+		{
+			void* data = lock(TextureUsage::Read);
+			mImageLoader->saveImage(mWidth, mHeight, mOriginalFormat, data, _filename);
+			unlock();
+		}
 	}
 
 	IRenderTarget* OpenGLTexture::getRenderTarget()

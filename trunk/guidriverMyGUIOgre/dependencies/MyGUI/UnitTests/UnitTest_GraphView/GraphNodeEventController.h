@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __GRAPH_NODE_EVENT_H__
 #define __GRAPH_NODE_EVENT_H__
@@ -14,30 +13,32 @@
 namespace demo
 {
 
-	class GraphNodeEventController : public BaseAnimationNode
+	class GraphNodeEventController :
+		public BaseAnimationNode
 	{
 	public:
 		GraphNodeEventController(const std::string& _name) :
 			BaseAnimationNode("GraphNodeEvent.layout", "EventController", _name),
-			mConnectionOut(nullptr)
+			mConnectionOut(nullptr),
+			mButtonEvent(nullptr)
 		{
 		}
 
 	private:
 		virtual void initialise()
 		{
-			mMainWidget->setCaption(getName());
+			mMainWidget->castType<MyGUI::Window>()->setCaption(getName());
 			assignBase(mConnectionOut, "ConnectionOut");
 			assignWidget(mButtonEvent, "ButtonEvent");
 
-			mButtonEvent->eventMouseButtonClick = MyGUI::newDelegate(this, &GraphNodeEventController::notifyMouseButtonClick);
+			mButtonEvent->eventMouseButtonClick += MyGUI::newDelegate(this, &GraphNodeEventController::notifyMouseButtonClick);
 		}
 
 		virtual void shutdown()
 		{
 		}
 
-		void notifyMouseButtonClick(MyGUI::WidgetPtr _sender)
+		void notifyMouseButtonClick(MyGUI::Widget* _sender)
 		{
 			onEvent();
 		}
@@ -50,8 +51,8 @@ namespace demo
 		}
 
 	private:
-		wraps::BaseGraphConnection * mConnectionOut;
-		MyGUI::ButtonPtr mButtonEvent;
+		wraps::BaseGraphConnection* mConnectionOut;
+		MyGUI::Button* mButtonEvent;
 
 	};
 

@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		12/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "State.h"
 
 namespace demo
@@ -27,10 +26,10 @@ namespace demo
 		mButton3->setVisible(false);
 		mButton4->setVisible(false);
 
-		mButton1->eventMouseButtonClick = MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
-		mButton2->eventMouseButtonClick = MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
-		mButton3->eventMouseButtonClick = MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
-		mButton4->eventMouseButtonClick = MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
+		mButton1->eventMouseButtonClick += MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
+		mButton2->eventMouseButtonClick += MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
+		mButton3->eventMouseButtonClick += MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
+		mButton4->eventMouseButtonClick += MyGUI::newDelegate(this, &State::notifyMouseButtonClick);
 	}
 
 	State::~State()
@@ -61,7 +60,7 @@ namespace demo
 		{
 			MyGUI::ControllerManager& manager = MyGUI::ControllerManager::getInstance();
 
-			MyGUI::ControllerFadeAlpha * controller = createControllerFadeAlpha(0, 3, true);
+			MyGUI::ControllerFadeAlpha* controller = createControllerFadeAlpha(0, 3, true);
 			manager.addItem(mMainWidget, controller);
 
 			controller = createControllerFadeAlpha(0, 3, true);
@@ -88,11 +87,10 @@ namespace demo
 		mCountTime += _time;
 
 		const int offset = 30;
-		//const int offset_jamp = 1;
-		const MyGUI::IntSize & view = MyGUI::Gui::getInstance().getViewSize();
 		const float time_diff = 0.3;
+		const MyGUI::IntSize& view = MyGUI::RenderManager::getInstance().getViewSize();
 
-		if (!mMainWidget->isVisible())
+		if (!mMainWidget->getVisible())
 		{
 			mMainWidget->setPosition(-mMainWidget->getWidth(), view.height - mMainWidget->getHeight() - offset);
 			mMainWidget->setVisible(true);
@@ -102,7 +100,7 @@ namespace demo
 			MyGUI::ControllerManager::getInstance().addItem(mMainWidget, createControllerPosition(point));
 		}
 
-		if (!mButton1->isVisible())
+		if (!mButton1->getVisible())
 		{
 			mButton1->setPosition(view.width, offset);
 			mButton1->setVisible(true);
@@ -113,7 +111,7 @@ namespace demo
 
 		if (mCountTime > time_diff)
 		{
-			if (!mButton2->isVisible())
+			if (!mButton2->getVisible())
 			{
 				mButton2->setPosition(view.width, (mButton2->getHeight() + offset) + offset);
 				mButton2->setVisible(true);
@@ -123,9 +121,9 @@ namespace demo
 			}
 		}
 
-		if (mCountTime > time_diff*2)
+		if (mCountTime > time_diff * 2)
 		{
-			if (!mButton3->isVisible())
+			if (!mButton3->getVisible())
 			{
 				mButton3->setPosition(view.width, (mButton3->getHeight() + offset) * 2 + offset);
 				mButton3->setVisible(true);
@@ -137,7 +135,7 @@ namespace demo
 
 		if (mCountTime > time_diff * 3)
 		{
-			if (!mButton4->isVisible())
+			if (!mButton4->getVisible())
 			{
 				mButton4->setPosition(view.width, (mButton4->getHeight() + offset) * 3 + offset);
 				mButton4->setVisible(true);
@@ -145,7 +143,7 @@ namespace demo
 				MyGUI::IntPoint point(view.width - mButton4->getWidth() - offset, (mButton4->getHeight() + offset) * 3 + offset);
 				MyGUI::ControllerPosition* controller = createControllerPosition(point);
 				MyGUI::ControllerManager::getInstance().addItem(mButton4, controller);
-				controller->eventPostAction = MyGUI::newDelegate(this, &State::notifyPostAction);
+				controller->eventPostAction += MyGUI::newDelegate(this, &State::notifyPostAction);
 			}
 
 			FrameAdvise(false);
@@ -177,7 +175,7 @@ namespace demo
 		}
 	}
 
-	MyGUI::ControllerPosition * State::createControllerPosition(const MyGUI::IntPoint & _point)
+	MyGUI::ControllerPosition* State::createControllerPosition(const MyGUI::IntPoint& _point)
 	{
 		MyGUI::ControllerItem* item = MyGUI::ControllerManager::getInstance().createItem(MyGUI::ControllerPosition::getClassTypeName());
 		MyGUI::ControllerPosition* controller = item->castType<MyGUI::ControllerPosition>();
@@ -203,6 +201,11 @@ namespace demo
 		controller->setEnabled(_enable);
 
 		return controller;
+	}
+
+	MyGUI::Widget* State::getClient()
+	{
+		return mMainWidget->getClientWidget();
 	}
 
 } // namespace demo

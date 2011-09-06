@@ -15,21 +15,25 @@
 namespace wraps
 {
 
-	class BasePanelViewItem : public wraps::BaseLayout
+	class BasePanelViewItem :
+		public wraps::BaseLayout
 	{
 	public:
 		BasePanelViewItem(const std::string& _layout) :
 			BaseLayout("", nullptr),
+			mPanelCell(nullptr),
+			mWidgetClient(nullptr),
 			mLayout(_layout)
 		{
 		}
 
-		void _initialise(BasePanelViewCell * _cell)
+		void _initialise(BasePanelViewCell* _cell)
 		{
 			mPanelCell = _cell;
 			mWidgetClient = mPanelCell->getClient();
 
-			if ( ! mLayout.empty()) {
+			if ( ! mLayout.empty())
+			{
 				BaseLayout::initialise(mLayout, mWidgetClient);
 				mMainWidget->setCoord(0, 0, mWidgetClient->getWidth(), mMainWidget->getHeight());
 				mPanelCell->setClientHeight(mMainWidget->getHeight(), false);
@@ -42,7 +46,8 @@ namespace wraps
 		{
 			shutdown();
 
-			if ( ! mLayout.empty()) {
+			if ( ! mLayout.empty())
+			{
 				BaseLayout::shutdown();
 			}
 
@@ -61,15 +66,23 @@ namespace wraps
 			mPanelCell->eventUpdatePanel(mPanelCell);
 		}
 
-		BasePanelViewCell * getPanelCell() { return mPanelCell; }
+		bool getVisible()
+		{
+			return mPanelCell->getVisible();
+		}
+
+		BasePanelViewCell* getPanelCell()
+		{
+			return mPanelCell;
+		}
 
 	protected:
 		virtual void initialise() { }
 		virtual void shutdown() { }
 
 	protected:
-		BasePanelViewCell * mPanelCell;
-		MyGUI::WidgetPtr mWidgetClient;
+		BasePanelViewCell* mPanelCell;
+		MyGUI::Widget* mWidgetClient;
 		std::string mLayout;
 	};
 

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __ANIMATION_GRAPH_H__
 #define __ANIMATION_GRAPH_H__
@@ -14,7 +13,8 @@
 namespace animation
 {
 
-	class AnimationGraph : public IAnimationGraph
+	class AnimationGraph :
+		public IAnimationGraph
 	{
 	public:
 		AnimationGraph() :
@@ -48,7 +48,7 @@ namespace animation
 
 		virtual void addTime(float _value)
 		{
-			for (VectorNode::iterator item=mNodes.begin(); item!=mNodes.end(); ++item)
+			for (VectorNode::iterator item = mNodes.begin(); item != mNodes.end(); ++item)
 			{
 				(*item)->addTime(_value);
 			}
@@ -70,7 +70,7 @@ namespace animation
 		{
 			if (_name == getName()) return this;
 
-			for (VectorNode::iterator item=mNodes.begin(); item!=mNodes.end(); ++item)
+			for (VectorNode::iterator item = mNodes.begin(); item != mNodes.end(); ++item)
 			{
 				if ((*item)->getName() == _name)
 				{

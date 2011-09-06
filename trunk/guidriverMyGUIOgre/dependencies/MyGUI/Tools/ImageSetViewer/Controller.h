@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __CONTROLLER_H__
 #define __CONTROLLER_H__
@@ -13,7 +12,8 @@
 namespace editor
 {
 
-	class Controller : public base::BaseManager
+	class Controller :
+		public base::BaseManager
 	{
 	public:
 		Controller();
@@ -26,7 +26,6 @@ namespace editor
 
 	private:
 		View* mView;
-
 	};
 
 } // namespace editor

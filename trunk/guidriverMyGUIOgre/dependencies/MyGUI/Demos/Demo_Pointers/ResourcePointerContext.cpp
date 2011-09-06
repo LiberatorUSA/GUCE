@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #include "ResourcePointerContext.h"
@@ -46,6 +45,11 @@ namespace demo
 		if (item != mPointers.end())
 			return item->second;
 		return "";
+	}
+
+	bool ResourcePointerContext::isHighLevel()
+	{
+		return mHighLevel;
 	}
 
 }

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __BASE_GRAPH_VIEW_H__
 #define __BASE_GRAPH_VIEW_H__
@@ -12,35 +11,39 @@
 #include "BaseGraphNode.h"
 #include "ConnectionInfo.h"
 
-#include "agg_scanline_p.h"
-#include "agg_renderer_scanline.h"
-#include "agg_pixfmt_rgba.h"
-
-#include "agg_scanline_u.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_pixfmt_rgb.h"
-#include "agg_path_storage.h"
-#include "agg_curves.h"
-#include "agg_conv_stroke.h"
-
 namespace wraps
 {
 
-	class BaseGraphView : public BaseLayout, public IGraphController
+	class BaseGraphView :
+		public BaseLayout,
+		public IGraphController
 	{
 	public:
 		typedef std::vector<BaseGraphNode*> VectorGraphNode;
 		typedef MyGUI::Enumerator<VectorGraphNode> EnumeratorNode;
 
-		BaseGraphView(const std::string& _layout, MyGUI::WidgetPtr _parent) :
-	  		BaseLayout(_layout, _parent),
+		BaseGraphView(const std::string& _layout, MyGUI::Widget* _parent) :
+			BaseLayout(_layout, _parent),
+			mCanvas(nullptr),
 			mIsDrug(false),
 			mConnectionStart(nullptr),
-			mCanvas(nullptr)
+			mInvalidate(false),
+			mCurrentIndexConnection(0)
 		{
-			if (mMainWidget->isType<MyGUI::Canvas>())
+			MyGUI::Gui::getInstance().eventFrameStart += MyGUI::newDelegate(this, &BaseGraphView::notifyFrameStart);
+		}
+
+		virtual ~BaseGraphView()
+		{
+			MyGUI::Gui::getInstance().eventFrameStart -= MyGUI::newDelegate(this, &BaseGraphView::notifyFrameStart);
+		}
+
+		void notifyFrameStart(float _time)
+		{
+			if (mInvalidate)
 			{
-				wrapCanvas(mMainWidget->castType<MyGUI::Canvas>());
+				mInvalidate = false;
+				updateCanvasImpl();
 			}
 		}
 
@@ -67,7 +70,7 @@ namespace wraps
 
 		void removeAllItems()
 		{
-			for (VectorGraphNode::iterator item=mNodes.begin(); item!=mNodes.end(); ++item)
+			for (VectorGraphNode::iterator item = mNodes.begin(); item != mNodes.end(); ++item)
 			{
 				removeAllConnections((*item));
 				(*item)->_shutdown();
@@ -78,12 +81,12 @@ namespace wraps
 			changePosition(nullptr);
 		}
 
-		EnumeratorNode getNodeEnumerator()
+		EnumeratorNode getNodeEnumerator() const
 		{
 			return EnumeratorNode(mNodes);
 		}
 
-		bool isConnecting(BaseGraphConnection* _from, BaseGraphConnection* _to)
+		bool isConnecting(BaseGraphConnection* _from, BaseGraphConnection* _to) const
 		{
 			EnumeratorConnection conn = _from->getConnectionEnumerator();
 			while (conn.next())
@@ -96,7 +99,7 @@ namespace wraps
 			return false;
 		}
 
-		MyGUI::WidgetPtr getClient()
+		MyGUI::Widget* getClient() const
 		{
 			return mCanvas;
 		}
@@ -151,12 +154,11 @@ namespace wraps
 		MyGUI::delegates::CDelegate2<BaseGraphView*, BaseGraphNode*> eventNodeClosed;
 
 	protected:
-		void wrapCanvas(MyGUI::CanvasPtr _canvas)
+		void setCanvasWidget(const std::string& _widgetName)
 		{
-			mCanvas = _canvas;
-			mCanvas->requestUpdateCanvas = MyGUI::newDelegate( this, &BaseGraphView::requestUpdateCanvas );
-			mCanvas->createTexture( MyGUI::Canvas::TRM_PT_VIEW_REQUESTED);
-			mCanvas->updateTexture();
+			assignWidget(mCanvas, _widgetName);
+
+			updateCanvas();
 		}
 
 	private:
@@ -216,11 +218,12 @@ namespace wraps
 					mDrugLine.point_start.set(
 						coord.left + (coord.width / 2) - mCanvas->getAbsoluteLeft(),
 						coord.top + (coord.height / 2) - mCanvas->getAbsoluteTop()
-						);
+					);
 					mDrugLine.point_end = mDrugLine.point_start;
 
 					mConnectionStart = _connection;
-					mCanvas->updateTexture();
+
+					updateCanvas();
 				}
 				// разрываем существующий
 				else
@@ -277,11 +280,12 @@ namespace wraps
 						mDrugLine.point_start.set(
 							coord.left + (coord.width / 2) - mCanvas->getAbsoluteLeft(),
 							coord.top + (coord.height / 2) - mCanvas->getAbsoluteTop()
-							);
+						);
 						mDrugLine.point_end = mDrugLine.point_start;
 
 						mConnectionStart = drag_node;
-						mCanvas->updateTexture();
+
+						updateCanvas();
 
 						updateDrag(nullptr);
 					}
@@ -302,7 +306,7 @@ namespace wraps
 				mIsDrug = false;
 				mConnectionStart = nullptr;
 
-				mCanvas->updateTexture();
+				updateCanvas();
 			}
 		}
 
@@ -330,17 +334,17 @@ namespace wraps
 				else if (distance > offset) distance = offset;
 				if (mDrugLine.start_offset.height != 0)
 				{
-					if (mDrugLine.start_offset.height < 0) mDrugLine.start_offset.height = distance * -1;
-					else  mDrugLine.start_offset.height = distance;
+					if (mDrugLine.start_offset.height < 0) mDrugLine.start_offset.height = -(int)distance;
+					else  mDrugLine.start_offset.height = (int)distance;
 				}
 				if (mDrugLine.start_offset.width != 0)
 				{
-					if (mDrugLine.start_offset.width < 0) mDrugLine.start_offset.width = distance * -1;
-					else  mDrugLine.start_offset.width = distance;
+					if (mDrugLine.start_offset.width < 0) mDrugLine.start_offset.width = -(int)distance;
+					else  mDrugLine.start_offset.width = (int)distance;
 				}
 
 				// пикаем виджет под нами
-				MyGUI::WidgetPtr widget = MyGUI::LayerManager::getInstance().getWidgetFromPoint(mouse.left, mouse.top);
+				MyGUI::Widget* widget = MyGUI::LayerManager::getInstance().getWidgetFromPoint(mouse.left, mouse.top);
 				if (widget != nullptr)
 				{
 					BaseGraphConnection** connection = widget->getUserData<BaseGraphConnection*>(false);
@@ -362,29 +366,28 @@ namespace wraps
 					mDrugLine.colour = MyGUI::Colour::White;
 				}
 
-				mCanvas->updateTexture();
+				updateCanvas();
 			}
 		}
 
 		virtual void changePosition(BaseGraphNode* _node)
 		{
 			eventChangeSize(this, getViewSize());
-			mCanvas->updateTexture();
+
+			updateCanvas();
 		}
 
-		void requestUpdateCanvas(MyGUI::CanvasPtr _canvas, MyGUI::Canvas::Event _event)
+		void updateCanvas()
 		{
-			if ( ! _event.textureChanged && ! _event.requested ) return;
+			mInvalidate = true;
+		}
 
-			unsigned char * data = (unsigned char*)_canvas->lock();
-
-			int width = _canvas->getTextureRealWidth();
-			int height = _canvas->getTextureRealHeight();
-
-			clearCanvas((unsigned char*)data, width, height);
+		void updateCanvasImpl()
+		{
+			clearCanvas();
 
 			// проходим по всем нодам и перерисовываем связи
-			for (size_t index=0; index<mNodes.size(); ++index)
+			for (size_t index = 0; index < mNodes.size(); ++index)
 			{
 				EnumeratorConnection node_point = mNodes[index]->getConnectionEnumerator();
 				while (node_point.next())
@@ -394,7 +397,7 @@ namespace wraps
 					while (connect_point.next())
 					{
 						const MyGUI::IntCoord& coord_to = connect_point->getAbsoluteCoord();
-			
+
 						ConnectionInfo info(
 							coord_from.point() - mCanvas->getAbsolutePosition() + MyGUI::IntPoint(coord_from.width / 2, coord_from.height / 2),
 							coord_to.point() - mCanvas->getAbsolutePosition() + MyGUI::IntPoint(coord_to.width / 2, coord_to.height / 2),
@@ -402,16 +405,14 @@ namespace wraps
 							node_point->getOffset(),
 							connect_point->getOffset());
 
-						drawCurve((unsigned char*)data, width, height, info);
+						drawCurve(info);
 					}
 				}
 			}
 
 			// ниточка для драга
 			if (mIsDrug)
-				drawCurve((unsigned char*)data, width, height, mDrugLine);
-			
-			_canvas->unlock();
+				drawCurve(mDrugLine);
 		}
 
 		void connectPoint(BaseGraphConnection* _connection)
@@ -419,7 +420,7 @@ namespace wraps
 			const MyGUI::IntPoint& mouse = MyGUI::InputManager::getInstance().getMousePosition();
 
 			// пикаем виджет под нами
-			MyGUI::WidgetPtr widget = MyGUI::LayerManager::getInstance().getWidgetFromPoint(mouse.left, mouse.top);
+			MyGUI::Widget* widget = MyGUI::LayerManager::getInstance().getWidgetFromPoint(mouse.left, mouse.top);
 			if (widget != nullptr)
 			{
 				BaseGraphConnection** connection = widget->getUserData<BaseGraphConnection*>(false);
@@ -448,119 +449,75 @@ namespace wraps
 			eventConnectPoint(this, _from, _to);
 		}
 
-		void clearCanvas(unsigned char* _data, int _width, int _height)
+		void clearCanvas()
 		{
-			agg::rendering_buffer rbuf;
-			rbuf.attach(_data, _width, _height, _width*4);
-
-			// Pixel format and basic primitives renderer
-			agg::pixfmt_bgra32 pixf(rbuf);
-			agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
-
-			renb.clear(agg::rgba8(106, 147, 221, 0));
+			for (MyGUI::VectorWidgetPtr::iterator item = mConnections.begin(); item != mConnections.end(); ++item)
+				(*item)->setVisible(false);
+			mCurrentIndexConnection = 0;
 		}
 
-		void drawCurve(unsigned char* _data, int _width, int _height, const ConnectionInfo& _info)
+		MyGUI::Widget* getNextWidget()
 		{
-			//============================================================ 
-			// AGG
-			agg::rendering_buffer rbuf;
-			rbuf.attach(_data, _width, _height, _width*4);
+			MyGUI::Widget* result = nullptr;
 
-			// Pixel format and basic primitives renderer
-			agg::pixfmt_bgra32 pixf(rbuf);
-			agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
+			if (mCurrentIndexConnection < mConnections.size())
+			{
+				result = mConnections[mCurrentIndexConnection];
+			}
+			else
+			{
+				result = mCanvas->createWidget<MyGUI::Widget>("PolygonalSkin", mCanvas->getCoord(), MyGUI::Align::Default);
+				result->setNeedMouseFocus(false);
+				mConnections.push_back(result);
+			}
 
-			// Scanline renderer for solid filling.
-			agg::renderer_scanline_aa_solid<agg::renderer_base<agg::pixfmt_bgra32> > ren(renb);
+			mCurrentIndexConnection++;
 
-			// Rasterizer & scanline
-			agg::rasterizer_scanline_aa<> ras;
-			agg::scanline_p8 sl;
+			result->setVisible(true);
+			return result;
+		}
 
-			// хранилище всех путей
-			agg::path_storage path;
+		void drawSpline(const ConnectionInfo& _info, int _offset, const MyGUI::Colour& _colour)
+		{
+			MyGUI::Widget* widget = getNextWidget();
+			widget->setColour(_colour);
 
-			// кривая безье которая строится по 4 точкам
-			agg::curve4 curve;
-			curve.approximation_method(agg::curve_approximation_method_e(agg::curve_inc)); // метод апроксимации, curve_inc - быстрый но много точек
-			curve.approximation_scale(0.7); //масштаб апроксимации
-			curve.angle_tolerance(agg::deg2rad(0));
-			curve.cusp_limit(agg::deg2rad(0));
-			const int offset = 3;
-			curve.init(
-				_info.point_start.left,
-				_info.point_start.top + offset,
-				_info.point_start.left + _info.start_offset.width,
-				_info.point_start.top + _info.start_offset.height + offset,
+			MyGUI::ISubWidget* main = widget->getSubWidgetMain();
+			MyGUI::PolygonalSkin* polygonalSkin = main->castType<MyGUI::PolygonalSkin>();
+			polygonalSkin->setWidth(4.0f);
 
-				_info.point_end.left + _info.end_offset.width,
-				_info.point_end.top + _info.end_offset.height + offset,
-				_info.point_end.left,
-				_info.point_end.top + offset);
+			const size_t PointsNumber = 16;
+			std::vector<MyGUI::FloatPoint> basePoints;
+			basePoints.push_back(
+				MyGUI::FloatPoint((float)_info.point_start.left, (float)_info.point_start.top + _offset));
+			basePoints.push_back(
+				MyGUI::FloatPoint((float)_info.point_start.left + _info.start_offset.width, (float)_info.point_start.top + _info.start_offset.height + _offset));
+			basePoints.push_back(
+				MyGUI::FloatPoint((float)_info.point_end.left + _info.end_offset.width, (float)_info.point_end.top + _info.end_offset.height + _offset));
+			basePoints.push_back(
+				MyGUI::FloatPoint((float)_info.point_end.left, (float)_info.point_end.top + _offset));
+			std::vector<MyGUI::FloatPoint> splinePoints;
+			splinePoints.reserve(PointsNumber);
+			for (size_t i = 0; i < PointsNumber; ++i)
+			{
+				float t = float(i) / (PointsNumber - 1);
+				float left = basePoints[0].left * pow(1 - t, 3) + 3 * basePoints[1].left * pow(1 - t, 2) * t + 3 * basePoints[2].left * (1 - t) * t * t + t * t * t * basePoints[3].left;
+				float top = basePoints[0].top * pow(1 - t, 3) + 3 * basePoints[1].top * pow(1 - t, 2) * t + 3 * basePoints[2].top * (1 - t) * t * t + t * t * t * basePoints[3].top;
+				splinePoints.push_back(MyGUI::FloatPoint(left, top));
+			}
+			polygonalSkin->setPoints(splinePoints);
+		}
 
-			// добавляем путь безье
-			path.concat_path(curve);
-
-			// сам путь который рисуется, растерезатор
-			agg::conv_stroke<agg::path_storage> stroke(path);
-			stroke.width(2); // ширина линии
-			stroke.line_join(agg::line_join_e(agg::bevel_join)); // хз че такое
-			stroke.line_cap(agg::line_cap_e(agg::butt_cap)); //обрезка концов
-			stroke.inner_join(agg::inner_join_e(agg::inner_miter)); // соединения внутри линии точек
-			stroke.inner_miter_limit(1.01);
-
-			ras.add_path(stroke);
-
-			// Setting the attrribute (color) & Rendering
-			ren.color(agg::rgba8(80, 80, 80, 200));
-			agg::render_scanlines(ras, sl, ren);
-
-
-			//============================================================ 
-			// хранилище всех путей
-			agg::path_storage path2;
-
-			// кривая безье которая строится по 4 точкам
-			agg::curve4 curve2;
-			curve2.approximation_method(agg::curve_approximation_method_e(agg::curve_inc)); // метод апроксимации, curve_inc - быстрый но много точек
-			curve2.approximation_scale(0.7); //масштаб апроксимации
-			curve2.angle_tolerance(agg::deg2rad(0));
-			curve2.cusp_limit(agg::deg2rad(0));
-			curve2.init(
-				_info.point_start.left,
-				_info.point_start.top,
-				_info.point_start.left + _info.start_offset.width,
-				_info.point_start.top + _info.start_offset.height,
-
-				_info.point_end.left + _info.end_offset.width,
-				_info.point_end.top + _info.end_offset.height,
-				_info.point_end.left,
-				_info.point_end.top);
-
-			// добавляем путь безье
-			path2.concat_path(curve2);
-
-			// сам путь который рисуется, растерезатор
-			agg::conv_stroke<agg::path_storage> stroke2(path2);
-			stroke2.width(2); // ширина линии
-			stroke2.line_join(agg::line_join_e(agg::bevel_join)); // хз че такое
-			stroke2.line_cap(agg::line_cap_e(agg::butt_cap)); //обрезка концов
-			stroke2.inner_join(agg::inner_join_e(agg::inner_miter)); // соединения внутри линии точек
-			stroke2.inner_miter_limit(1.01);
-
-			ras.add_path(stroke2);
-
-			// Setting the attrribute (color) & Rendering
-			ren.color(agg::rgba8(_info.colour.red * 255, _info.colour.green * 255, _info.colour.blue * 255, 255));
-			agg::render_scanlines(ras, sl, ren);
-			//============================================================ 
+		void drawCurve(const ConnectionInfo& _info)
+		{
+			drawSpline(_info, 3, MyGUI::Colour(0.3, 0.3, 0.3, 0.8));
+			drawSpline(_info, 0, _info.colour);
 		}
 
 		MyGUI::IntSize getViewSize()
 		{
 			MyGUI::IntSize result;
-			for (size_t index=0; index<mNodes.size(); ++index)
+			for (size_t index = 0; index < mNodes.size(); ++index)
 			{
 				const MyGUI::IntCoord& coord = mNodes[index]->getCoord();
 				if (coord.right() > result.width) result.width = coord.right();
@@ -577,10 +534,13 @@ namespace wraps
 	private:
 		VectorGraphNode mNodes;
 
-		MyGUI::CanvasPtr mCanvas;
+		MyGUI::Widget* mCanvas;
 		bool mIsDrug;
 		ConnectionInfo mDrugLine;
 		BaseGraphConnection* mConnectionStart;
+		bool mInvalidate;
+		MyGUI::VectorWidgetPtr mConnections;
+		size_t mCurrentIndexConnection;
 	};
 
 } // namespace wraps

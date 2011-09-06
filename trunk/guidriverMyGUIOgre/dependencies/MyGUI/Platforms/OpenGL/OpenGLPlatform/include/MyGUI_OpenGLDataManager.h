@@ -2,14 +2,12 @@
 	@file
 	@author		George Evmenov
 	@date		07/2009
-	@module
 */
 
 #ifndef __MYGUI_OPENGL_DATA_MANAGER_H__
 #define __MYGUI_OPENGL_DATA_MANAGER_H__
 
 #include "MyGUI_Prerequest.h"
-#include "MyGUI_Instance.h"
 #include "MyGUI_DataManager.h"
 
 namespace MyGUI
@@ -18,18 +16,31 @@ namespace MyGUI
 	class OpenGLDataManager :
 		public DataManager
 	{
-		MYGUI_INSTANCE_HEADER(OpenGLDataManager)
-
 	public:
+		OpenGLDataManager();
+
 		void initialise();
 		void shutdown();
 
+		static OpenGLDataManager& getInstance()
+		{
+			return *getInstancePtr();
+		}
+		static OpenGLDataManager* getInstancePtr()
+		{
+			return static_cast<OpenGLDataManager*>(DataManager::getInstancePtr());
+		}
+
+		/** @see DataManager::getData */
 		virtual IDataStream* getData(const std::string& _name);
 
+		/** @see DataManager::isDataExist */
 		virtual bool isDataExist(const std::string& _name);
 
+		/** @see DataManager::getDataListNames */
 		virtual const VectorString& getDataListNames(const std::string& _pattern);
 
+		/** @see DataManager::getDataPath */
 		const std::string& getDataPath(const std::string& _name);
 
 	/*internal:*/
@@ -43,6 +54,8 @@ namespace MyGUI
 		};
 		typedef std::vector<ArhivInfo> VectorArhivInfo;
 		VectorArhivInfo mPaths;
+
+		bool mIsInitialise;
 	};
 
 } // namespace MyGUI

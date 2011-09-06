@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 
 #ifndef __MYGUI_RTT_LAYER_NODE_H__
@@ -12,11 +11,13 @@
 #include "MyGUI_LayerNode.h"
 #include "MyGUI_ITexture.h"
 #include "MyGUI_LayerNodeAnimation.h"
+#include <MyGUI_Timer.h>
 
 namespace MyGUI
 {
 
-	class /*MYGUI_EXPORT */RTTLayerNode : public LayerNode
+	class /*MYGUI_EXPORT */RTTLayerNode :
+		public LayerNode
 	{
 		MYGUI_RTTI_DERIVED( RTTLayerNode )
 
@@ -35,13 +36,25 @@ namespace MyGUI
 		// рисует леер
 		virtual void renderToTarget(IRenderTarget* _target, bool _update);
 
-		bool getCacheUsing() { return mChacheUsing; }
+		bool getCacheUsing() const
+		{
+			return mChacheUsing;
+		}
 		void setCacheUsing(bool _value);
 
-		bool getAnimate() { return mIsAnimate; }
+		bool getAnimate() const
+		{
+			return mIsAnimate;
+		}
 
-		void setDestroy(bool _value) { mDestroy = _value; }
-		bool getDestroy() { return mDestroy; }
+		void setDestroy(bool _value)
+		{
+			mDestroy = _value;
+		}
+		bool getDestroy() const
+		{
+			return mDestroy;
+		}
 
 		void addLayerNodeAnimation(LayerNodeAnimation* _impl);
 
@@ -67,6 +80,8 @@ namespace MyGUI
 
 		VectorQuadData mData;
 		QuadData mDefaultData;
+
+		MyGUI::Timer mTimer;
 	};
 
 } // namespace MyGUI

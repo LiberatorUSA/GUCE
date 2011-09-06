@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 
 #ifndef __BASE_MANAGER_H__
@@ -18,6 +17,7 @@
 
 #if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
 #	include <windows.h>
+#	include <winuser.h>
 #endif
 
 namespace base
@@ -32,24 +32,26 @@ namespace base
 		BaseManager();
 		virtual ~BaseManager();
 
-		virtual void prepare(int argc, char **argv);
+		virtual void prepare();
 		bool create();
 		void destroy();
 		void run();
-		void quit() { mExit = true; }
+		void quit();
 
-		void setWindowCaption(const std::string& _text);
+		void setWindowCaption(const std::wstring& _text);
 		void createDefaultScene() { }
 
-		MyGUI::Gui* getGUI() { return mGUI; }
-		const std::string& getRootMedia() { return mRootMedia; }
-		void setResourceFilename(const std::string& _flename) { mResourceFileName = _flename; }
+		const std::string& getRootMedia();
+		void setResourceFilename(const std::string& _flename);
 		void addResourceLocation(const std::string& _name, bool _recursive = false);
-		diagnostic::StatisticInfo * getStatisticInfo() { return mInfo; }
+
+		diagnostic::StatisticInfo* getStatisticInfo();
+		diagnostic::InputFocusInfo* getFocusInput();
 
 	/*internal:*/
 		void _windowResized();
 		virtual void* loadImage(int& _width, int& _height, MyGUI::PixelFormat& _format, const std::string& _filename);
+		virtual void saveImage(int _width, int _height, MyGUI::PixelFormat _format, void* _texture, const std::string& _filename);
 
 	protected:
 		virtual void createScene() { }

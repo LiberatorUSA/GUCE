@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -35,14 +34,15 @@ namespace MyGUI
 	RenderItem::RenderItem() :
 		mTexture(nullptr),
 		mNeedVertexCount(0),
-		mOutDate(false),
+		mOutOfDate(false),
 		mCountVertex(0),
 		mCurrentUpdate(true),
-		mCurrentVertext(nullptr),
-		mLastVertextCount(0),
+		mCurrentVertex(nullptr),
+		mLastVertexCount(0),
 		mVertexBuffer(nullptr),
 		mRenderTarget(nullptr),
-		mCompression(false)
+		mCompression(false),
+		mManualRender(false)
 	{
 		mVertexBuffer = RenderManager::getInstance().createVertexBuffer();
 	}
@@ -62,28 +62,28 @@ namespace MyGUI
 
 		mCurrentUpdate = _update;
 
-		if (mOutDate || _update)
+		if (mOutOfDate || _update)
 		{
 			mCountVertex = 0;
-			Vertex * buffer = (Vertex*)mVertexBuffer->lock();
+			Vertex* buffer = (Vertex*)mVertexBuffer->lock();
 
-			for (VectorDrawItem::iterator iter=mDrawItems.begin(); iter!=mDrawItems.end(); ++iter)
+			for (VectorDrawItem::iterator iter = mDrawItems.begin(); iter != mDrawItems.end(); ++iter)
 			{
 				// перед вызовом запоминаем позицию в буфере
-				mCurrentVertext = buffer;
-				mLastVertextCount = 0;
+				mCurrentVertex = buffer;
+				mLastVertexCount = 0;
 
 				(*iter).first->doRender();
 
 				// колличество отрисованных вершин
-				MYGUI_DEBUG_ASSERT(mLastVertextCount <= (*iter).second, "It is too much vertexes");
-				buffer += mLastVertextCount;
-				mCountVertex += mLastVertextCount;
+				MYGUI_DEBUG_ASSERT(mLastVertexCount <= (*iter).second, "It is too much vertexes");
+				buffer += mLastVertexCount;
+				mCountVertex += mLastVertexCount;
 			}
 
 			mVertexBuffer->unlock();
 
-			mOutDate = false;
+			mOutOfDate = false;
 		}
 
 		// хоть с 0 не выводиться батч, но все равно не будем дергать стейт и операцию
@@ -98,21 +98,29 @@ namespace MyGUI
 			}
 #endif
 			// непосредственный рендринг
-			_target->doRender(mVertexBuffer, mTexture, mCountVertex);
+			if (mManualRender)
+			{
+				for (VectorDrawItem::iterator iter = mDrawItems.begin(); iter != mDrawItems.end(); ++iter)
+					(*iter).first->doManualRender(mVertexBuffer, mTexture, mCountVertex);
+			}
+			else
+			{
+				_target->doRender(mVertexBuffer, mTexture, mCountVertex);
+			}
 		}
 	}
 
 	void RenderItem::removeDrawItem(ISubWidget* _item)
 	{
-		for (VectorDrawItem::iterator iter=mDrawItems.begin(); iter!=mDrawItems.end(); ++iter)
+		for (VectorDrawItem::iterator iter = mDrawItems.begin(); iter != mDrawItems.end(); ++iter)
 		{
 			if ((*iter).first == _item)
 			{
 				mNeedVertexCount -= (*iter).second;
 				mDrawItems.erase(iter);
-				mOutDate = true;
+				mOutOfDate = true;
 
-				mVertexBuffer->setVertextCount(mNeedVertexCount);
+				mVertexBuffer->setVertexCount(mNeedVertexCount);
 
 				// если все отдетачились, расскажем отцу
 				if (mDrawItems.empty())
@@ -132,7 +140,7 @@ namespace MyGUI
 
 // проверяем только в дебаге
 #if MYGUI_DEBUG_MODE == 1
-		for (VectorDrawItem::iterator iter=mDrawItems.begin(); iter!=mDrawItems.end(); ++iter)
+		for (VectorDrawItem::iterator iter = mDrawItems.begin(); iter != mDrawItems.end(); ++iter)
 		{
 			MYGUI_ASSERT((*iter).first != _item, "DrawItem exist");
 		}
@@ -140,14 +148,14 @@ namespace MyGUI
 
 		mDrawItems.push_back(DrawItemInfo(_item, _count));
 		mNeedVertexCount += _count;
-		mOutDate = true;
+		mOutOfDate = true;
 
-		mVertexBuffer->setVertextCount(mNeedVertexCount);
+		mVertexBuffer->setVertexCount(mNeedVertexCount);
 	}
 
 	void RenderItem::reallockDrawItem(ISubWidget* _item, size_t _count)
 	{
-		for (VectorDrawItem::iterator iter=mDrawItems.begin(); iter!=mDrawItems.end(); ++iter)
+		for (VectorDrawItem::iterator iter = mDrawItems.begin(); iter != mDrawItems.end(); ++iter)
 		{
 			if ((*iter).first == _item)
 			{
@@ -157,9 +165,9 @@ namespace MyGUI
 					mNeedVertexCount -= (*iter).second;
 					mNeedVertexCount += _count;
 					(*iter).second = _count;
-					mOutDate = true;
+					mOutOfDate = true;
 
-					mVertexBuffer->setVertextCount(mNeedVertexCount);
+					mVertexBuffer->setVertexCount(mNeedVertexCount);
 				}
 				return;
 			}
@@ -169,7 +177,10 @@ namespace MyGUI
 
 	void RenderItem::setTexture(ITexture* _value)
 	{
-		MYGUI_DEBUG_ASSERT(mVertexBuffer->getVertextCount() == 0, "change texture only empty buffer");
+		if (mTexture == _value)
+			return;
+
+		MYGUI_DEBUG_ASSERT(mVertexBuffer->getVertexCount() == 0, "change texture only empty buffer");
 		MYGUI_DEBUG_ASSERT(mNeedVertexCount == 0, "change texture only empty buffer");
 
 		mTexture = _value;
@@ -189,6 +200,56 @@ namespace MyGUI
 		bool result = mCompression;
 		mCompression = false;
 		return result;
+	}
+
+	void RenderItem::setManualRender(bool _value)
+	{
+		mManualRender = _value;
+	}
+
+	bool RenderItem::getManualRender() const
+	{
+		return mManualRender;
+	}
+
+	void RenderItem::outOfDate()
+	{
+		mOutOfDate = true;
+	}
+
+	bool RenderItem::isOutOfDate() const
+	{
+		return mOutOfDate;
+	}
+
+	size_t RenderItem::getNeedVertexCount() const
+	{
+		return mNeedVertexCount;
+	}
+
+	size_t RenderItem::getVertexCount() const
+	{
+		return mCountVertex;
+	}
+
+	bool RenderItem::getCurrentUpdate() const
+	{
+		return mCurrentUpdate;
+	}
+
+	Vertex* RenderItem::getCurrentVertexBuffer() const
+	{
+		return mCurrentVertex;
+	}
+
+	void RenderItem::setLastVertexCount(size_t _count)
+	{
+		mLastVertexCount = _count;
+	}
+
+	IRenderTarget* RenderItem::getRenderTarget()
+	{
+		return mRenderTarget;
 	}
 
 } // namespace MyGUI

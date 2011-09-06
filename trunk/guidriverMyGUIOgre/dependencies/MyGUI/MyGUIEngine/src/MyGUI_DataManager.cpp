@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		05/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -26,31 +25,7 @@
 namespace MyGUI
 {
 
-	const std::string INSTANCE_TYPE_NAME("DataManager");
-
-	DataManager* DataManager::msInstance = 0;
-
-	DataManager::DataManager() :
-		mIsInitialise(false)
-	{
-		MYGUI_ASSERT(0 == msInstance, "instance " << INSTANCE_TYPE_NAME << " is exsist");
-		msInstance = this;
-	}
-
-	DataManager::~DataManager()
-	{
-		msInstance = 0;
-	}
-
-	DataManager* DataManager::getInstancePtr()
-	{
-		return msInstance;
-	}
-
-	DataManager& DataManager::getInstance()
-	{
-		MYGUI_ASSERT(0 != msInstance, "instance " << INSTANCE_TYPE_NAME << " was not created");
-		return (*msInstance);
-	}
+	template <> DataManager* Singleton<DataManager>::msInstance = nullptr;
+	template <> const char* Singleton<DataManager>::mClassTypeName("DataManager");
 
 } // namespace MyGUI

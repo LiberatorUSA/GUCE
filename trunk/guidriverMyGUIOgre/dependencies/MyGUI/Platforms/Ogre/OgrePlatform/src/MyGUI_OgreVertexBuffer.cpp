@@ -2,12 +2,11 @@
 	@file
 	@author		Albert Semenov
 	@date		04/2009
-	@module
 */
 
 #include "MyGUI_OgreVertexBuffer.h"
 
-#include "Ogre.h"
+#include <OgreHardwareVertexBuffer.h>
 
 #include "MyGUI_LastHeader.h"
 
@@ -38,8 +37,8 @@ namespace MyGUI
 		vd->addElement( 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION );
 		vd->addElement( 0, Ogre::VertexElement::getTypeSize( Ogre::VET_FLOAT3 ), Ogre::VET_COLOUR, Ogre::VES_DIFFUSE );
 		vd->addElement( 0, Ogre::VertexElement::getTypeSize( Ogre::VET_FLOAT3 ) +
-						   Ogre::VertexElement::getTypeSize( Ogre::VET_COLOUR ),
-						   Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES );
+			Ogre::VertexElement::getTypeSize( Ogre::VET_COLOUR ),
+			Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES );
 
 		// Create the Vertex Buffer, using the Vertex Structure we previously declared in _declareVertexStructure.
 		mVertexBuffer = Ogre::HardwareBufferManager::getSingleton( ).createVertexBuffer(
@@ -68,12 +67,12 @@ namespace MyGUI
 		createVertexBuffer();
 	}
 
-	void OgreVertexBuffer::setVertextCount(size_t _count)
+	void OgreVertexBuffer::setVertexCount(size_t _count)
 	{
 		mNeedVertexCount = _count;
 	}
 
-	size_t OgreVertexBuffer::getVertextCount()
+	size_t OgreVertexBuffer::getVertexCount()
 	{
 		return mNeedVertexCount;
 	}

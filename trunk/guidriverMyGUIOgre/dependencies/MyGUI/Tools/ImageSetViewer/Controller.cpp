@@ -1,17 +1,17 @@
 /*!
-    @file
-    @author     Albert Semenov
-    @date       08/2008
-    @module
+	@file
+	@author     Albert Semenov
+	@date       08/2008
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "Controller.h"
 #include "Base/Main.h"
 
 namespace editor
 {
 
-	Controller::Controller() : mView(nullptr)
+	Controller::Controller() :
+		mView(nullptr)
 	{
 	}
 
@@ -19,12 +19,12 @@ namespace editor
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/Tools/ImageSetViewer");
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void Controller::createScene()
 	{
-		getGUI()->load("Wallpaper0.layout");
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
 		MyGUI::ResourceManager::getInstance().load("external_resources.xml");
 
 		mView = new View();

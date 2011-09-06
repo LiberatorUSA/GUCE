@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		12/2009
-	@module
 */
 
 #ifndef __SCENE_OBJECT_H__
@@ -11,6 +10,8 @@
 #ifdef MYGUI_OGRE_PLATFORM
 
 #include <Ogre.h>
+
+#include "MyGUI_LastHeader.h"
 
 namespace demo
 {
@@ -36,14 +37,14 @@ namespace demo
 		// Code found in Wiki: www.ogre3d.org/wiki/index.php/RetrieveVertexData
 		void GetMeshInformation(
 			const Ogre::MeshPtr mesh,
-			size_t &vertex_count,
+			size_t& vertex_count,
 			Ogre::Vector3* &vertices,
-			size_t &index_count,
+			size_t& index_count,
 			unsigned long* &indices,
 			Ogre::Vector2* &coords,
-			const Ogre::Vector3 &position,
-			const Ogre::Quaternion &orient,
-			const Ogre::Vector3 &scale,
+			const Ogre::Vector3& position,
+			const Ogre::Quaternion& orient,
+			const Ogre::Vector3& scale,
 			const std::string& _material);
 		void clear();
 

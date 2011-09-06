@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 
 #include "MyGUI_LayerItem.h"
@@ -53,7 +52,7 @@ namespace MyGUI
 	{
 		bool out_date = false;
 
-		for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+		for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 		{
 			if ((*iter)->castType<LayerNode>()->isOutOfDate())
 			{
@@ -69,7 +68,7 @@ namespace MyGUI
 			{
 				target->begin();
 
-				for (VectorILayerNode::iterator iter=mChildItems.begin(); iter!=mChildItems.end(); ++iter)
+				for (VectorILayerNode::iterator iter = mChildItems.begin(); iter != mChildItems.end(); ++iter)
 				{
 					(*iter)->renderToTarget(target, _update);
 				}
@@ -80,13 +79,13 @@ namespace MyGUI
 		}
 	}
 
-	ILayerItem* RTTLayer::getLayerItemByPoint(int _left, int _top)
+	ILayerItem* RTTLayer::getLayerItemByPoint(int _left, int _top) const
 	{
 		if (!mIsPick)
 			return nullptr;
 
 #ifdef MYGUI_OGRE_PLATFORM
-		const MyGUI::IntSize& size = MyGUI::Gui::getInstance().getViewSize();
+		const MyGUI::IntSize& size = MyGUI::RenderManager::getInstance().getViewSize();
 		bool result = pickPositionInObject(_left, _top, size.width, size.height, mTextureSize.width, mTextureSize.height);
 		if (result)
 		{
@@ -103,7 +102,7 @@ namespace MyGUI
 			return Base::getPosition(_left, _top);
 
 #ifdef MYGUI_OGRE_PLATFORM
-		const MyGUI::IntSize& size = MyGUI::Gui::getInstance().getViewSize();
+		const MyGUI::IntSize& size = MyGUI::RenderManager::getInstance().getViewSize();
 		bool result = pickPositionInObject(_left, _top, size.width, size.height, mTextureSize.width, mTextureSize.height);
 		if (result)
 		{

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __GRAPH_NODE_SKELETON_STATE_H__
 #define __GRAPH_NODE_SKELETON_STATE_H__
@@ -14,7 +13,8 @@
 namespace demo
 {
 
-	class GraphNodeSkeletonState : public BaseAnimationNode
+	class GraphNodeSkeletonState :
+		public BaseAnimationNode
 	{
 	public:
 		GraphNodeSkeletonState(const std::string& _name) :
@@ -22,14 +22,19 @@ namespace demo
 			mStartIn(nullptr),
 			mStopIn(nullptr),
 			mPositionIn(nullptr),
-			mWeightIn(nullptr)
+			mWeightIn(nullptr),
+			mComboStates(nullptr),
+			mWeightValue(nullptr),
+			mPositionValue(nullptr),
+			mStartValue(nullptr),
+			mStopValue(nullptr)
 		{
 		}
 
 	private:
 		virtual void initialise()
 		{
-			mMainWidget->setCaption(getName());
+			mMainWidget->castType<MyGUI::Window>()->setCaption(getName());
 			assignBase(mStartIn, "StartIn");
 			assignBase(mStopIn, "StopIn");
 			assignBase(mPositionIn, "PositionIn");
@@ -40,7 +45,7 @@ namespace demo
 			assignWidget(mStartValue, "StartValue");
 			assignWidget(mStopValue, "StopValue");
 
-			mComboStates->eventComboAccept = MyGUI::newDelegate(this, &GraphNodeSkeletonState::notifyComboAccept);
+			mComboStates->eventComboAccept += MyGUI::newDelegate(this, &GraphNodeSkeletonState::notifyComboAccept);
 			MyGUI::Gui::getInstance().eventFrameStart += MyGUI::newDelegate(this, &GraphNodeSkeletonState::notifyFrameStart);
 		}
 
@@ -76,7 +81,7 @@ namespace demo
 			size_t index = mComboStates->findItemIndexWith(_name);
 			if (index != MyGUI::ITEM_NONE)
 			{
-				mComboStates->setItemSelectedAt(index);
+				mComboStates->setIndexSelected(index);
 				notifyComboAccept(mComboStates, index);
 			}
 		}
@@ -127,22 +132,22 @@ namespace demo
 				Ogre::AnimationStateSet* set = entity->getAllAnimationStates();
 				Ogre::AnimationStateIterator iter = set->getAnimationStateIterator();
 				while (iter.hasMoreElements())
-				{ 
-					Ogre::AnimationState* state = iter.getNext(); 
+				{
+					Ogre::AnimationState* state = iter.getNext();
 					mComboStates->addItem(state->getAnimationName());
 				}
 			}
 
 			if (mComboStates->getItemCount() > 0)
 			{
-				mComboStates->setItemSelectedAt(0);
+				mComboStates->setIndexSelected(0);
 				notifyComboAccept(mComboStates, 0);
 			}
 		}
 
-		void notifyComboAccept(MyGUI::ComboBoxPtr _sender, size_t _index)
+		void notifyComboAccept(MyGUI::ComboBox* _sender, size_t _index)
 		{
-			if (_index != -1)
+			if (_index != MyGUI::ITEM_NONE)
 			{
 				mStateName = _sender->getItemNameAt(_index);
 				getAnimationNode()->setProperty("StateName", mStateName);
@@ -152,15 +157,15 @@ namespace demo
 
 	private:
 		std::string mStateName;
-		wraps::BaseGraphConnection * mStartIn;
-		wraps::BaseGraphConnection * mStopIn;
-		wraps::BaseGraphConnection * mPositionIn;
-		wraps::BaseGraphConnection * mWeightIn;
-		MyGUI::ComboBoxPtr mComboStates;
-		MyGUI::StaticTextPtr mWeightValue;
-		MyGUI::StaticTextPtr mPositionValue;
-		MyGUI::StaticTextPtr mStartValue;
-		MyGUI::StaticTextPtr mStopValue;
+		wraps::BaseGraphConnection* mStartIn;
+		wraps::BaseGraphConnection* mStopIn;
+		wraps::BaseGraphConnection* mPositionIn;
+		wraps::BaseGraphConnection* mWeightIn;
+		MyGUI::ComboBox* mComboStates;
+		MyGUI::TextBox* mWeightValue;
+		MyGUI::TextBox* mPositionValue;
+		MyGUI::TextBox* mStartValue;
+		MyGUI::TextBox* mStopValue;
 
 	};
 

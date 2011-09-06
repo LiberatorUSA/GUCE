@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -43,6 +42,7 @@ namespace MyGUI
 		if (mFileStream != nullptr)
 		{
 			mFileStream->close();
+			delete mFileStream;
 			mFileStream = nullptr;
 		}
 	}

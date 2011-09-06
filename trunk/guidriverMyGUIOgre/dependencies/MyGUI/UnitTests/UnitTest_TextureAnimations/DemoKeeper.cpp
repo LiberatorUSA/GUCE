@@ -2,7 +2,6 @@
 	@file
 	@author     George Evmenov
 	@date       08/2009
-	@module
 */
 #include "DemoKeeper.h"
 #include "Base/Main.h"
@@ -27,12 +26,14 @@ namespace demo
 
 	void DemoKeeper::createScene()
 	{
+		//MyGUI::ResourceManager::getInstance().load("WindowSkin.xml");
+
 		MyGUI::FactoryManager::getInstance().registerFactory<WobbleNodeAnimator>("NodeAnimator");
 		MyGUI::FactoryManager::getInstance().registerFactory<FadeNodeAnimator>("NodeAnimator");
 
 		MyGUI::FactoryManager::getInstance().registerFactory<MyGUI::RTTLayer>("Layer");
 
-		getGUI()->load("test_layer.xml");
+		MyGUI::ResourceManager::getInstance().load("Layers.xml");
 
 		createNewWindow();
 	}
@@ -52,7 +53,7 @@ namespace demo
 			mWidgets.erase(_sender);
 			MyGUI::WidgetManager::getInstance().destroyWidget(_sender);
 		}
-		else if (_name == "check")
+		/*else if (_name == "check")
 		{
 			const MyGUI::IntCoord coord(0, 0, 1024, 768);
 			const MyGUI::IntSize size(300, 300);
@@ -65,13 +66,13 @@ namespace demo
 			{
 				_sender->setCoord(coord.width / 2 - size.width / 2, coord.height / 2 - size.height / 2, size.width, size.height);
 			}
-		}
+		}*/
 	}
 
 	void DemoKeeper::createNewWindow()
 	{
 		MyGUI::Window* widget = MyGUI::LayoutManager::getInstance().loadLayout("Window.layout")[0]->castType<MyGUI::Window>();
-		widget->eventWindowButtonPressed = MyGUI::newDelegate(this, &DemoKeeper::notifyWindowButtonPressed);
+		widget->eventWindowButtonPressed += MyGUI::newDelegate(this, &DemoKeeper::notifyWindowButtonPressed);
 
 		mWidgets.insert(widget);
 	}
@@ -82,26 +83,27 @@ namespace demo
 		{
 			createNewWindow();
 		}
+		else if (_key == MyGUI::KeyCode::V)
+		{
+			for (SetWidget::iterator item=mWidgets.begin(); item!=mWidgets.end(); ++item)
+			{
+				const MyGUI::IntCoord coord(0, 0, 1024, 768);
+				const MyGUI::IntSize size(300, 300);
 
-#ifdef MYGUI_OGRE_PLATFORM
-		if (_key == MyGUI::KeyCode::One)
-		{
-			getCamera()->setPolygonMode(Ogre::PM_SOLID);
+				if ((*item)->getCoord().width != coord.width)
+				{
+					(*item)->setCoord(coord);
+				}
+				else
+				{
+					(*item)->setCoord(coord.width / 2 - size.width / 2, coord.height / 2 - size.height / 2, size.width, size.height);
+				}
+			}
 		}
-		else if (_key == MyGUI::KeyCode::Two)
-		{
-			getCamera()->setPolygonMode(Ogre::PM_WIREFRAME);
-		}
-		else if (_key == MyGUI::KeyCode::Three)
-		{
-			getCamera()->setPolygonMode(Ogre::PM_POINTS);
-		}
-		else
-#endif
-			if (_key == MyGUI::KeyCode::Four)
+		else if (_key == MyGUI::KeyCode::Four)
 		{
 			MyGUI::LayerManager::EnumeratorLayer layer = MyGUI::LayerManager::getInstance().getEnumerator();
-			while(layer.next())
+			while (layer.next())
 			{
 				if (layer->getName() == "RTT_Test")
 				{
@@ -112,7 +114,7 @@ namespace demo
 		else if (_key == MyGUI::KeyCode::Space)
 		{
 			MyGUI::LayerManager::EnumeratorLayer layer = MyGUI::LayerManager::getInstance().getEnumerator();
-			while(layer.next())
+			while (layer.next())
 			{
 				if (layer->getName() == "RTT_Test")
 				{
@@ -127,12 +129,12 @@ namespace demo
 
 							//MyGUI::Widget* widget = rttnode->castType<MyGUI::Widget>(false);
 							//if (widget != nullptr)
-								//widget->setCaption(rtt ? "RTT mode" : "Vertext mode");
+							//	widget->setCaption(rtt ? "RTT mode" : "Vertex mode");
 
 
 							/*for (SetWidget::iterator item=mWidgets.begin(); item!=mWidgets.end(); ++item)
 							{
-								(*item)->setCaption(mIsRTT ? "RTT mode" : "Vertext mode");
+								(*item)->setCaption(mIsRTT ? "RTT mode" : "Vertex mode");
 							}*/
 						}
 					}

@@ -2,7 +2,6 @@
 	@file
 	@author		George Evmenov
 	@date		07/2009
-	@module
 */
 
 #include "MyGUI_OpenGLDataManager.h"
@@ -13,23 +12,26 @@
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT(OpenGLDataManager)
+	OpenGLDataManager::OpenGLDataManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void OpenGLDataManager::initialise()
 	{
-		MYGUI_PLATFORM_ASSERT(false == mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_PLATFORM_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void OpenGLDataManager::shutdown()
 	{
-		if (false == mIsInitialise) return;
-		MYGUI_PLATFORM_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
@@ -65,12 +67,12 @@ namespace MyGUI
 		common::VectorWString wresult;
 		std::wstring pattern = MyGUI::UString(_pattern).asWStr();
 
-		for (VectorArhivInfo::const_iterator item=mPaths.begin(); item!=mPaths.end(); ++item)
+		for (VectorArhivInfo::const_iterator item = mPaths.begin(); item != mPaths.end(); ++item)
 		{
 			common::scanFolder(wresult, (*item).name, (*item).recursive, pattern, false);
 		}
 
-		for (common::VectorWString::const_iterator item=wresult.begin(); item!=wresult.end(); ++item)
+		for (common::VectorWString::const_iterator item = wresult.begin(); item != wresult.end(); ++item)
 		{
 			result.push_back(MyGUI::UString(*item).asUTF8());
 		}
@@ -86,12 +88,12 @@ namespace MyGUI
 		common::VectorWString wresult;
 		std::wstring pattern = MyGUI::UString(_pattern).asWStr();
 
-		for (VectorArhivInfo::const_iterator item=mPaths.begin(); item!=mPaths.end(); ++item)
+		for (VectorArhivInfo::const_iterator item = mPaths.begin(); item != mPaths.end(); ++item)
 		{
 			common::scanFolder(wresult, (*item).name, (*item).recursive, pattern, true);
 		}
 
-		for (common::VectorWString::const_iterator item=wresult.begin(); item!=wresult.end(); ++item)
+		for (common::VectorWString::const_iterator item = wresult.begin(); item != wresult.end(); ++item)
 		{
 			result.push_back(MyGUI::UString(*item).asUTF8());
 		}

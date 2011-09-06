@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __GRAPH_NODE_GROUP2_CONTROLLER_H__
 #define __GRAPH_NODE_GROUP2_CONTROLLER_H__
@@ -13,7 +12,8 @@
 namespace demo
 {
 
-	class GraphNodeGroup2Controller : public BaseAnimationNode
+	class GraphNodeGroup2Controller :
+		public BaseAnimationNode
 	{
 	public:
 		GraphNodeGroup2Controller(const std::string& _name) :
@@ -30,7 +30,7 @@ namespace demo
 	private:
 		virtual void initialise()
 		{
-			mMainWidget->setCaption(getName());
+			mMainWidget->castType<MyGUI::Window>()->setCaption(getName());
 
 			assignBase(mStart1In, "Start1In");
 			assignBase(mStart2In, "Start2In");

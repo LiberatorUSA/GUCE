@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __DEMO_KEEPER_H__
 #define __DEMO_KEEPER_H__
@@ -13,7 +12,8 @@
 namespace demo
 {
 
-	class DemoKeeper : public base::BaseManager
+	class DemoKeeper :
+		public base::BaseManager
 	{
 	public:
 		DemoKeeper();
@@ -26,10 +26,10 @@ namespace demo
 		virtual void setupResources();
 
 	private:
-		State * mMenu1;
-		State * mMenu2;
-		State * mMenu3;
-		State * mMenu4;
+		State* mMenu1;
+		State* mMenu2;
+		State* mMenu3;
+		State* mMenu4;
 		ControllerType mType;
 		bool mIsAnim;
 	};

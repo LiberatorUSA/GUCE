@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2009
-	@module
 */
 
 #include "Plugin.h"
@@ -16,15 +15,13 @@ namespace plugin
 	const std::string Plugin::LogSection = "Plugin";
 	HMODULE Plugin::msFlashLib = 0;
 
-	Plugin::Plugin() : 
+	Plugin::Plugin() :
 		mKeyboardHook(0)
 	{
-		MyGUI::LogManager::registerSection(Plugin::LogSection, MYGUI_LOG_FILENAME);
 	}
 
 	Plugin::~Plugin()
 	{
-		MyGUI::LogManager::unregisterSection(Plugin::LogSection);
 	}
 
 	void Plugin::install()

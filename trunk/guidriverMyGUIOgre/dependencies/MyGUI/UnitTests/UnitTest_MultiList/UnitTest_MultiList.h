@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 #ifndef __UNITTEST_MULTILIST_H__
 #define __UNITTEST_MULTILIST_H__
@@ -16,15 +15,16 @@ namespace unittest
 	class UnitTest_MultiList
 	{
 	private:
-		MyGUI::MultiList* original_list;
+		MyGUI::MultiListBox* original_list;
 		//unittest::BiIndexData * original_list;
-		unittest::Mirror_MultiList * mirror_list;
+		unittest::Mirror_MultiList* mirror_list;
 		size_t count_items;
 		size_t count_columns;
 
 		void Assert(bool _expression)
 		{
-			if (!_expression) {
+			if (!_expression)
+			{
 				throw new std::exception();
 			}
 		}
@@ -32,25 +32,28 @@ namespace unittest
 	public:
 		UnitTest_MultiList()
 		{
-			original_list = MyGUI::Gui::getInstance().createWidget<MyGUI::MultiList>("MultiList", MyGUI::IntCoord(300, 100, 400, 400), MyGUI::Align::Default, "Main");
+			original_list = MyGUI::Gui::getInstance().createWidget<MyGUI::MultiListBox>("MultiList", MyGUI::IntCoord(300, 100, 400, 400), MyGUI::Align::Default, "Main");
 			//original_list = new unittest::BiIndexData();
 			mirror_list = new unittest::Mirror_MultiList();
 			count_items = 0;
 			count_columns = 0;
 
-			original_list->addColumn("1", 100);
-			mirror_list->addColumn("1", 100);
+			original_list->addColumn("1");
+			original_list->setColumnResizingPolicyAt(0, MyGUI::ResizingPolicy::Fill);
+			mirror_list->addColumn("1");
 			count_columns = 1;
 
-			original_list->addColumn("2", 100);
-			mirror_list->addColumn("2", 100);
+			original_list->addColumn("2");
+			original_list->setColumnResizingPolicyAt(1, MyGUI::ResizingPolicy::Fill);
+			mirror_list->addColumn("2");
 			count_columns = 2;
 
-			original_list->addColumn("3", 100);
-			mirror_list->addColumn("3", 100);
+			original_list->addColumn("3");
+			original_list->setColumnResizingPolicyAt(2, MyGUI::ResizingPolicy::Fill);
+			mirror_list->addColumn("3");
 			count_columns = 3;
 
-			start();
+			//start();
 		}
 
 		~UnitTest_MultiList()
@@ -69,9 +72,11 @@ namespace unittest
 			Assert(original_list->getItemCount() == mirror_list->getItemCount());
 			Assert(original_list->getColumnCount() == mirror_list->getColumnCount());
 
-			for (size_t item=0; item<count_items; ++item) {
-				for (size_t column=0; column<count_columns; ++column) {
-					
+			for (size_t item = 0; item < count_items; ++item)
+			{
+				for (size_t column = 0; column < count_columns; ++column)
+				{
+
 					//Assert(MyGUI::UString(original_list->getItemNameAt(item)) == mirror_list->getItemNameAt(item));
 					//Assert(original_list->getItemNameAt(item) == MyGUI::utility::toString(item));
 
@@ -83,7 +88,7 @@ namespace unittest
 					Assert(((original_list->getItemDataAt<size_t>(item, false) == 0) && (mirror_list->getItemDataAt<size_t>(item, false) == 0))
 						|| (*original_list->getItemDataAt<size_t>(item, false) == *mirror_list->getItemDataAt<size_t>(item, false)));
 
-					Assert(original_list->getSubItemDataAt<size_t>(column, item, false) == 0 && mirror_list->getSubItemDataAt<size_t>(column, item, false) == 0
+					Assert((original_list->getSubItemDataAt<size_t>(column, item, false) == 0 && mirror_list->getSubItemDataAt<size_t>(column, item, false) == 0)
 						|| *original_list->getSubItemDataAt<size_t>(column, item, false) == *mirror_list->getSubItemDataAt<size_t>(column, item, false));
 				}
 			}
@@ -103,7 +108,8 @@ namespace unittest
 
 		void Begin(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				Begin();
 				--_count;
 			}
@@ -123,7 +129,8 @@ namespace unittest
 
 		void AddItem(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				AddItem();
 				--_count;
 			}
@@ -146,7 +153,8 @@ namespace unittest
 
 		void InsertItem(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				InsertItem();
 				--_count;
 			}
@@ -169,7 +177,8 @@ namespace unittest
 
 		void RemoveItem(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				RemoveItem();
 				--_count;
 			}
@@ -191,7 +200,8 @@ namespace unittest
 
 		void SwapItems(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				SwapItems();
 				--_count;
 			}
@@ -202,8 +212,8 @@ namespace unittest
 			if (count_columns == 0) return;
 			if (count_items == 0) return;
 
-			size_t index1 = count_items == 0 ? 0 : ((size_t)rand() % count_items);
-			size_t index2 = count_items == 0 ? 0 : ((size_t)rand() % count_items);
+			//size_t index1 = count_items == 0 ? 0 : ((size_t)rand() % count_items);
+			//size_t index2 = count_items == 0 ? 0 : ((size_t)rand() % count_items);
 
 			//mirror_list->swapItemsAt(index1, index2);
 			//original_list->swapSortItemsAt(index1, index2);
@@ -213,7 +223,8 @@ namespace unittest
 
 		void SortItems(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				SortItems();
 				--_count;
 			}
@@ -238,7 +249,8 @@ namespace unittest
 
 		void ChangeItems(size_t _count)
 		{
-			while (_count > 0) {
+			while (_count > 0)
+			{
 				ChangeItems();
 				--_count;
 			}
@@ -255,13 +267,13 @@ namespace unittest
 			check();
 		}
 
-		void start()
+		/*void start()
 		{
-			/*count_items = original_list->generate();
+			count_items = original_list->generate();
 			for (size_t pos=0; pos<count_items; ++pos) {
 				mirror_list->addItem(MyGUI::utility::toString(pos));
-			}*/
-		}
+			}
+		}*/
 
 		void nextFrame()
 		{
@@ -285,7 +297,8 @@ namespace unittest
 			original_list->removeItemAt(1);
 			original_list->removeItemAt(0);*/
 
-			if (count_items > 100) {
+			if (count_items > 100)
+			{
 				RemoveAllItems();
 			}
 
