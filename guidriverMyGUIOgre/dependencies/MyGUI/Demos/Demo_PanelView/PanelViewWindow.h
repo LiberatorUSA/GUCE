@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __PANEL_VIEW_WINDOW_H__
 #define __PANEL_VIEW_WINDOW_H__
@@ -13,36 +12,23 @@
 namespace demo
 {
 
-	class PanelViewWindow : public wraps::BaseLayout
+	class PanelViewWindow :
+		public wraps::BaseLayout
 	{
 	public:
-		PanelViewWindow() : BaseLayout("PanelView.layout")
+		PanelViewWindow() :
+			BaseLayout("PanelView.layout"),
+			mPanelView(nullptr)
 		{
 			assignBase(mPanelView, "scroll_View");
-
-			MyGUI::Window* window = mMainWidget->castType<MyGUI::Window>(false);
-			if (window != nullptr)
-			{
-				window->eventWindowChangeCoord = MyGUI::newDelegate(this, &PanelViewWindow::notifyWindowChangeCoord);
-				mOldSize = window->getSize();
-			}
 		}
 
-		PanelView* getPanelView() { return mPanelView; }
-
-	private:
-		void notifyWindowChangeCoord(MyGUI::Window* _sender)
+		PanelView* getPanelView()
 		{
-			const MyGUI::IntSize & size = _sender->getSize();
-			if (size != mOldSize)
-			{
-				mOldSize = size;
-				mPanelView->setNeedUpdate();
-			}
+			return mPanelView;
 		}
 
 	private:
-		MyGUI::IntSize mOldSize;
 		PanelView* mPanelView;
 	};
 

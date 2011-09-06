@@ -1,11 +1,10 @@
 /*!
-    @file
-    @author     Albert Semenov
-    @date       08/2008
-    @module
+	@file
+	@author     Albert Semenov
+	@date       08/2008
 */
 
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 #include "GraphNodeEventController.h"
@@ -71,10 +70,14 @@ namespace demo
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/UnitTests/UnitTest_GraphView");
+		addResourceLocation(getRootMedia() + "/Common/Tools");
 	}
 
 	void DemoKeeper::createScene()
-    {
+	{
+		MyGUI::ResourceManager::getInstance().load("FrameworkSkin.xml");
+		MyGUI::ResourceManager::getInstance().load("GraphNodeSkin.xml");
+
 		Ogre::SceneNode* node = getSceneManager()->getRootSceneNode()->createChildSceneNode();
 		Ogre::Entity* entity = getSceneManager()->createEntity("Object", "Robot.mesh");
 		node->attachObject(entity);
@@ -94,14 +97,33 @@ namespace demo
 		mContextMenu = new wraps::ContextMenu("ContextMenu.layout");
 		mContextMenu->eventMenuAccept = MyGUI::newDelegate(this, &DemoKeeper::notifyMenuCtrlAccept);
 
-		getGUI()->eventFrameStart += MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
+		MyGUI::Gui::getInstance().eventFrameStart += MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
 	}
 
-    void DemoKeeper::destroyScene()
-    {
-		getGUI()->eventFrameStart -= MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
+	void DemoKeeper::destroyScene()
+	{
+		MyGUI::Gui::getInstance().eventFrameStart -= MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
+
+		for (VectorBaseAnimationNode::iterator item = mNodes.begin(); item != mNodes.end(); ++ item)
+		{
+			animation::IAnimationNode* anim_node = (*item)->getAnimationNode();
+			delete anim_node;
+			delete (*item);
+		}
+		mNodes.clear();
+
+		delete mFileDialog;
+		mFileDialog = nullptr;
+
 		delete mGraphView;
-    }
+		mGraphView = nullptr;
+
+		delete mGraph;
+		mGraph = nullptr;
+
+		delete mContextMenu;
+		mContextMenu = nullptr;
+	}
 
 	void DemoKeeper::notifyMenuCtrlAccept(wraps::ContextMenu* _sender, const std::string& _id)
 	{
@@ -123,11 +145,11 @@ namespace demo
 
 		std::string name = _id;
 		size_t index = name.find("Controller");
-		if (index != -1) name.erase(index);
+		if (index != MyGUI::ITEM_NONE) name.erase(index);
 		else
 		{
 			index = name.find("State");
-			if (index != -1) name.erase(index);
+			if (index != MyGUI::ITEM_NONE) name.erase(index);
 		}
 
 		static size_t name_index = 0;
@@ -142,9 +164,10 @@ namespace demo
 		BaseAnimationNode* node = mGraphNodeFactory.createNode("GraphNode" + _type, _name);
 		assert(node);
 
+		mNodes.push_back(node);
+
 		mGraphView->addItem(node);
-		MyGUI::IntPoint point = MyGUI::InputManager::getInstance().getMousePosition();
-		node->setAbsolutePosition(point);
+		node->setAbsolutePosition(mClickPosition);
 
 		animation::IAnimationNode* anim_node = mNodeFactory.createNode(_type, _name, mGraph);
 		mGraph->addNode(anim_node);
@@ -188,8 +211,10 @@ namespace demo
 		node->getAnimationNode()->getGraph()->removeNode(node->getAnimationNode());
 		animation::IAnimationNode* anim_node = node->getAnimationNode();
 		_sender->removeItem(_node);
-		delete _node;
 		delete anim_node;
+
+		mNodes.erase(std::remove(mNodes.begin(), mNodes.end(), _node), mNodes.end());
+		delete _node;
 	}
 
 	void DemoKeeper::notifyConnectPoint(wraps::BaseGraphView* _sender, wraps::BaseGraphConnection* _from, wraps::BaseGraphConnection* _to)
@@ -221,13 +246,15 @@ namespace demo
 		mGraphView->eventDisconnectPoint = MyGUI::newDelegate(this, &DemoKeeper::notifyDisconnectPoint);
 
 		mGraphView->eventNodeClosed = MyGUI::newDelegate(this, &DemoKeeper::notifyNodeClosed);
-		mGraphView->getClient()->eventMouseButtonReleased = MyGUI::newDelegate(this, &DemoKeeper::notifyMouseButtonReleased);
+		mGraphView->getClient()->eventMouseButtonReleased += MyGUI::newDelegate(this, &DemoKeeper::notifyMouseButtonReleased);
 	}
 
-	void DemoKeeper::notifyMouseButtonReleased(MyGUI::WidgetPtr _sender, int _left, int _top, MyGUI::MouseButton _id)
+	void DemoKeeper::notifyMouseButtonReleased(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id)
 	{
 		if (_id == MyGUI::MouseButton::Right)
 		{
+			mClickPosition.left = _left;
+			mClickPosition.top = _top;
 			mContextMenu->setVisible(true);
 		}
 	}

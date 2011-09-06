@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -32,6 +31,10 @@ namespace MyGUI
 		mLayerNode(nullptr),
 		mSaveLayerNode(nullptr),
 		mTexture(nullptr)
+	{
+	}
+
+	LayerItem::~LayerItem()
 	{
 	}
 
@@ -126,7 +129,7 @@ namespace MyGUI
 		mLayerNode->detachLayerItem(this);
 
 		// при детаче обнулиться
-		ILayerNode * save = mLayerNode;
+		ILayerNode* save = mLayerNode;
 
 		// физически отсоединяем
 		detachFromLayerItemNode(true);
@@ -208,6 +211,11 @@ namespace MyGUI
 			// очищаем
 			mLayerNode = nullptr;
 		}
+	}
+
+	ILayer* LayerItem::getLayer() const
+	{
+		return mLayer;
 	}
 
 } // namespace MyGUI

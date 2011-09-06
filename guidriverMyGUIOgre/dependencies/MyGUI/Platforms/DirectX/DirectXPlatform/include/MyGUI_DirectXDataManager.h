@@ -2,14 +2,12 @@
 	@file
 	@author		Losev Vasiliy aka bool
 	@date		06/2009
-	@module
 */
 
 #ifndef __MYGUI_OGRE_DATA_MANAGER_H__
 #define __MYGUI_OGRE_DATA_MANAGER_H__
 
 #include "MyGUI_Prerequest.h"
-#include "MyGUI_Instance.h"
 #include "MyGUI_DataManager.h"
 
 namespace MyGUI
@@ -18,18 +16,31 @@ namespace MyGUI
 	class DirectXDataManager :
 		public DataManager
 	{
-		MYGUI_INSTANCE_HEADER(DirectXDataManager)
-
 	public:
+		DirectXDataManager();
+
 		void initialise();
 		void shutdown();
 
+		static DirectXDataManager& getInstance()
+		{
+			return *getInstancePtr();
+		}
+		static DirectXDataManager* getInstancePtr()
+		{
+			return static_cast<DirectXDataManager*>(DataManager::getInstancePtr());
+		}
+
+		/** @see DataManager::getData(const std::string& _name) */
 		virtual IDataStream* getData(const std::string& _name);
 
+		/** @see DataManager::isDataExist(const std::string& _name) */
 		virtual bool isDataExist(const std::string& _name);
 
+		/** @see DataManager::getDataListNames(const std::string& _pattern) */
 		virtual const VectorString& getDataListNames(const std::string& _pattern);
 
+		/** @see DataManager::getDataPath(const std::string& _name) */
 		virtual const std::string& getDataPath(const std::string& _name);
 
 	/*internal:*/
@@ -43,6 +54,8 @@ namespace MyGUI
 		};
 		typedef std::vector<ArhivInfo> VectorArhivInfo;
 		VectorArhivInfo mPaths;
+
+		bool mIsInitialise;
 	};
 
 } // namespace MyGUI

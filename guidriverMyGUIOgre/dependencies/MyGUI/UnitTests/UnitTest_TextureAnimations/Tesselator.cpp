@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2008
-	@module
 */
 
 #include "Tesselator.h"
@@ -44,9 +43,9 @@ namespace demo
 		float texture_u = (float)_coord.width / (float)_texture->getWidth();
 		float texture_v = (float)_coord.height / (float)_texture->getHeight();
 
-		for (int rx=0; rx<mCountX+1; rx++)
+		for (int rx = 0; rx < mCountX + 1; rx++)
 		{
-			for (int ry=0; ry<mCountY+1; ry++)
+			for (int ry = 0; ry < mCountY + 1; ry++)
 			{
 				MyGUI::FloatPoint point((float)rx / (float)mCountX, (float)ry / (float)mCountY);
 
@@ -63,7 +62,7 @@ namespace demo
 
 				if (rx < mCountX && ry < mCountY)
 				{
-					_data[rx + ry*mCountX].vertex[MyGUI::QuadData::CornerLT] = vertex;
+					_data[rx + ry* mCountX].vertex[MyGUI::QuadData::CornerLT] = vertex;
 				}
 
 				if (rx > 0 && ry > 0)
@@ -73,7 +72,7 @@ namespace demo
 
 				if (rx > 0 && ry < mCountY)
 				{
-					_data[(rx-1) + ry*mCountX].vertex[MyGUI::QuadData::CornerRT] = vertex;
+					_data[(rx-1) + ry* mCountX].vertex[MyGUI::QuadData::CornerRT] = vertex;
 				}
 
 				if (rx < mCountX && ry > 0)

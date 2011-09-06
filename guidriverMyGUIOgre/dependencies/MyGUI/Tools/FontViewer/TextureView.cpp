@@ -2,15 +2,15 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "TextureView.h"
 
 namespace demo
 {
 
-	TextureView::TextureView() : BaseLayout("TextureView.layout")
+	TextureView::TextureView() :
+		BaseLayout("TextureView.layout")
 	{
 		assignWidget(mScrollView, "view_Texture");
 		assignWidget(mImageBack, "image_Back");
@@ -20,12 +20,18 @@ namespace demo
 	void TextureView::setFontName(const std::string& _value)
 	{
 		MyGUI::ResourceManager& manager = MyGUI::ResourceManager::getInstance();
-		if (!manager.isExist(_value)) return;
-
+		if (!manager.isExist(_value))
+		{
+			mImageTexture->setImageTexture("");
+			return;
+		}
 		MyGUI::IFont* font = manager.getByName(_value)->castType<MyGUI::IFont>();
 		MyGUI::ITexture* texture = font->getTextureFont();
-		if (texture == nullptr) return;
-
+		if (texture == nullptr)
+		{
+			mImageTexture->setImageTexture("");
+			return;
+		}
 		const MyGUI::IntSize& size = MyGUI::texture_utility::getTextureSize(texture->getName(), false);
 
 		mImageTexture->setImageTexture(texture->getName());

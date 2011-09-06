@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -28,13 +27,13 @@ namespace MyGUI
 
 	DataStream::DataStream() :
 		mStream(nullptr),
-		mSize((size_t)-1)
+		mSize((size_t) - 1)
 	{
 	}
 
 	DataStream::DataStream(std::istream* _stream) :
 		mStream(_stream),
-		mSize((size_t)-1)
+		mSize((size_t) - 1)
 	{
 	}
 
@@ -45,7 +44,7 @@ namespace MyGUI
 	size_t DataStream::size()
 	{
 		if (mStream == nullptr) return 0;
-		if (mSize == (size_t)-1)
+		if (mSize == (size_t) - 1)
 		{
 			mStream->seekg (0, std::ios::end);
 			mSize = mStream->tellg();

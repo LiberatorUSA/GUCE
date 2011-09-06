@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #ifndef __POINTER_MANAGER_H__
@@ -22,7 +21,6 @@ namespace input
 
 		void setPointerVisible(bool _value);
 		void setPointerName(const std::string& _name);
-
 	};
 
 } // namespace input

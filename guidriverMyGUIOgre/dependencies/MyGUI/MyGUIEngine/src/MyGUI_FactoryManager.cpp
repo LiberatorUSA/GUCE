@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -22,28 +21,34 @@
 */
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_FactoryManager.h"
+#include "MyGUI_BackwardCompatibility.h"
 
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT( FactoryManager )
+	template <> FactoryManager* Singleton<FactoryManager>::msInstance = nullptr;
+	template <> const char* Singleton<FactoryManager>::mClassTypeName("FactoryManager");
+
+	FactoryManager::FactoryManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void FactoryManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
-
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void FactoryManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
@@ -86,7 +91,9 @@ namespace MyGUI
 		{
 			return nullptr;
 		}
-		MapFactoryItem::iterator type = category->second.find(_type);
+
+		std::string typeName = BackwardCompatibility::getFactoryRename(_category, _type);
+		MapFactoryItem::iterator type = category->second.find(typeName);
 		if (type == category->second.end())
 		{
 			return nullptr;

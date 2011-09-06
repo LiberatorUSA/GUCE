@@ -1,4 +1,0 @@
-# CMake generation dependency list for this directory.
-../../../../Demos/Demo_Pointers/CMakeLists.txt
-../../../../Demos/Demo_Pointers/Demo_Pointers.list
-../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

@@ -1,8 +1,7 @@
 /*!
-    @file
-    @author     Albert Semenov
-    @date       08/2008
-    @module
+	@file
+	@author     Albert Semenov
+	@date       08/2008
 */
 #ifndef __WOBBLE_NODE_ANIMATOR_H__
 #define __WOBBLE_NODE_ANIMATOR_H__
@@ -40,7 +39,7 @@ namespace demo
 			const MyGUI::RenderTargetInfo& _info,
 			const MyGUI::IntCoord& _coord,
 			bool& _isAnimate
-			);
+		);
 
 	private:
 		void addInertia(const MyGUI::FloatPoint& _value);

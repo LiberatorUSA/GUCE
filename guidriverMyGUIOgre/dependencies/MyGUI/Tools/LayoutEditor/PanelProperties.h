@@ -2,7 +2,6 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		09/2008
-	@module
 */
 #ifndef __PANEL_PROPERTIES_H__
 #define __PANEL_PROPERTIES_H__
@@ -11,27 +10,39 @@
 #include "PanelView/BasePanelViewItem.h"
 #include "WidgetTypes.h"
 #include "WidgetContainer.h"
+#include "IPropertyField.h"
 
-extern const int PropertyItemHeight;
-
-class PanelProperties : public wraps::BasePanelViewItem
+namespace tools
 {
-public:
+	class PanelProperties :
+		public wraps::BasePanelViewItem
+	{
+	public:
+		PanelProperties();
 
-	PanelProperties();
+		virtual void initialise();
+		virtual void shutdown();
 
-	virtual void initialise();
-	virtual void shutdown();
+		void update(MyGUI::Widget* _currentWidget, WidgetStyle* _widgetType);
 
-	enum PropertiesGroup { TYPE_PROPERTIES, WIDGET_PROPERTIES };
-	void update(MyGUI::Widget* _current_widget, PropertiesGroup _group);
+		void setDeep(size_t _value);
+		size_t getDeep() const;
 
-	typedef MyGUI::delegates::CDelegate5<MyGUI::Widget*, const std::string&, const std::string&, const std::string&, int> EventHandle_EventCreatePair;
-	EventHandle_EventCreatePair eventCreatePair;
+	private:
+		void notifyAction(const std::string& _name, const std::string& _value, bool _final);
 
-private:
-	size_t AddParametrs(WidgetStyle * widgetType, WidgetContainer * widgetContainer, int& y);
+		void AddParametrs(WidgetStyle* widgetType, WidgetContainer* widgetContainer, MyGUI::Widget* _currentWidget);
+		void destroyPropertyFields();
 
-};
+		void updateSize();
+
+	private:
+		typedef std::vector<IPropertyField*> VectorPropertyField;
+		VectorPropertyField mFields;
+		size_t mDeep;
+		MyGUI::Widget* mCurrentWidget;
+	};
+
+} // namespace tools
 
 #endif // __PANEL_PROPERTIES_H__

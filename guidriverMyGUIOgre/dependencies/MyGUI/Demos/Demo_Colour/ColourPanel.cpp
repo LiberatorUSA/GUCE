@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "ColourPanel.h"
 
 namespace demo
@@ -17,18 +16,16 @@ namespace demo
 		mCurrentColour = MyGUI::Colour::Green;
 		mBaseColour = MyGUI::Colour::Green;
 
-		mColourRect->eventMouseButtonPressed = MyGUI::newDelegate(this, &ColourPanel::notifyMouseButtonPressed);
-		mColourRect->eventMouseDrag = MyGUI::newDelegate(this, &ColourPanel::notifyMouseDrag);
-		mImageColourPicker->eventMouseDrag = MyGUI::newDelegate(this, &ColourPanel::notifyMouseDrag);
-		mScrollRange->eventScrollChangePosition = MyGUI::newDelegate(this, &ColourPanel::notifyScrollChangePosition);
+		mColourRect->eventMouseButtonPressed += MyGUI::newDelegate(this, &ColourPanel::notifyMouseButtonPressed);
+		mColourRect->eventMouseDrag += MyGUI::newDelegate(this, &ColourPanel::notifyMouseDrag);
+		mImageColourPicker->eventMouseDrag += MyGUI::newDelegate(this, &ColourPanel::notifyMouseDrag);
+		mScrollRange->eventScrollChangePosition += MyGUI::newDelegate(this, &ColourPanel::notifyScrollChangePosition);
 
-		mEditRed->eventEditTextChange = MyGUI::newDelegate(this, &ColourPanel::notifyEditTextChange);
-		mEditGreen->eventEditTextChange = MyGUI::newDelegate(this, &ColourPanel::notifyEditTextChange);
-		mEditBlue->eventEditTextChange = MyGUI::newDelegate(this, &ColourPanel::notifyEditTextChange);
+		mEditRed->eventEditTextChange += MyGUI::newDelegate(this, &ColourPanel::notifyEditTextChange);
+		mEditGreen->eventEditTextChange += MyGUI::newDelegate(this, &ColourPanel::notifyEditTextChange);
+		mEditBlue->eventEditTextChange += MyGUI::newDelegate(this, &ColourPanel::notifyEditTextChange);
 
-		mOk->eventMouseButtonClick = MyGUI::newDelegate(this, &ColourPanel::notifyMouseButtonClick);
-
-		//MyGUI::ISubWidget * main = mColourView->getSubWidgetMain();
+		mOk->eventMouseButtonClick += MyGUI::newDelegate(this, &ColourPanel::notifyMouseButtonClick);
 
 		mColourRange.push_back(MyGUI::Colour(1, 0, 0));
 		mColourRange.push_back(MyGUI::Colour(1, 0, 1));
@@ -59,7 +56,8 @@ namespace demo
 
 		notifyMouseDrag(nullptr,
 			mImageColourPicker->getAbsoluteLeft() + (mColourRect->getWidth() / 2),
-			mImageColourPicker->getAbsoluteTop() + (mColourRect->getHeight() / 2));
+			mImageColourPicker->getAbsoluteTop() + (mColourRect->getHeight() / 2),
+			MyGUI::MouseButton::Left);
 	}
 
 	void ColourPanel::createTexture()
@@ -86,13 +84,13 @@ namespace demo
 		MyGUI::uint8* pDest = static_cast<MyGUI::uint8*>(mTexture->lock(MyGUI::TextureUsage::Write));
 
 		for (size_t j = 0; j < size; j++)
-			for(size_t i = 0; i < size; i++)
+			for (size_t i = 0; i < size; i++)
 			{
-				float x = (float)i/size;
-				float y = (float)j/size;
-				*pDest++ = (1. - y) * (_colour.blue * x + (1. - x)) * 255; // B
-				*pDest++ = (1. - y) * (_colour.green * x + (1. - x)) * 255; // G
-				*pDest++ = (1. - y) * (_colour.red * x + (1. - x)) * 255; // R
+				float x = (float)i / size;
+				float y = (float)j / size;
+				*pDest++ = MyGUI::uint8((1. - y) * (_colour.blue  * x + (1. - x)) * 255); // B
+				*pDest++ = MyGUI::uint8((1. - y) * (_colour.green * x + (1. - x)) * 255); // G
+				*pDest++ = MyGUI::uint8((1. - y) * (_colour.red   * x + (1. - x)) * 255); // R
 				*pDest++ = 255; // A
 			}
 
@@ -100,8 +98,11 @@ namespace demo
 		mTexture->unlock();
 	}
 
-	void ColourPanel::notifyMouseDrag(MyGUI::Widget* _sender, int _left, int _top)
+	void ColourPanel::notifyMouseDrag(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id)
 	{
+		if (_id != MyGUI::MouseButton::Left)
+			return;
+
 		MyGUI::Widget* parent = mImageColourPicker->getParent();
 		MyGUI::IntPoint point(_left - parent->getAbsoluteLeft(), _top - parent->getAbsoluteTop());
 
@@ -117,14 +118,15 @@ namespace demo
 
 	void ColourPanel::notifyMouseButtonPressed(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id)
 	{
-		if (_id == MyGUI::MouseButton::Left) notifyMouseDrag(nullptr, _left, _top);
+		if (_id == MyGUI::MouseButton::Left)
+			notifyMouseDrag(nullptr, _left, _top, _id);
 	}
 
-	void ColourPanel::updateFromPoint(const MyGUI::IntPoint & _point)
+	void ColourPanel::updateFromPoint(const MyGUI::IntPoint& _point)
 	{
 		// вычисляем цвет по положению курсора Altren 09.2008
-		float x = 1. * _point.left / mColourRect->getWidth();
-		float y = 1. * _point.top / mColourRect->getHeight();
+		float x = 1.0f * _point.left / mColourRect->getWidth();
+		float y = 1.0f * _point.top / mColourRect->getHeight();
 		if (x > 1) x = 1;
 		else if (x < 0) x = 0;
 		if (y > 1) y = 1;
@@ -141,7 +143,7 @@ namespace demo
 		mEditBlue->setCaption(MyGUI::utility::toString((int)(mCurrentColour.blue * 255)));
 	}
 
-	void ColourPanel::notifyScrollChangePosition(MyGUI::VScroll* _sender, size_t _position)
+	void ColourPanel::notifyScrollChangePosition(MyGUI::ScrollBar* _sender, size_t _position)
 	{
 		float sector_size = (float)mScrollRange->getScrollRange() / 6.0f;
 		float sector_current = (float)_position / sector_size;
@@ -168,19 +170,19 @@ namespace demo
 		updateFromPoint(point);
 	}
 
-	void ColourPanel::notifyEditTextChange(MyGUI::Edit* _sender)
+	void ColourPanel::notifyEditTextChange(MyGUI::EditBox* _sender)
 	{
-		MyGUI::Edit* edit = static_cast<MyGUI::Edit*>(_sender);
+		MyGUI::EditBox* edit = static_cast<MyGUI::EditBox*>(_sender);
 		size_t cursor = edit->getTextCursor();
-		size_t num = MyGUI::utility::parseSizeT(edit->getCaption());
+		size_t num = MyGUI::utility::parseSizeT(edit->getOnlyText());
 		if (num > 255) num = 255;
 		edit->setCaption(MyGUI::utility::toString(num));
 		if (cursor < edit->getTextLength()) edit->setTextCursor(cursor);
 
 		MyGUI::Colour colour(
-			MyGUI::utility::parseFloat(mEditRed->getCaption()) / 255.0f,
-			MyGUI::utility::parseFloat(mEditGreen->getCaption()) / 255.0f,
-			MyGUI::utility::parseFloat(mEditBlue->getCaption()) / 255.0f);
+			MyGUI::utility::parseFloat(mEditRed->getOnlyText()) / 255.0f,
+			MyGUI::utility::parseFloat(mEditGreen->getOnlyText()) / 255.0f,
+			MyGUI::utility::parseFloat(mEditBlue->getOnlyText()) / 255.0f);
 
 		updateFromColour(colour);
 	}
@@ -205,7 +207,7 @@ namespace demo
 		vec.push_back(_colour.blue);
 		std::sort(vec.begin(), vec.end());
 
-		MyGUI::IntPoint point((1 - vec[0]/vec[2]) * mColourRect->getWidth(), (1 - vec[2]) * mColourRect->getHeight());
+		MyGUI::IntPoint point((int)((1 - vec[0] / vec[2]) * mColourRect->getWidth()), (int)((1 - vec[2]) * mColourRect->getHeight()));
 		mImageColourPicker->setPosition(point.left - (mImageColourPicker->getWidth() / 2), point.top - (mImageColourPicker->getHeight() / 2));
 
 		int iMax = (_colour.red == vec[2]) ? 0 : (_colour.green == vec[2]) ? 1 : 2;
@@ -230,7 +232,7 @@ namespace demo
 
 
 		int i;
-		for (i = 0; i<6; ++i)
+		for (i = 0; i < 6; ++i)
 		{
 			if ((fabs(byIndex(mColourRange[i], iMin) - byIndex(mBaseColour, iMin)) < 0.001) &&
 				(fabs(byIndex(mColourRange[i], iMax) - byIndex(mBaseColour, iMax)) < 0.001) &&
@@ -245,7 +247,7 @@ namespace demo
 		float offset = byIndex(mBaseColour, iAvg);
 		if (byIndex(mColourRange[i+1], iAvg) < byIndex(mColourRange[i], iAvg)) offset = 1 - byIndex(mBaseColour, iAvg);
 
-		size_t pos = (current + offset) * sector_size;
+		size_t pos = size_t((current + offset) * sector_size);
 
 		mScrollRange->setScrollPosition(pos);
 
@@ -280,7 +282,7 @@ namespace demo
 		return colour;
 	}
 
-	float & ColourPanel::byIndex(MyGUI::Colour& _colour, size_t _index)
+	float& ColourPanel::byIndex(MyGUI::Colour& _colour, size_t _index)
 	{
 		if (_index == 0) return _colour.red;
 		else if (_index == 1) return _colour.green;
@@ -288,4 +290,9 @@ namespace demo
 		else return _colour.alpha;
 	}
 
- } // namespace demo
+	const MyGUI::Colour& ColourPanel::getColour() const
+	{
+		return mCurrentColour;
+	}
+
+} // namespace demo

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -26,94 +25,58 @@
 namespace MyGUI
 {
 
-	TabItem::TabItem() :
-		mOwner(nullptr)
+	TabItem::TabItem()
 	{
 	}
 
-	void TabItem::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
+	void TabItem::initialiseOverride()
 	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
+		Base::initialiseOverride();
 
-		mOwner = getParent()->castType<Tab>();
+		// FIXME проверить смену скина ибо должно один раз вызываться
+		//mOwner = getParent()->castType<TabControl>();
 	}
 
-	TabItem::~TabItem()
+	void TabItem::shutdownOverride()
 	{
-		mOwner->_notifyDeleteItem(this);
-	}
+		TabControl* owner = getParent() != nullptr ? getParent()->castType<TabControl>(false) : nullptr;
+		if (owner != nullptr)
+			owner->_notifyDeleteItem(this);
 
-	void TabItem::setSelected(bool _value)
-	{
-		if (_value) setItemSelected();
+		Base::shutdownOverride();
 	}
 
 	void TabItem::setCaption(const UString& _value)
 	{
-		mOwner->setItemName(this, _value);
+		TabControl* owner = getParent() != nullptr ? getParent()->castType<TabControl>(false) : nullptr;
+		if (owner != nullptr)
+			owner->setItemName(this, _value);
+		else
+			Base::setCaption(_value);
 	}
 
 	const UString& TabItem::getCaption()
 	{
-		return mOwner->getItemName(this);
+		TabControl* owner = getParent() != nullptr ? getParent()->castType<TabControl>(false) : nullptr;
+		if (owner != nullptr)
+			return owner->getItemName(this);
+		return Base::getCaption();
 	}
 
 	void TabItem::setButtonWidth(int _width)
 	{
-		mOwner->setButtonWidth(this, _width);
+		TabControl* owner = getParent() != nullptr ? getParent()->castType<TabControl>(false) : nullptr;
+		if (owner != nullptr)
+			owner->setButtonWidth(this, _width);
 	}
 
-	int TabItem::getButtonWidth()
+	void TabItem::setPropertyOverride(const std::string& _key, const std::string& _value)
 	{
-		return mOwner->getButtonWidth(this);
-	}
-
-	const UString& TabItem::getItemName()
-	{
-		return mOwner->getItemName(this);
-	}
-
-	void TabItem::setItemName(const UString& _name)
-	{
-		mOwner->setItemName(this, _name);
-	}
-
-	void TabItem::setItemData(Any _data)
-	{
-		mOwner->setItemData(this, _data);
-	}
-
-	void TabItem::setItemSelected()
-	{
-		mOwner->setItemSelected(this);
-	}
-
-	void TabItem::removeItem()
-	{
-		mOwner->removeItem(this);
-	}
-
-	void TabItem::setProperty(const std::string& _key, const std::string& _value)
-	{
-		if (_key == "TabItem_ButtonWidth") setButtonWidth(utility::parseValue<int>(_value));
-		else if (_key == "TabItem_Select") setSelected(utility::parseValue<bool>(_value));
-
-#ifndef MYGUI_DONT_USE_OBSOLETE
-		else if (_key == "Sheet_ButtonWidth")
-		{
-			MYGUI_LOG(Warning, "Sheet_ButtonWidth is obsolete, use TabItem_ButtonWidth");
+		if (_key == "ButtonWidth")
 			setButtonWidth(utility::parseValue<int>(_value));
-		}
-		else if (_key == "Sheet_Select")
-		{
-			MYGUI_LOG(Warning, "Sheet_Select is obsolete, use TabItem_Select");
-			setSelected(utility::parseValue<bool>(_value));
-		}
-#endif // MYGUI_DONT_USE_OBSOLETE
-
 		else
 		{
-			Base::setProperty(_key, _value);
+			Base::setPropertyOverride(_key, _value);
 			return;
 		}
 		eventChangeProperty(this, _key, _value);

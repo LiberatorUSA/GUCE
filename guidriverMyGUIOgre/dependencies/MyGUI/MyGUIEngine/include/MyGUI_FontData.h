@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -45,10 +44,20 @@ namespace MyGUI
 			MAX
 		};
 
-		FontCodeType(Enum _value = MAX) : value(_value) { }
+		FontCodeType(Enum _value = MAX) :
+			value(_value)
+		{
+		}
 
-		friend bool operator == (FontCodeType const& a, FontCodeType const& b) { return a.value == b.value; }
-		friend bool operator != (FontCodeType const& a, FontCodeType const& b) { return a.value != b.value; }
+		friend bool operator == (FontCodeType const& a, FontCodeType const& b)
+		{
+			return a.value == b.value;
+		}
+
+		friend bool operator != (FontCodeType const& a, FontCodeType const& b)
+		{
+			return a.value != b.value;
+		}
 
 	private:
 		Enum value;
@@ -57,11 +66,17 @@ namespace MyGUI
 	// информация об одном символе
 	struct GlyphInfo
 	{
+	public:
+		GlyphInfo() :
+			codePoint(0),
+			width(0)
+		{
+		}
+
+	public:
 		FloatRect uvRect;
 		Char codePoint;
 		int width;
-
-		GlyphInfo() : codePoint(0), width(0) { }
 	};
 
 	typedef std::vector<GlyphInfo> VectorGlyphInfo;
@@ -71,11 +86,23 @@ namespace MyGUI
 	class PairCodePoint
 	{
 	public:
-		PairCodePoint() : first(0), last(0) { }
-		PairCodePoint(Char _first, Char _last) : first(_first), last(_last) { }
+		PairCodePoint() :
+			first(0),
+			last(0)
+		{
+		}
+
+		PairCodePoint(Char _first, Char _last) :
+			first(_first),
+			last(_last)
+		{
+		}
 
 		// проверяет входит ли символ в диапазон
-		bool isExist(Char _code) const { return _code >= first && _code <= last; }
+		bool isExist(Char _code) const
+		{
+			return _code >= first && _code <= last;
+		}
 
 	public:
 		Char first;
@@ -86,7 +113,12 @@ namespace MyGUI
 	class RangeInfo
 	{
 	public:
-		RangeInfo() : first(0), last(0) { }
+		RangeInfo() :
+			first(0),
+			last(0)
+		{
+		}
+
 		RangeInfo(Char _first, Char _last) :
 			first(_first),
 			last(_last)
@@ -95,11 +127,21 @@ namespace MyGUI
 		}
 
 		// проверяет входит ли символ в диапазон
-		bool isExist(Char _code) const { return _code >= first && _code <= last; }
+		bool isExist(Char _code) const
+		{
+			return _code >= first && _code <= last;
+		}
 
 		// возвращает указатель на глиф, или 0, если код не входит в диапазон
-		GlyphInfo* getInfo(Char _code) { return isExist(_code) ? &range[_code - first] : nullptr; }
-		void setInfo(Char _code, GlyphInfo* _value) { if (isExist(_code)) range[_code - first] = *_value; }
+		GlyphInfo* getInfo(Char _code)
+		{
+			return isExist(_code) ? &range[_code - first] : nullptr;
+		}
+
+		void setInfo(Char _code, GlyphInfo* _value)
+		{
+			if (isExist(_code)) range[_code - first] = *_value;
+		}
 
 	public:
 		Char first;
@@ -111,15 +153,23 @@ namespace MyGUI
 	class PairCodeCoord
 	{
 	public:
-		PairCodeCoord() : code(0) { }
+		PairCodeCoord() :
+			code(0)
+		{
+		}
+
 		PairCodeCoord(Char _code, const IntCoord& _coord) :
 			code(_code),
 			coord(_coord)
 		{
 		}
 
-		bool operator < (const PairCodeCoord& _value) const { return code < _value.code; }
+		bool operator < (const PairCodeCoord& _value) const
+		{
+			return code < _value.code;
+		}
 
+	public:
 		Char code;
 		IntCoord coord;
 	};

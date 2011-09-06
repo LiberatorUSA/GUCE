@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -21,71 +20,73 @@
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "MyGUI_Precompiled.h"
-#include "MyGUI_ResourceManager.h"
 #include "MyGUI_LayoutManager.h"
-#include "MyGUI_SkinManager.h"
+#include "MyGUI_ResourceManager.h"
+#include "MyGUI_FactoryManager.h"
 #include "MyGUI_WidgetManager.h"
-#include "MyGUI_Widget.h"
-#include "MyGUI_CoordConverter.h"
-#include "MyGUI_ControllerManager.h"
 
 namespace MyGUI
 {
 
 	const std::string XML_TYPE("Layout");
+	const std::string XML_TYPE_RESOURCE("Resource");
 
-	MYGUI_INSTANCE_IMPLEMENT( LayoutManager )
+	template <> LayoutManager* Singleton<LayoutManager>::msInstance = nullptr;
+	template <> const char* Singleton<LayoutManager>::mClassTypeName("LayoutManager");
+
+	LayoutManager::LayoutManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void LayoutManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		ResourceManager::getInstance().registerLoadXmlDelegate(XML_TYPE) = newDelegate(this, &LayoutManager::_load);
-		layoutPrefix = "";
-		layoutParent = nullptr;
+		FactoryManager::getInstance().registerFactory<ResourceLayout>(XML_TYPE_RESOURCE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void LayoutManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		ResourceManager::getInstance().unregisterLoadXmlDelegate(XML_TYPE);
+		FactoryManager::getInstance().unregisterFactory<ResourceLayout>(XML_TYPE_RESOURCE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
-	}
-
-	VectorWidgetPtr& LayoutManager::load(const std::string& _file)
-	{
-		mVectorWidgetPtr.clear();
-		ResourceManager::getInstance()._loadImplement(_file, true, XML_TYPE, INSTANCE_TYPE_NAME);
-		return mVectorWidgetPtr;
 	}
 
 	void LayoutManager::_load(xml::ElementPtr _node, const std::string& _file, Version _version)
 	{
-#if MYGUI_DEBUG_MODE == 1
-		MYGUI_LOG(Info, "load layout '" << _file << "'");
-#endif
-		parseLayout(mVectorWidgetPtr, _node);
+		ResourceLayout* resource = new ResourceLayout(_node, _file);
+		ResourceManager::getInstance().addResource(resource);
 	}
 
-	VectorWidgetPtr& LayoutManager::loadLayout(const std::string& _file, const std::string& _prefix, Widget* _parent)
+	VectorWidgetPtr LayoutManager::loadLayout(const std::string& _file, const std::string& _prefix, Widget* _parent)
 	{
-		static VectorWidgetPtr widgets;
-		widgets.clear();
+		mCurrentLayoutName = _file;
 
-		layoutPrefix = _prefix;
-		layoutParent = _parent;
-		widgets = load(_file);
-		layoutPrefix = "";
-		layoutParent = nullptr;
-		return widgets;
+		ResourceLayout* resource = getByName(_file, false);
+		if (!resource)
+		{
+			ResourceManager::getInstance().load(_file);
+			resource = getByName(_file, false);
+		}
+
+		MYGUI_ASSERT(resource != nullptr, "Layout '" << _file << "' couldn't be loaded");
+
+		VectorWidgetPtr result = resource->createLayout(_prefix, _parent);
+
+		mCurrentLayoutName = "";
+
+		return result;
 	}
 
 	void LayoutManager::unloadLayout(VectorWidgetPtr& _widgets)
@@ -93,86 +94,33 @@ namespace MyGUI
 		WidgetManager::getInstance().destroyWidgets(_widgets);
 	}
 
-	void LayoutManager::parseLayout(VectorWidgetPtr& _widgets, xml::ElementPtr _root)
+	ResourceLayout* LayoutManager::getByName(const std::string& _name, bool _throw) const
 	{
-		// берем детей и крутимся
-		xml::ElementEnumerator widget = _root->getElementEnumerator();
-		while (widget.next("Widget")) parseWidget(_widgets, widget, layoutParent);
+		std::string skinName = BackwardCompatibility::getSkinRename(_name);
+		IResource* result = ResourceManager::getInstance().getByName(skinName, false);
+
+		if (result != nullptr)
+		{
+			ResourceLayout* resource = result->castType<ResourceLayout>(false);
+			if (resource == nullptr)
+			{
+				MYGUI_ASSERT(!_throw, "Resource '" << skinName << "' is not ResourceLayout type");
+			}
+			return resource;
+		}
+
+		MYGUI_ASSERT(!_throw, "ResourceLayout '" << skinName << "' not found");
+		return nullptr;
 	}
 
-	void LayoutManager::parseWidget(VectorWidgetPtr& _widgets, xml::ElementEnumerator& _widget, Widget* _parent)
+	const std::string& LayoutManager::getCurrentLayout() const
 	{
-		// парсим атрибуты виджета
-		std::string widgetType, widgetSkin, widgetName, widgetLayer, tmp;
+		return mCurrentLayoutName;
+	}
 
-		_widget->findAttribute("type", widgetType);
-		_widget->findAttribute("skin", widgetSkin);
-		_widget->findAttribute("layer", widgetLayer);
-
-		Align align = Align::Default;
-		if (_widget->findAttribute("align", tmp)) align = Align::parse(tmp);
-
-		_widget->findAttribute("name", widgetName);
-		if (!widgetName.empty()) widgetName = layoutPrefix + widgetName;
-
-		WidgetStyle style = WidgetStyle::Child;
-		if (_widget->findAttribute("style", tmp)) style = WidgetStyle::parse(tmp);
-		if (_parent != nullptr && style != WidgetStyle::Popup) widgetLayer.clear();
-
-		IntCoord coord;
-		if (_widget->findAttribute("position", tmp)) coord = IntCoord::parse(tmp);
-		else if (_widget->findAttribute("position_real", tmp))
-		{
-			if (_parent == nullptr || style == WidgetStyle::Popup)
-				coord = CoordConverter::convertFromRelative(FloatCoord::parse(tmp), Gui::getInstance().getViewSize());
-			else
-				coord = CoordConverter::convertFromRelative(FloatCoord::parse(tmp), _parent->getSize());
-		}
-
-		Widget* wid;
-		if (nullptr == _parent)
-			wid = Gui::getInstance().createWidgetT(widgetType, widgetSkin, coord, align, widgetLayer, widgetName);
-		else
-			wid = _parent->createWidgetT(style, widgetType, widgetSkin, coord, align, widgetLayer, widgetName);
-
-		if (layoutParent == _parent) _widgets.push_back(wid);
-
-		// берем детей и крутимся
-		xml::ElementEnumerator node = _widget->getElementEnumerator();
-		while (node.next())
-		{
-			if (node->getName() == "Widget")
-			{
-				parseWidget(_widgets, node, wid);
-			}
-			else if (node->getName() == "Property")
-			{
-				wid->setProperty(node->findAttribute("key"), node->findAttribute("value"));
-			}
-			else if (node->getName() == "UserString")
-			{
-				wid->setUserString(node->findAttribute("key"), node->findAttribute("value"));
-			}
-			else if (node->getName() == "Controller")
-			{
-				const std::string& type = node->findAttribute("type");
-				MyGUI::ControllerItem* item = MyGUI::ControllerManager::getInstance().createItem(type);
-				if (item)
-				{
-					xml::ElementEnumerator prop = node->getElementEnumerator();
-					while (prop.next("Property"))
-					{
-						item->setProperty(prop->findAttribute("key"), prop->findAttribute("value"));
-					}
-					MyGUI::ControllerManager::getInstance().addItem(wid, item);
-				}
-				else
-				{
-					//LOG
-				}
-			}
-
-		}
+	bool LayoutManager::isExist(const std::string& _name) const
+	{
+		return getByName(_name, false) != nullptr;
 	}
 
 } // namespace MyGUI

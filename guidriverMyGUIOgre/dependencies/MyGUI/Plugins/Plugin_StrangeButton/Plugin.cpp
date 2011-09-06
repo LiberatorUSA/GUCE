@@ -16,12 +16,10 @@ namespace plugin
 
 	Plugin::Plugin()
 	{
-		MyGUI::LogManager::registerSection(Plugin::LogSection, MYGUI_LOG_FILENAME);
 	}
 
 	Plugin::~Plugin()
 	{
-		MyGUI::LogManager::unregisterSection(Plugin::LogSection);
 	}
 
 	void Plugin::install()
@@ -34,12 +32,10 @@ namespace plugin
 
 	void Plugin::initialize()
 	{
-
 		MYGUI_LOGGING(LogSection, Info, "initialize");
 
 		// создаем фабрики
 		MyGUI::FactoryManager::getInstance().registerFactory<StrangeButton>("Widget");
-
 	}
 
 	void Plugin::shutdown()
@@ -48,7 +44,6 @@ namespace plugin
 
 		// удаляем фабрику
 		MyGUI::FactoryManager::getInstance().unregisterFactory<StrangeButton>("Widget");
-
 	}
 
 	const std::string& Plugin::getName() const

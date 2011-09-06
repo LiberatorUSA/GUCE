@@ -2,7 +2,6 @@
 	@file
 	@author		George Evmenov
 	@date		07/2009
-	@module
 */
 
 #ifndef __MYGUI_OPENGL_VERTEX_BUFFER_H__
@@ -21,8 +20,8 @@ namespace MyGUI
 		OpenGLVertexBuffer();
 		virtual ~OpenGLVertexBuffer();
 
-		virtual void setVertextCount(size_t _count);
-		virtual size_t getVertextCount();
+		virtual void setVertexCount(size_t _count);
+		virtual size_t getVertexCount();
 
 		virtual Vertex* lock();
 		virtual void unlock();
@@ -31,7 +30,10 @@ namespace MyGUI
 		void destroy();
 		void create();
 
-		unsigned int getBufferID() { return mBufferID; }
+		unsigned int getBufferID()
+		{
+			return mBufferID;
+		}
 
 	private:
 		unsigned int mBufferID;

@@ -2,33 +2,34 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __PANEL_VIEW_CELL_H__
 #define __PANEL_VIEW_CELL_H__
 
 #include "PanelView/BasePanelViewItem.h"
 
-//namespace demo
-//{
-
-	class PanelViewCell : public wraps::BasePanelViewCell
+namespace tools
+{
+	class PanelViewCell :
+		public wraps::BasePanelViewCell
 	{
 	public:
-		PanelViewCell(MyGUI::Widget* _parent) : BasePanelViewCell("PanelCell.layout", _parent)
+		PanelViewCell(MyGUI::Widget* _parent) :
+			BasePanelViewCell("PanelCell.layout", _parent),
+			mButtonMinimize(nullptr)
 		{
 			assignWidget(mTextCaption, "text_Caption");
 			assignWidget(mButtonMinimize, "button_Minimize");
 			assignWidget(mWidgetClient, "widget_Client");
 
-			mTextCaption->eventMouseButtonDoubleClick = MyGUI::newDelegate(this, &PanelViewCell::notifyMouseButtonDoubleClick);
-			mButtonMinimize->eventMouseButtonPressed = MyGUI::newDelegate(this, &PanelViewCell::notfyMouseButtonPressed);
+			mTextCaption->eventMouseButtonDoubleClick += MyGUI::newDelegate(this, &PanelViewCell::notifyMouseButtonDoubleClick);
+			mButtonMinimize->eventMouseButtonPressed += MyGUI::newDelegate(this, &PanelViewCell::notfyMouseButtonPressed);
 		}
 
 		virtual void setMinimized(bool _minimized)
 		{
 			wraps::BasePanelViewCell::setMinimized(_minimized);
-			mButtonMinimize->setButtonPressed(isMinimized());
+			mButtonMinimize->setStateSelected(isMinimized());
 		}
 
 	private:
@@ -50,6 +51,6 @@
 
 	};
 
-//} // namespace demo
+} // namespace tools
 
 #endif // __PANEL_VIEW_CELL_H__

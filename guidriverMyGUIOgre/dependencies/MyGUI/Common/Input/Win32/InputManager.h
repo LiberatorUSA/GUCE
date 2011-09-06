@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2009
-	@module
 */
 
 #ifndef __INPUT_MANAGER_H__
@@ -31,13 +30,14 @@ namespace input
 		virtual void injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text) { }
 		virtual void injectKeyRelease(MyGUI::KeyCode _key) { }
 
+		virtual void onFileDrop(const std::wstring& _filename) { }
+		virtual bool onWinodwClose(size_t _handle) { return true; }
+
 		void setMousePosition(int _x, int _y);
 		void updateCursorPosition();
 
 	private:
 		static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-		static int convertVirtualToScan(int _vk);
-		static int translateWin32Text(int _scan_code);
 
 	private:
 		static InputManager* msInputManager;

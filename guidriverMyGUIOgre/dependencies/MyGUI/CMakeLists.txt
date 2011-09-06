@@ -90,10 +90,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MYGUI_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MYGUI_BINARY_DIR}/bin)
 if (WIN32 OR APPLE)
 	if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-		# We don't want to install in default system location, install is really for the SDK, so call it that
-		SET(CMAKE_INSTALL_PREFIX
-		"${MYGUI_BINARY_DIR}/sdk" CACHE PATH "MYGUI install prefix" FORCE
-		)
+		if (UNIX)
+			# On Mac OS X and Linux, standard behavior is to install to /usr/local/lib
+			set(CMAKE_INSTALL_PREFIX "/usr/local")
+		elseif (WIN32)
+			# On Windows, we don't want to install in default system location, install is really for the SDK, so call it that
+			SET(CMAKE_INSTALL_PREFIX
+				"${MYGUI_BINARY_DIR}/sdk" CACHE PATH "MYGUI install prefix" FORCE
+			)
+		endif ()
 	endif (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif(WIN32 OR APPLE)
 
@@ -113,10 +118,11 @@ set(MYGUI_RENDERSYSTEM 2 CACHE STRING
   3 - OpenGL"
 )
 
-option(MYGUI_BUILD_SAMPLES "Build MyGUI demos" TRUE)
+option(MYGUI_BUILD_DEMOS "Build MyGUI demos" TRUE)
 option(MYGUI_BUILD_PLUGINS "Build MyGUI plugins" TRUE)
 option(MYGUI_BUILD_TOOLS "Build the tools" TRUE)
-option(MYGUI_BUILD_TESTS "Build the unit tests & TestApp" FALSE)
+option(MYGUI_BUILD_UNITTESTS "Build the unit tests" FALSE)
+option(MYGUI_BUILD_TEST_APP "Build TestApp" FALSE)
 option(MYGUI_BUILD_WRAPPER "Build the wrapper" FALSE)
 
 option(MYGUI_INSTALL_SAMPLES "Install MyGUI demos." FALSE)
@@ -129,32 +135,79 @@ option(MYGUI_FULL_RPATH "Build executables with the full required RPATH to run f
 option(MYGUI_STANDALONE_BUILD "Generate build files that do not reference CMake (should be used only from Scripts/prepareRelease.py)" FALSE)
 MARK_AS_ADVANCED(MYGUI_STANDALONE_BUILD)
 
-set(MYGUI_SAMPLES_INPUT 1 CACHE STRING
-"Specify the Input Manager for samples. Possible values:
-  1 - OIS
-  2 - Win32
-  3 - Win32 (Mouse) + OIS (Keyboard)"
-)
+if (WIN32)
+	set(MYGUI_SAMPLES_INPUT 2 CACHE STRING
+	"Specify the Input Manager for samples. Possible values:
+	  1 - OIS
+	  2 - Win32
+	  3 - Win32 (Mouse) + OIS (Keyboard)"
+	)
+else()
+	set(MYGUI_SAMPLES_INPUT 1)
+endif()
+
+if (MSVC)
+	option(MYGUI_USE_PROJECT_FOLDERS "Use Visual Studio solution folders for projects." FALSE)
+endif ()
+
+# Used to not annoy users with high level warnings (should be TRUE for developers)
+option(MYGUI_HIGH_LEVEL_WARNINGS "Use high level compiler warnings. Developers should enable this." FALSE)
+if (MSVC)
+	option(MYGUI_CHECK_MEMORY_LEAKS "Check memory leaks. Developers should enable this." FALSE)
+endif ()
+
+if (MYGUI_USE_PROJECT_FOLDERS)
+	SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+endif ()
+
+if (MYGUI_CHECK_MEMORY_LEAKS)
+	add_definitions(-DMYGUI_CHECK_MEMORY_LEAKS)
+endif ()
 
 # Set compiler specific build flags
 if (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions(-fdiagnostics-show-option)
 	add_definitions(-msse)
-	if (MYGUI_RENDERSYSTEM EQUAL 2)
-		# to avoid warnings from OGRE sources
-		add_definitions(-isystem ${OGRE_INCLUDE_DIR})
-	endif ()
-	# very interesting option, but way too many warnings
-	#add_definitions(-Weffc++)
-	add_definitions(-Wno-deprecated -Wall -Wctor-dtor-privacy -Winit-self -Woverloaded-virtual -Wcast-qual -Wwrite-strings -Wextra -Wno-unused-parameter)
-	#add_definitions(-pedantic)
+	if (NOT MYGUI_HIGH_LEVEL_WARNINGS)
+		add_definitions(-w)
+	else ()
+		if (MYGUI_RENDERSYSTEM EQUAL 2)
+			# to avoid warnings from OGRE
+			add_definitions(-isystem ${OGRE_INCLUDE_DIR})
+		endif ()
+		if (MYGUI_SAMPLES_INPUT EQUAL 1 OR MYGUI_SAMPLES_INPUT EQUAL 3)
+			# to avoid warnings from OIS
+			add_definitions(-isystem ${OIS_INCLUDE_DIR})
+		endif ()
+		if (NOT APPLE)
+			add_definitions(-fdiagnostics-show-option)
+		endif ()
+		# very interesting option, but way too many warnings
+		#add_definitions(-Weffc++)
+		add_definitions(-Wno-deprecated -Wall -Wctor-dtor-privacy -Winit-self -Woverloaded-virtual -Wcast-qual -Wwrite-strings -Wextra -Wno-unused-parameter)
+		add_definitions(-pedantic)
 
-	# MyGUI_UString.h ignored from warnings because of this
-	add_definitions(-Wshadow)
+		# MyGUI_UString.h ignored from warnings because of this
+		add_definitions(-Wshadow)
+	endif ()
 endif ()
 
 if (MSVC)
 	add_definitions(/fp:fast)
+	
+	# Use the highest warning level for visual studio.
+	if (MYGUI_HIGH_LEVEL_WARNINGS)
+		SET(WARNING_LEVEL "/W4")
+		add_definitions(/wd4127)
+	else ()
+		SET(WARNING_LEVEL "/W3")
+	endif ()
+
+	if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+		STRING(REGEX REPLACE "/W[0-4]" "${WARNING_LEVEL}" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	else ()
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_LEVEL}")
+	endif ()
+
 endif ()
 
 # Find dependencies
@@ -186,12 +239,16 @@ add_subdirectory(MyGUIEngine)
 # Setup Platforms
 add_subdirectory(Platforms)
 
+if (MYGUI_BUILD_DEMOS OR MYGUI_BUILD_TOOLS OR MYGUI_BUILD_UNITTESTS OR MYGUI_BUILD_TEST_APP)
+	add_subdirectory(Common)
+endif ()
+
 # Setup Plugins
 if (MYGUI_BUILD_PLUGINS)
 	add_subdirectory(Plugins)
 endif ()
 
-if (MYGUI_BUILD_SAMPLES)
+if (MYGUI_BUILD_DEMOS)
 	add_subdirectory(Demos)
 endif ()
 
@@ -201,13 +258,13 @@ if (MYGUI_BUILD_TOOLS)
 endif ()
 
 # Setup tests
-if (MYGUI_BUILD_TESTS)
+if (MYGUI_BUILD_UNITTESTS OR MYGUI_BUILD_TEST_APP)
 	add_subdirectory(UnitTests)
 endif ()
 
 # Setup wrapers
 if (MYGUI_BUILD_WRAPPER)
-	add_subdirectory(Wrapper)
+	add_subdirectory(Wrappers)
 endif ()
 
 # Install documentation

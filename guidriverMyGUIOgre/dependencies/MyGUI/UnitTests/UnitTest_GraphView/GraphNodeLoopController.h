@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __GRAPH_NODE_LOOP_CONTROLLER_H__
 #define __GRAPH_NODE_LOOP_CONTROLLER_H__
@@ -14,7 +13,8 @@
 namespace demo
 {
 
-	class GraphNodeLoopController : public BaseAnimationNode
+	class GraphNodeLoopController :
+		public BaseAnimationNode
 	{
 	public:
 		GraphNodeLoopController(const std::string& _name) :
@@ -73,13 +73,13 @@ namespace demo
 			{
 				mStateName.clear();
 			}
-			
+
 			getAnimationNode()->setProperty("Length", MyGUI::utility::toString(mLength));
 		}
 
 		virtual void initialise()
 		{
-			mMainWidget->setCaption(getName());
+			mMainWidget->castType<MyGUI::Window>()->setCaption(getName());
 
 			assignBase(mStartIn, "StartIn");
 			assignBase(mStopIn, "StopIn");

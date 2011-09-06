@@ -19,6 +19,9 @@ if (MYGUI_STATIC)
   add_definitions(-DMYGUI_STATIC)
 endif()
 
+if (WIN32)
+	configure_file(${MYGUI_TEMPLATES_DIR}/updateListFiles.bat.in ${MYGUI_BINARY_DIR}/updateListFiles.bat)
+endif ()
 
 # Create the pkg-config package files on Unix systems
 if (UNIX)
@@ -38,7 +41,7 @@ if (UNIX)
   set(MYGUI_ADDITIONAL_LIBS "")
   set(MYGUI_CFLAGS "")
   set(MYGUI_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
-  set(MYGUI_ADDITIONAL_LIBS "${MYGUI_ADDITIONAL_LIBS} -luuid")
+  set(MYGUI_ADDITIONAL_LIBS "${MYGUI_ADDITIONAL_LIBS}")
   if (MYGUI_STATIC)
     configure_file(${MYGUI_TEMPLATES_DIR}/MYGUIStatic.pc.in ${MYGUI_BINARY_DIR}/pkgconfig/MYGUI${MYGUI_LIB_SUFFIX}.pc @ONLY)
   else ()

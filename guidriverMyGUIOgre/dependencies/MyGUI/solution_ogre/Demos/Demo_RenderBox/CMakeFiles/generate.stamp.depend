@@ -1,4 +1,0 @@
-# CMake generation dependency list for this directory.
-../../../../Demos/Demo_RenderBox/CMakeLists.txt
-../../../../Demos/Demo_RenderBox/Demo_RenderBox.list
-../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

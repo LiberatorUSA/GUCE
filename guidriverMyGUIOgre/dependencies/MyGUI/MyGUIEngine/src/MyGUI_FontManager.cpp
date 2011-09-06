@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -21,8 +20,8 @@
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "MyGUI_Precompiled.h"
-#include "MyGUI_FactoryManager.h"
 #include "MyGUI_FontManager.h"
+#include "MyGUI_FactoryManager.h"
 #include "MyGUI_XmlDocument.h"
 
 #include "MyGUI_ResourceManualFont.h"
@@ -35,12 +34,18 @@ namespace MyGUI
 	const std::string XML_TYPE_PROPERTY("Property");
 	const std::string RESOURCE_DEFAULT_NAME("Default");
 
-	MYGUI_INSTANCE_IMPLEMENT( FontManager )
+	template <> FontManager* Singleton<FontManager>::msInstance = nullptr;
+	template <> const char* Singleton<FontManager>::mClassTypeName("FontManager");
+
+	FontManager::FontManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void FontManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		ResourceManager::getInstance().registerLoadXmlDelegate(XML_TYPE) = newDelegate(this, &FontManager::_load);
 
@@ -49,27 +54,22 @@ namespace MyGUI
 
 		mDefaultName = "Default";
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void FontManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		MyGUI::ResourceManager::getInstance().unregisterLoadXmlDelegate(XML_TYPE);
 
 		FactoryManager::getInstance().unregisterFactory<ResourceManualFont>(XML_TYPE_RESOURCE);
 		FactoryManager::getInstance().unregisterFactory<ResourceTrueTypeFont>(XML_TYPE_RESOURCE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
-	}
-
-	bool FontManager::load(const std::string& _file)
-	{
-		return MyGUI::ResourceManager::getInstance()._loadImplement(_file, true, XML_TYPE, INSTANCE_TYPE_NAME);
 	}
 
 	void FontManager::_load(xml::ElementPtr _node, const std::string& _file, Version _version)
@@ -186,7 +186,7 @@ namespace MyGUI
 						codenew->addAttribute("coord", tmp);
 				}
 
-				ResourceManager::getInstance()._load(root, _file, _version);
+				ResourceManager::getInstance().loadFromXmlNode(root, _file, _version);
 			}
 			else if (font->getName() == XML_TYPE_PROPERTY)
 			{
@@ -211,9 +211,20 @@ namespace MyGUI
 			result = ResourceManager::getInstance().getByName(_name, false);
 
 		if (result == nullptr)
+		{
 			result = ResourceManager::getInstance().getByName(mDefaultName, false);
+			if (!_name.empty() && _name != RESOURCE_DEFAULT_NAME)
+			{
+				MYGUI_LOG(Error, "Font '" << _name << "' not found. Replaced with default font.");
+			}
+		}
 
 		return result ? result->castType<IFont>(false) : nullptr;
+	}
+
+	const std::string& FontManager::getDefaultFont() const
+	{
+		return mDefaultName;
 	}
 
 } // namespace MyGUI

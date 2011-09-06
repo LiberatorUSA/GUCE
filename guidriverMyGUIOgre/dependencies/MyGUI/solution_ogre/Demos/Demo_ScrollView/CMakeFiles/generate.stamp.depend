@@ -1,4 +1,0 @@
-# CMake generation dependency list for this directory.
-../../../../Demos/Demo_ScrollView/CMakeLists.txt
-../../../../Demos/Demo_ScrollView/Demo_ScrollView.list
-../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

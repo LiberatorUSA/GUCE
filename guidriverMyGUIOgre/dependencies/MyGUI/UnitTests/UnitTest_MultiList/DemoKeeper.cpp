@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 #include "UnitTest_List.h"
@@ -13,31 +12,28 @@
 namespace demo
 {
 
-	unittest::UnitTest_List * unittest_list = 0;
-	unittest::UnitTest_MultiList * unittest_multilist = 0;
+	unittest::UnitTest_List* unittest_list = 0;
+	unittest::UnitTest_MultiList* unittest_multilist = 0;
 
 	void DemoKeeper::setupResources()
 	{
 		base::BaseManager::setupResources();
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void DemoKeeper::createScene()
 	{
-        getGUI()->load("Wallpaper0.layout");
-
-		const MyGUI::IntSize & view = MyGUI::Gui::getInstance().getViewSize();
-		const MyGUI::IntSize size(100, 100);
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
 
 		unittest_list = new unittest::UnitTest_List();
 		unittest_multilist = new unittest::UnitTest_MultiList();
 
-		getGUI()->eventFrameStart += MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
+		MyGUI::Gui::getInstance().eventFrameStart += MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
 	}
 
 	void DemoKeeper::destroyScene()
 	{
-		getGUI()->eventFrameStart -= MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
+		MyGUI::Gui::getInstance().eventFrameStart -= MyGUI::newDelegate(this, &DemoKeeper::notifyFrameStarted);
 
 		if (unittest_multilist)
 		{

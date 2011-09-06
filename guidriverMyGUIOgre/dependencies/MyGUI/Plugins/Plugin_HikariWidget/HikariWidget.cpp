@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2009
-	@module
 */
 #include "HikariWidget.h"
 #include "FlashSite.h"
@@ -17,11 +16,9 @@ namespace Hikari
 	{
 	}
 
-	void HikariWidget::_initialise(MyGUI::WidgetStyle _style, const MyGUI::IntCoord& _coord, MyGUI::Align _align, MyGUI::ResourceSkin* _info, MyGUI::Widget* _parent, MyGUI::ICroppedRectangle * _croppedParent, MyGUI::IWidgetCreator * _creator, const std::string& _name)
+	void HikariWidget::initialiseOverride()
 	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
-
-		initialiseWidgetSkin(_info);
+		Base::initialiseOverride();
 
 		createTexture(TRM_PT_VIEW_REQUESTED);
 		requestUpdateCanvas = newDelegate(this, &HikariWidget::notifyUpdateCanvas);
@@ -32,7 +29,7 @@ namespace Hikari
 		MyGUI::Gui::getInstance().eventFrameStart += MyGUI::newDelegate(this, &HikariWidget::notifyFrameStart);
 	}
 
-	HikariWidget::~HikariWidget()
+	void HikariWidget::shutdownOverride()
 	{
 		MyGUI::Gui::getInstance().eventFrameStart -= MyGUI::newDelegate(this, &HikariWidget::notifyFrameStart);
 
@@ -40,22 +37,7 @@ namespace Hikari
 		delete mControl;
 		mControl = 0;
 
-		shutdownWidgetSkin();
-	}
-
-	void HikariWidget::baseChangeWidgetSkin(MyGUI::ResourceSkin* _info)
-	{
-		shutdownWidgetSkin();
-		Base::baseChangeWidgetSkin(_info);
-		initialiseWidgetSkin(_info);
-	}
-
-	void HikariWidget::initialiseWidgetSkin(MyGUI::ResourceSkin* _info)
-	{
-	}
-
-	void HikariWidget::shutdownWidgetSkin()
-	{
+		Base::shutdownOverride();
 	}
 
 	void HikariWidget::notifyUpdateCanvas(MyGUI::Canvas* _canvas, MyGUI::Canvas::Event _event)
@@ -115,7 +97,7 @@ namespace Hikari
 	void HikariWidget::gotoFrame(long frameNum)
 	{
 		mControl->getFlashInterface()->raw_GotoFrame(frameNum);
-	}	
+	}
 
 	void HikariWidget::setLoop(bool shouldLoop)
 	{
@@ -152,16 +134,16 @@ namespace Hikari
 		return mControl->callFunction(funcName, args);
 	}
 
-	void HikariWidget::onMouseDrag(int _left, int _top)
+	void HikariWidget::onMouseDrag(int _left, int _top, MyGUI::MouseButton _id)
 	{
 		mControl->injectMouseMove(_left - getAbsoluteLeft(), _top - getAbsoluteTop());
-		Base::onMouseDrag(_left, _top);
+		Base::onMouseDrag(_left, _top, _id);
 	}
 
 	void HikariWidget::onMouseMove(int _left, int _top)
 	{
 		mControl->injectMouseMove(_left - getAbsoluteLeft(), _top - getAbsoluteTop());
-		Base::onMouseDrag(_left, _top);
+		Base::onMouseMove(_left, _top);
 	}
 
 	void HikariWidget::onMouseWheel(int _rel)
@@ -185,11 +167,23 @@ namespace Hikari
 		Base::onMouseButtonReleased(_left, _top, _id);
 	}
 
-	void HikariWidget::setProperty(const std::string& _key, const std::string& _value)
+	void HikariWidget::setPropertyOverride(const std::string& _key, const std::string& _value)
 	{
-		if (_key == "Hikari_Source") load(_value);
-		else if (_key == "Hikari_Transparent") setTransparent(MyGUI::utility::parseValue<bool>(_value));
-		else Base::setProperty(_key, _value);
+		if (_key == "Source")
+			load(_value);
+		else if (_key == "Transparent")
+			setTransparent(MyGUI::utility::parseValue<bool>(_value));
+		else
+		{
+			Base::setProperty(_key, _value);
+			return;
+		}
+		eventChangeProperty(this, _key, _value);
+	}
+
+	FlashControl* HikariWidget::getControl()
+	{
+		return mControl;
 	}
 
 } // namespace Hikari

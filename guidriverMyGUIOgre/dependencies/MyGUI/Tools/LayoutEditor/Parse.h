@@ -2,98 +2,65 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		10/2008
-	@module
 */
 #ifndef __PARSE_H__
 #define __PARSE_H__
 
 #include <MyGUI.h>
 
-namespace Parse
+namespace tools
 {
-	template <typename T>
-	bool checkParseInterval(MyGUI::Edit* _edit, size_t _count, T _min, T _max)
+	namespace utility
 	{
-		static const MyGUI::UString colour = MyGUI::LanguageManager::getInstance().getTag("ColourError");
-		const MyGUI::UString & text = _edit->getOnlyText();
-		size_t index = _edit->getTextCursor();
-		bool success = true;
 
-		T p;
-		std::istringstream str(text);
-		while (success && _count > 0)
+		void _setSuccessText(MyGUI::EditBox* _edit, const MyGUI::UString& _text, bool _success);
+		bool _checkStreamFail(std::istringstream& str);
+
+		template <typename T>
+		bool checkParseInterval(MyGUI::EditBox* _edit, size_t _count, T _min, T _max)
 		{
-			str >> p;
-			if (p > _max || p < _min) success = false;
-			-- _count;
-		}
-		if (success)
-		{
-			if (str.fail())
+			const MyGUI::UString& text = _edit->getOnlyText();
+			bool success = true;
+
+			T p;
+			std::istringstream str(text);
+			while (success && _count > 0)
 			{
-				success = false;
+				str >> p;
+				if (p > _max || p < _min) success = false;
+				-- _count;
 			}
-			else
+			if (success)
 			{
-				std::string tmp;
-				str >> tmp;
-				if (!str.fail() || tmp.find_first_not_of(" \t\r") != std::string::npos)
-				{
-					success = false;
-				}
-				else
-				{
-					success = true;
-				}
+				success = _checkStreamFail(str);
 			}
+
+			_setSuccessText(_edit, text, success);
+			return success;
 		}
 
-		if (success) _edit->setCaption(text);
-		else _edit->setCaption(colour + text);
-		_edit->setTextCursor(index);
-		return success;
-	}
+		template <typename T>
+		bool checkParse(MyGUI::EditBox* _edit, size_t _count)
+		{
+			const MyGUI::UString& text = _edit->getOnlyText();
+			bool success = false;
 
-	template <typename T>
-	bool checkParse(MyGUI::Edit* _edit, size_t _count)
-	{
-		static const MyGUI::UString colour = MyGUI::LanguageManager::getInstance().getTag("ColourError");
-		const MyGUI::UString & text = _edit->getOnlyText();
-		size_t index = _edit->getTextCursor();
-		bool success = false;
-
-		T p;
-		std::istringstream str(text);
-		while (_count > 0)
-		{
-			str >> p;
-			-- _count;
-		}
-		if (str.fail())
-		{
-			success = false;
-		}
-		else
-		{
-			std::string tmp;
-			str >> tmp;
-			if (!str.fail() || tmp.find_first_not_of(" \t\r") != std::string::npos)
+			T p;
+			std::istringstream str(text);
+			while (_count > 0)
 			{
-				success = false;
+				str >> p;
+				-- _count;
 			}
-			else
-			{
-				success = true;
-			}
+			success = _checkStreamFail(str);
+
+			_setSuccessText(_edit, text, success);
+			return success;
 		}
-		if (success) _edit->setCaption(text);
-		else _edit->setCaption(colour + text);
-		_edit->setTextCursor(index);
-		return success;
-	}
 
-	bool checkParseFileName(MyGUI::Edit* _edit);
+		bool checkParseFileName(MyGUI::EditBox* _edit);
 
-}// namespace Parse
+	} // namespace utility
+} // namespace tools
 
 #endif // __PARSE_H__

@@ -2,15 +2,18 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "PanelDirector.h"
 
 namespace demo
 {
 
-	PanelDirector::PanelDirector() : BasePanelViewItem("PanelDirector.layout")
+	PanelDirector::PanelDirector() :
+		BasePanelViewItem("PanelDirector.layout"),
+		mCheckShowStatic(nullptr),
+		mCheckShowDynamic(nullptr),
+		mComboCount(nullptr)
 	{
 	}
 
@@ -22,9 +25,9 @@ namespace demo
 		assignWidget(mCheckShowDynamic, "check_Dynamic");
 		assignWidget(mComboCount, "combo_Count");
 
-		mCheckShowStatic->eventMouseButtonClick = MyGUI::newDelegate(this, &PanelDirector::notifyMouseButtonClick);
-		mCheckShowDynamic->eventMouseButtonClick = MyGUI::newDelegate(this, &PanelDirector::notifyMouseButtonClick);
-		mComboCount->eventComboAccept = MyGUI::newDelegate(this, &PanelDirector::notifyComboAccept);
+		mCheckShowStatic->eventMouseButtonClick += MyGUI::newDelegate(this, &PanelDirector::notifyMouseButtonClick);
+		mCheckShowDynamic->eventMouseButtonClick += MyGUI::newDelegate(this, &PanelDirector::notifyMouseButtonClick);
+		mComboCount->eventComboAccept += MyGUI::newDelegate(this, &PanelDirector::notifyComboAccept);
 		mComboCount->setIndexSelected(4);
 	}
 
@@ -36,19 +39,19 @@ namespace demo
 	{
 		if (_sender == mCheckShowStatic)
 		{
-			mCheckShowStatic->setButtonPressed( ! mCheckShowStatic->getButtonPressed());
-			eventChangePanels(EVENT_SHOW_STATIC, (size_t)mCheckShowStatic->getButtonPressed());
+			mCheckShowStatic->setStateSelected( ! mCheckShowStatic->getStateSelected());
+			eventChangePanels(EVENT_SHOW_STATIC, (size_t)mCheckShowStatic->getStateSelected());
 		}
 		else if (_sender == mCheckShowDynamic)
 		{
-			mCheckShowDynamic->setButtonPressed( ! mCheckShowDynamic->getButtonPressed());
-			eventChangePanels(EVENT_SHOW_DYNAMIC, (size_t)mCheckShowDynamic->getButtonPressed());
+			mCheckShowDynamic->setStateSelected( ! mCheckShowDynamic->getStateSelected());
+			eventChangePanels(EVENT_SHOW_DYNAMIC, (size_t)mCheckShowDynamic->getStateSelected());
 		}
 	}
 
 	void PanelDirector::notifyComboAccept(MyGUI::ComboBox* _sender, size_t _index)
 	{
-		eventChangePanels(EVENT_COUNT_DYNAMIC, MyGUI::utility::parseInt(_sender->getCaption()));
+		eventChangePanels(EVENT_COUNT_DYNAMIC, MyGUI::utility::parseInt(_sender->getOnlyText()));
 	}
 
 } // namespace demo

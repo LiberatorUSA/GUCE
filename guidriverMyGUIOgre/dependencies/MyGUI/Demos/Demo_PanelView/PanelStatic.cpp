@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "PanelStatic.h"
 
 namespace demo

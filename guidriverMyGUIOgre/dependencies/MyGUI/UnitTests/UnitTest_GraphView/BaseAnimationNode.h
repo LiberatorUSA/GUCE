@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __BASE_ANIMATION_NODE_H__
 #define __BASE_ANIMATION_NODE_H__
@@ -14,14 +13,15 @@
 namespace demo
 {
 
-	class BaseAnimationNode : public wraps::BaseGraphNode
+	class BaseAnimationNode :
+		public wraps::BaseGraphNode
 	{
 	public:
 		BaseAnimationNode(const std::string& _layout, const std::string& _type, const std::string& _name) :
 			BaseGraphNode(_layout),
+			mAnimationNode(0),
 			mType(_type),
-			mName(_name),
-			mAnimationNode(0)
+			mName(_name)
 		{
 		}
 
@@ -56,8 +56,14 @@ namespace demo
 		{
 		}
 
-		const std::string& getName() const { return mName; }
-		const std::string& getType() const  { return mType; }
+		const std::string& getName() const
+		{
+			return mName;
+		}
+		const std::string& getType() const
+		{
+			return mType;
+		}
 
 		/** Event : Invalidate node.\n
 			signature : void method(BaseAnimationNode* _sender)

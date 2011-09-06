@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "MonitorPanel.h"
 #include "CommandManager.h"
 #include "ResourceDevice.h"
@@ -38,15 +37,15 @@ namespace demo
 				if (device != nullptr)
 				{
 					mShipImage->setItemName(device->getDeviceName());
-					mDescription->setProperty("Widget_Caption", device->getDeviceDescription());
-					mEnergy->setProperty("Progress_Position", MyGUI::utility::toString(device->getValueEnergy()));
-					mExplosion->setProperty("Progress_Position", MyGUI::utility::toString(device->getValueExplosion()));
-					mTarget->setProperty("Progress_Position", MyGUI::utility::toString(device->getValueTarget()));
-					mHP->setProperty("Progress_Position", MyGUI::utility::toString(device->getValueHP()));
+					mDescription->setProperty("Caption", device->getDeviceDescription());
+					mEnergy->setProperty("RangePosition", MyGUI::utility::toString(device->getValueEnergy()));
+					mExplosion->setProperty("RangePosition", MyGUI::utility::toString(device->getValueExplosion()));
+					mTarget->setProperty("RangePosition", MyGUI::utility::toString(device->getValueTarget()));
+					mHP->setProperty("RangePosition", MyGUI::utility::toString(device->getValueHP()));
 				}
 			}
 
 		}
 	}
 
- } // namespace demo
+} // namespace demo

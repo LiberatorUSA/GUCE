@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		05/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -48,6 +47,7 @@ namespace MyGUI
 		mTileH(true),
 		mTileV(true)
 	{
+		mVertexFormat = RenderManager::getInstance().getVertexFormat();
 	}
 
 	TileRect::~TileRect()
@@ -64,10 +64,11 @@ namespace MyGUI
 
 	void TileRect::setAlpha(float _alpha)
 	{
-		uint32 alpha = ((uint8)(_alpha*255) << 24);
+		uint32 alpha = ((uint8)(_alpha * 255) << 24);
 		mCurrentColour = (mCurrentColour & 0x00FFFFFF) | (alpha & 0xFF000000);
 
-		if (nullptr != mNode) mNode->outOfDate(mRenderItem);
+		if (nullptr != mNode)
+			mNode->outOfDate(mRenderItem);
 	}
 
 	void TileRect::_correctView()
@@ -75,15 +76,10 @@ namespace MyGUI
 		if (nullptr != mNode) mNode->outOfDate(mRenderItem);
 	}
 
-	void TileRect::_setAlign(const IntCoord& _oldcoord, bool _update)
-	{
-		_setAlign(_oldcoord.size(), _update);
-	}
-
-	void TileRect::_setAlign(const IntSize& _oldsize, bool _update)
+	void TileRect::_setAlign(const IntSize& _oldsize)
 	{
 		// необходимо разобраться
-		bool need_update = true;//_update;
+		bool need_update = true;
 
 		// первоначальное выравнивание
 		if (mAlign.isHStretch())
@@ -199,7 +195,7 @@ namespace MyGUI
 	{
 		if (!mVisible || mEmptyView || mTileSize.empty()) return;
 
-		VertexQuad* quad = (VertexQuad*)mRenderItem->getCurrentVertextBuffer();
+		VertexQuad* quad = (VertexQuad*)mRenderItem->getCurrentVertexBuffer();
 
 		const RenderTargetInfo& info = mRenderItem->getRenderTarget()->getInfo();
 
@@ -229,7 +225,7 @@ namespace MyGUI
 		float top = window_top;
 		float bottom = window_top;
 
-		for (int y=0; y<mCoord.height; y+=mTileSize.height)
+		for (int y = 0; y < mCoord.height; y += mTileSize.height)
 		{
 			top = bottom;
 			bottom -= mRealTileHeight;
@@ -262,7 +258,7 @@ namespace MyGUI
 				texture_crop_height = true;
 			}
 
-			for (int x=0; x<mCoord.width; x+=mTileSize.width)
+			for (int x = 0; x < mCoord.width; x += mTileSize.width)
 			{
 				left = right;
 				right += mRealTileWidth;
@@ -331,7 +327,7 @@ namespace MyGUI
 					texture_right,
 					texture_bottom,
 					mCurrentColour
-					);
+				);
 
 				count ++;
 			}
@@ -340,12 +336,12 @@ namespace MyGUI
 		mRenderItem->setLastVertexCount(VertexQuad::VertexCount * count);
 	}
 
-	void TileRect::createDrawItem(ITexture* _texture, ILayerNode * _node)
+	void TileRect::createDrawItem(ITexture* _texture, ILayerNode* _node)
 	{
 		MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
 		mNode = _node;
-		mRenderItem = mNode->addToRenderItem(_texture, this);
+		mRenderItem = mNode->addToRenderItem(_texture, true, false);
 		mRenderItem->addDrawItem(this, mCountVertex);
 	}
 
@@ -371,7 +367,7 @@ namespace MyGUI
 	void TileRect::_setColour(const Colour& _value)
 	{
 		uint32 colour = texture_utility::toColourARGB(_value);
-		texture_utility::convertColour(colour, RenderManager::getInstance().getVertexFormat());
+		texture_utility::convertColour(colour, mVertexFormat);
 		mCurrentColour = (colour & 0x00FFFFFF) | (mCurrentColour & 0xFF000000);
 
 		if (nullptr != mNode)

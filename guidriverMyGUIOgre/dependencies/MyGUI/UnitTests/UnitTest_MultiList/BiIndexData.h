@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 #ifndef __BIINDEX_DATA_H__
 #define __BIINDEX_DATA_H__
@@ -12,14 +11,21 @@
 namespace unittest
 {
 
-	class BiIndexData : public MyGUI::BiIndexBase
+	class BiIndexData :
+		public MyGUI::BiIndexBase
 	{
 	public:
-		size_t getItemCount() const { return mItemsInfo.size(); }
+		size_t getItemCount() const
+		{
+			return mItemsInfo.size();
+		}
 
 		void insertItemAt(size_t _index, const std::string& _name, size_t _data);
 
-		void addItem(const std::string& _name, size_t _data) { insertItemAt(MyGUI::ITEM_NONE, _name, _data); }
+		void addItem(const std::string& _name, size_t _data)
+		{
+			insertItemAt(MyGUI::ITEM_NONE, _name, _data);
+		}
 
 		void removeItemAt(size_t _index);
 

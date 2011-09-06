@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 
@@ -21,16 +20,16 @@ namespace demo
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/Demos/Demo_Console");
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void DemoKeeper::createScene()
 	{
-		getGUI()->load("Wallpaper0.layout");
-		MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().load("BackHelp.layout");
-		root.at(0)->findWidget("Text")->setCaption("Write commands in console to change some widget parameters. For example \"colour 1 0 0 1\" changes text colour to red.");
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
+		const MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().loadLayout("HelpPanel.layout");
+		root.at(0)->findWidget("Text")->castType<MyGUI::TextBox>()->setCaption("Write commands in console to change some widget parameters. For example \"colour 1 0 0 1\" changes text colour to red.");
 
-		mEdit = getGUI()->createWidget<MyGUI::Edit>("EditStretch", MyGUI::IntCoord(10, 80, 100, 100), MyGUI::Align::Default, "Overlapped");
+		mEdit = MyGUI::Gui::getInstance().createWidget<MyGUI::EditBox>("EditBoxStretch", MyGUI::IntCoord(10, 80, 100, 100), MyGUI::Align::Default, "Overlapped");
 		mEdit->setCaption("some edit");
 		mEdit->setTextAlign(MyGUI::Align::Center);
 		mEdit->setEditMultiLine(true);
@@ -47,6 +46,11 @@ namespace demo
 
 	void DemoKeeper::destroyScene()
 	{
+		mConsole->unregisterConsoleDelegate("colour");
+		mConsole->unregisterConsoleDelegate("show");
+		mConsole->unregisterConsoleDelegate("alpha");
+		mConsole->unregisterConsoleDelegate("coord");
+
 		delete mConsole;
 		mConsole = nullptr;
 	}
@@ -55,14 +59,14 @@ namespace demo
 	{
 		if (_key == MyGUI::KeyCode::Grave)
 		{
-			mConsole->setVisible(!mConsole->isVisible());
+			mConsole->setVisible(!mConsole->getVisible());
 			return;
 		}
 
 		base::BaseManager::injectKeyPress(_key, _text);
 	}
 
-	void DemoKeeper::command(const MyGUI::UString & _key, const MyGUI::UString & _value)
+	void DemoKeeper::command(const MyGUI::UString& _key, const MyGUI::UString& _value)
 	{
 		if (_key == "colour")
 		{
@@ -86,7 +90,7 @@ namespace demo
 		{
 			if (_value.empty())
 			{
-				mConsole->addToConsole(mConsole->getConsoleStringCurrent(), _key, MyGUI::utility::toString(mEdit->isVisible()));
+				mConsole->addToConsole(mConsole->getConsoleStringCurrent(), _key, MyGUI::utility::toString(mEdit->getVisible()));
 			}
 			else
 			{
@@ -148,4 +152,3 @@ namespace demo
 } // namespace demo
 
 MYGUI_APP(demo::DemoKeeper)
-

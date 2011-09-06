@@ -2,7 +2,6 @@
 	@file
 	@author		Denis Koronchik
 	@date		09/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -22,43 +21,46 @@
 */
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_DynLibManager.h"
+#include "MyGUI_Gui.h"
+#include "MyGUI_WidgetManager.h"
 
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT( DynLibManager )
+	template <> DynLibManager* Singleton<DynLibManager>::msInstance = nullptr;
+	template <> const char* Singleton<DynLibManager>::mClassTypeName("DynLibManager");
+
+	DynLibManager::DynLibManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void DynLibManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		Gui::getInstance().eventFrameStart += newDelegate(this, &DynLibManager::notifyEventFrameStart);
+
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void DynLibManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
-		StringDynLibMap::iterator it;
+		unloadAll();
 
-		// unload and delete resources
-		for (it = mLibsMap.begin(); it != mLibsMap.end(); ++it)
-		{
-			it->second->unload();
-			delete it->second;
-		}
+		Gui::getInstance().eventFrameStart -= newDelegate(this, &DynLibManager::notifyEventFrameStart);
+		_unloadDelayDynLibs();
 
-		// Empty the list
-		mLibsMap.clear();
-
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
-	DynLib* DynLibManager::load(const std::string &fileName)
+	DynLib* DynLibManager::load(const std::string& fileName)
 	{
 		StringDynLibMap::iterator it = mLibsMap.find(fileName);
 
@@ -67,7 +69,7 @@ namespace MyGUI
 			return it->second;
 		}
 
-		DynLib *pLib = new DynLib(fileName);
+		DynLib* pLib = new DynLib(fileName);
 		if (!pLib->load())
 		{
 			delete pLib;
@@ -78,14 +80,47 @@ namespace MyGUI
 		return pLib;
 	}
 
-	void DynLibManager::unload(DynLib *library)
+	void DynLibManager::unload(DynLib* library)
 	{
 		StringDynLibMap::iterator it = mLibsMap.find(library->getName());
 
 		if (it != mLibsMap.end())
 			mLibsMap.erase(it);
 
-		library->unload();
-		delete library;
+		mDelayDynLib.push_back(library);
 	}
-}
+
+	void DynLibManager::unloadAll()
+	{
+		// unload and delete resources
+		for (StringDynLibMap::iterator it = mLibsMap.begin(); it != mLibsMap.end(); ++it)
+		{
+			mDelayDynLib.push_back(it->second);
+		}
+		// Empty the list
+		mLibsMap.clear();
+	}
+
+	void DynLibManager::notifyEventFrameStart(float _time)
+	{
+		_unloadDelayDynLibs();
+	}
+
+	void DynLibManager::_unloadDelayDynLibs()
+	{
+		if (!mDelayDynLib.empty())
+		{
+			WidgetManager* manager = WidgetManager::getInstancePtr();
+			if (manager != nullptr)
+				manager->_deleteDelayWidgets();
+
+			for (VectorDynLib::iterator entry = mDelayDynLib.begin(); entry != mDelayDynLib.end(); ++entry)
+			{
+				(*entry)->unload();
+				delete (*entry);
+			}
+			mDelayDynLib.clear();
+		}
+	}
+
+} // namespace MyGUI

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #ifndef __CONTROLLER_RANDOM_PROGRESS_H__
@@ -48,7 +47,7 @@ namespace demo
 		{
 			if ((::rand() % 2) == 0)
 			{
-				MyGUI::Progress* progress = _widget->castType<MyGUI::Progress>(false);
+				MyGUI::ProgressBar* progress = _widget->castType<MyGUI::ProgressBar>(false);
 				if (progress != nullptr)
 				{
 					size_t rande = progress->getProgressRange();

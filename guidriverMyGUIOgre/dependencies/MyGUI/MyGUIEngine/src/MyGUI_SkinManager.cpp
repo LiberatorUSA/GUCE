@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -30,6 +29,8 @@
 #include "MyGUI_DataManager.h"
 #include "MyGUI_FactoryManager.h"
 #include "MyGUI_IStateInfo.h"
+#include "MyGUI_LayoutManager.h"
+#include "MyGUI_BackwardCompatibility.h"
 
 namespace MyGUI
 {
@@ -38,12 +39,18 @@ namespace MyGUI
 	const std::string XML_TYPE_RESOURCE("Resource");
 	const std::string RESOURCE_DEFAULT_NAME("Default");
 
-	MYGUI_INSTANCE_IMPLEMENT( SkinManager )
+	template <> SkinManager* Singleton<SkinManager>::msInstance = nullptr;
+	template <> const char* Singleton<SkinManager>::mClassTypeName("SkinManager");
+
+	SkinManager::SkinManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void SkinManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		ResourceManager::getInstance().registerLoadXmlDelegate(XML_TYPE) = newDelegate(this, &SkinManager::_load);
 		FactoryManager::getInstance().registerFactory<ResourceSkin>(XML_TYPE_RESOURCE);
@@ -51,25 +58,20 @@ namespace MyGUI
 		mDefaultName = "skin_Default";
 		createDefault(mDefaultName);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void SkinManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		ResourceManager::getInstance().unregisterLoadXmlDelegate(XML_TYPE);
 		FactoryManager::getInstance().unregisterFactory<ResourceSkin>(XML_TYPE_RESOURCE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
-	}
-
-	bool SkinManager::load(const std::string& _file)
-	{
-		return ResourceManager::getInstance()._loadImplement(_file, true, XML_TYPE, INSTANCE_TYPE_NAME);
 	}
 
 	void SkinManager::_load(xml::ElementPtr _node, const std::string& _file, Version _version)
@@ -80,7 +82,8 @@ namespace MyGUI
 		{
 			std::string name = skin->findAttribute("name");
 			std::string type = skin->findAttribute("type");
-			if (type.empty()) type = "ResourceSkin";
+			if (type.empty())
+				type = "ResourceSkin";
 
 			IObject* object = FactoryManager::getInstance().createObject(XML_TYPE_RESOURCE, type);
 			if (object != nullptr)
@@ -101,19 +104,23 @@ namespace MyGUI
 		newnode->addAttribute("type", ResourceSkin::getClassTypeName());
 		newnode->addAttribute("name", _value);
 
-		ResourceManager::getInstance()._load(root, "", Version());
+		ResourceManager::getInstance().loadFromXmlNode(root, "", Version());
 	}
 
 	ResourceSkin* SkinManager::getByName(const std::string& _name) const
 	{
+		std::string skinName = BackwardCompatibility::getSkinRename(_name);
 		IResource* result = nullptr;
-		if (!_name.empty() && _name != RESOURCE_DEFAULT_NAME)
-			result = ResourceManager::getInstance().getByName(_name, false);
+		if (!skinName.empty() && skinName != RESOURCE_DEFAULT_NAME)
+			result = ResourceManager::getInstance().getByName(skinName, false);
 
 		if (result == nullptr)
 		{
 			result = ResourceManager::getInstance().getByName(mDefaultName, false);
-			MYGUI_LOG(Error, "Skin '" << _name << "' not found. Replaced with default skin.");
+			if (!skinName.empty() && skinName != RESOURCE_DEFAULT_NAME)
+			{
+				MYGUI_LOG(Error, "Skin '" << skinName << "' not found. Replaced with default skin." << " [" << LayoutManager::getInstance().getCurrentLayout() << "]");
+			}
 		}
 
 		return result ? result->castType<ResourceSkin>(false) : nullptr;
@@ -121,12 +128,19 @@ namespace MyGUI
 
 	bool SkinManager::isExist(const std::string& _name) const
 	{
-		return ResourceManager::getInstance().isExist(_name);
+		std::string skinName = BackwardCompatibility::getSkinRename(_name);
+		IResource* result = ResourceManager::getInstance().getByName(skinName, false);
+		return (result != nullptr) && (result->isType<ResourceSkin>());
 	}
 
 	void SkinManager::setDefaultSkin(const std::string& _value)
 	{
 		mDefaultName = _value;
+	}
+
+	const std::string SkinManager::getDefaultSkin() const
+	{
+		return mDefaultName;
 	}
 
 } // namespace MyGUI

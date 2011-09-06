@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 
@@ -21,16 +20,16 @@ namespace demo
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/Demos/Demo_Colour");
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void DemoKeeper::createScene()
 	{
-		getGUI()->load("Wallpaper0.layout");
-		MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().load("BackHelp.layout");
-		root.at(0)->findWidget("Text")->setCaption("Sample colour picker implementation. Select text in Edit and then select colour to colour selected part of text.");
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
+		const MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().loadLayout("HelpPanel.layout");
+		root.at(0)->findWidget("Text")->castType<MyGUI::TextBox>()->setCaption("Sample colour picker implementation. Select text in EditBox and then select colour to colour selected part of text.");
 
-		MyGUI::Gui::getInstance().load("colour_slider_skin.xml");
+		MyGUI::ResourceManager::getInstance().load("ColourSliderSkin.xml");
 
 		mColourPanel = new ColourPanel();
 		mEditPanel = new EditPanel();
@@ -54,4 +53,3 @@ namespace demo
 } // namespace demo
 
 MYGUI_APP(demo::DemoKeeper)
-

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 #ifndef __COMMAND_MANAGER_H__
 #define __COMMAND_MANAGER_H__
@@ -21,11 +20,14 @@ namespace demo
 		CommandManager();
 		virtual ~CommandManager();
 
-		static CommandManager& getInstance() { return *msCommandManager; }
+		static CommandManager& getInstance()
+		{
+			return *msCommandManager;
+		}
 
 		void execiteCommand(const std::string& _name, MyGUI::Any _data);
 
-		void registerCommand(const std::string& _name, CommandDelegate::IDelegate * _delegate);
+		void registerCommand(const std::string& _name, CommandDelegate::IDelegate* _delegate);
 		void unregisterCommand(const std::string& _name);
 
 	private:

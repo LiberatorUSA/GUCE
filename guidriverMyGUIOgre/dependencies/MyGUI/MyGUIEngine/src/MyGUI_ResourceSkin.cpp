@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		26/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -32,6 +31,16 @@ namespace MyGUI
 	{
 	}
 
+	ResourceSkin::~ResourceSkin()
+	{
+		for (MapWidgetStateInfo::iterator item = mStates.begin(); item != mStates.end(); ++ item)
+		{
+			for (VectorStateInfo::iterator info = (*item).second.begin(); info != (*item).second.end(); ++ info)
+				delete (*info);
+		}
+		mStates.clear();
+	}
+
 	void ResourceSkin::deserialization(xml::ElementPtr _node, Version _version)
 	{
 		Base::deserialization(_node, _version);
@@ -58,12 +67,7 @@ namespace MyGUI
 
 		// проверяем маску
 		if (_node->findAttribute("mask", tmp))
-		{
-			if (!loadMask(tmp))
-			{
-				MYGUI_LOG(Error, "Skin: mask not load '" << tmp << "'");
-			}
-		}
+			addProperty("MaskPick", tmp);
 
 		// берем детей и крутимся, цикл с саб скинами
 		xml::ElementEnumerator basis = _node->getElementEnumerator();
@@ -95,7 +99,7 @@ namespace MyGUI
 					Align::parse(basis->findAttribute("align")),
 					basis->findAttribute("layer"),
 					basis->findAttribute("name")
-					);
+				);
 
 				xml::ElementEnumerator child_params = basis->getElementEnumerator();
 				while (child_params.next("Property"))
@@ -187,7 +191,7 @@ namespace MyGUI
 		}
 	}
 
-	void ResourceSkin::setInfo(const IntSize& _size, const std::string &_texture)
+	void ResourceSkin::setInfo(const IntSize& _size, const std::string& _texture)
 	{
 		mSize = _size;
 		mTexture = _texture;
@@ -198,10 +202,10 @@ namespace MyGUI
 		checkState(_bind.mStates);
 		mBasis.push_back(SubWidgetInfo(_bind.mType, _bind.mOffset, _bind.mAlign));
 		checkBasis();
-		fillState(_bind.mStates, mBasis.size()-1);
+		fillState(_bind.mStates, mBasis.size() - 1);
 	}
 
-	void ResourceSkin::addProperty(const std::string &_key, const std::string &_value)
+	void ResourceSkin::addProperty(const std::string& _key, const std::string& _value)
 	{
 		mProperties[_key] = _value;
 	}
@@ -211,16 +215,11 @@ namespace MyGUI
 		mChilds.push_back(_child);
 	}
 
-	bool ResourceSkin::loadMask(const std::string& _file)
-	{
-		return mMaskPeek.load(_file);
-	}
-
 	void ResourceSkin::clear()
 	{
-		for (MapWidgetStateInfo::iterator iter = mStates.begin(); iter!=mStates.end(); ++iter)
+		for (MapWidgetStateInfo::iterator iter = mStates.begin(); iter != mStates.end(); ++iter)
 		{
-			for (VectorStateInfo::iterator iter2=iter->second.begin(); iter2!=iter->second.end(); ++iter2)
+			for (VectorStateInfo::iterator iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2)
 			{
 				delete *iter2;
 			}
@@ -249,7 +248,7 @@ namespace MyGUI
 	void ResourceSkin::checkBasis()
 	{
 		// и увеличиваем размер смещений по колличеству сабвиджетов
-		for (MapWidgetStateInfo::iterator iter = mStates.begin(); iter!=mStates.end(); ++iter)
+		for (MapWidgetStateInfo::iterator iter = mStates.begin(); iter != mStates.end(); ++iter)
 		{
 			iter->second.resize(mBasis.size());
 		}
@@ -261,6 +260,41 @@ namespace MyGUI
 		{
 			mStates[iter->first][_index] = iter->second;
 		}
+	}
+
+	const IntSize& ResourceSkin::getSize() const
+	{
+		return mSize;
+	}
+
+	const std::string& ResourceSkin::getTextureName() const
+	{
+		return mTexture;
+	}
+
+	const VectorSubWidgetInfo& ResourceSkin::getBasisInfo() const
+	{
+		return mBasis;
+	}
+
+	const MapWidgetStateInfo& ResourceSkin::getStateInfo() const
+	{
+		return mStates;
+	}
+
+	const MapString& ResourceSkin::getProperties() const
+	{
+		return mProperties;
+	}
+
+	const VectorChildSkinInfo& ResourceSkin::getChild() const
+	{
+		return mChilds;
+	}
+
+	const std::string& ResourceSkin::getSkinName() const
+	{
+		return mSkinName;
 	}
 
 } // namespace MyGUI

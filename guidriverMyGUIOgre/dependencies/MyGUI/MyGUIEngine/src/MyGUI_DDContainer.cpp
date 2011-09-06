@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -41,33 +40,6 @@ namespace MyGUI
 	{
 	}
 
-	void DDContainer::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
-	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
-
-		initialiseWidgetSkin(_info);
-	}
-
-	DDContainer::~DDContainer()
-	{
-		shutdownWidgetSkin();
-	}
-
-	void DDContainer::baseChangeWidgetSkin(ResourceSkin* _info)
-	{
-		shutdownWidgetSkin();
-		Base::baseChangeWidgetSkin(_info);
-		initialiseWidgetSkin(_info);
-	}
-
-	void DDContainer::initialiseWidgetSkin(ResourceSkin* _info)
-	{
-	}
-
-	void DDContainer::shutdownWidgetSkin()
-	{
-	}
-
 	void DDContainer::onMouseButtonPressed(int _left, int _top, MouseButton _id)
 	{
 		// смещение внутри виджета, куда кликнули мышкой
@@ -85,11 +57,11 @@ namespace MyGUI
 		Base::onMouseButtonReleased(_left, _top, _id);
 	}
 
-	void DDContainer::onMouseDrag(int _left, int _top)
+	void DDContainer::onMouseDrag(int _left, int _top, MouseButton _id)
 	{
-		mouseDrag();
+		mouseDrag(_id);
 
-		Base::onMouseDrag(_left, _top);
+		Base::onMouseDrag(_left, _top, _id);
 	}
 
 	void DDContainer::mouseButtonPressed(MouseButton _id)
@@ -122,8 +94,11 @@ namespace MyGUI
 		}
 	}
 
-	void DDContainer::mouseDrag()
+	void DDContainer::mouseDrag(MouseButton _id)
 	{
+		if (MouseButton::Left != _id)
+			return;
+
 		// нужно ли обновить данные
 		bool update = false;
 
@@ -142,7 +117,6 @@ namespace MyGUI
 			if (mNeedDrop)
 			{
 				eventChangeDDState(this, DDItemState::Start);
-				setEnableToolTip(false);
 			}
 			else
 			{
@@ -178,13 +152,16 @@ namespace MyGUI
 		if (item)
 		{
 			// делаем запрос на индекс по произвольному виджету
-			item->_getContainer(receiver, receiver_index);
+			receiver = item->_getContainer();
 			// работаем только с контейнерами
 			if (receiver && receiver->isType<DDContainer>())
 			{
+				receiver_index = receiver->_getItemIndex(item);
+
 				// подписываемся на информацию о валидности дропа
 				mReseiverContainer = static_cast<DDContainer*>(receiver);
-				mReseiverContainer->_eventInvalideContainer = newDelegate(this, &DDContainer::notifyInvalideDrop);
+				mReseiverContainer->_eventInvalideContainer.clear();
+				mReseiverContainer->_eventInvalideContainer += newDelegate(this, &DDContainer::notifyInvalideDrop);
 
 				// делаем запрос на возможность дропа
 				mDropInfo.set(this, mDropSenderIndex, mReseiverContainer, receiver_index);
@@ -246,7 +223,6 @@ namespace MyGUI
 			if (_reset) mDropResult = false;
 			eventDropResult(this, mDropInfo, mDropResult);
 			eventChangeDDState(this, DDItemState::End);
-			setEnableToolTip(true);
 
 			// сбрасываем инфу для дропа
 			mStartDrop = false;
@@ -288,24 +264,33 @@ namespace MyGUI
 
 	void DDContainer::notifyInvalideDrop(DDContainer* _sender)
 	{
-		mouseDrag();
+		mouseDrag(MouseButton::Left);
 	}
 
-	void DDContainer::_getContainer(Widget*& _container, size_t& _index)
+	void DDContainer::setPropertyOverride(const std::string& _key, const std::string& _value)
 	{
-		_container = this;
-		_index = ITEM_NONE;
-	}
-
-	void DDContainer::setProperty(const std::string& _key, const std::string& _value)
-	{
-		if (_key == "DDContainer_NeedDragDrop") setNeedDragDrop(utility::parseValue<bool>(_value));
+		if (_key == "NeedDragDrop")
+			setNeedDragDrop(utility::parseValue<bool>(_value));
 		else
 		{
-			Base::setProperty(_key, _value);
+			Base::setPropertyOverride(_key, _value);
 			return;
 		}
 		eventChangeProperty(this, _key, _value);
+	}
+
+	void DDContainer::setNeedDragDrop(bool _value)
+	{
+		mNeedDragDrop = _value;
+	}
+
+	bool DDContainer::getNeedDragDrop() const
+	{
+		return mNeedDragDrop;
+	}
+
+	void DDContainer::_setContainerItemInfo(size_t _index, bool _set, bool _accept)
+	{
 	}
 
 } // namespace MyGUI

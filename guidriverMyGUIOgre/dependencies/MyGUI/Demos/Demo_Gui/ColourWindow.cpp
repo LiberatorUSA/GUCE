@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "ColourWindow.h"
 
 namespace demo
@@ -30,14 +29,12 @@ namespace demo
 		assignWidget(mLine, "Line");
 		assignBase(mBox, "Box");
 
-		mSliderRed->eventScrollChangePosition = MyGUI::newDelegate(this, &ColourWindow::notifyScrollChangePosition);
-		mSliderGreen->eventScrollChangePosition = MyGUI::newDelegate(this, &ColourWindow::notifyScrollChangePosition);
-		mSliderBlue->eventScrollChangePosition = MyGUI::newDelegate(this, &ColourWindow::notifyScrollChangePosition);
+		mSliderRed->eventScrollChangePosition += MyGUI::newDelegate(this, &ColourWindow::notifyScrollChangePosition);
+		mSliderGreen->eventScrollChangePosition += MyGUI::newDelegate(this, &ColourWindow::notifyScrollChangePosition);
+		mSliderBlue->eventScrollChangePosition += MyGUI::newDelegate(this, &ColourWindow::notifyScrollChangePosition);
 
-		mRawColourView = mColour->getSubWidgetMain()->castType<MyGUI::RawRect>();
-
-		mAdd->eventMouseButtonClick = MyGUI::newDelegate(this, &ColourWindow::notifyMouseButtonClick);
-		mLine->eventEditSelectAccept = MyGUI::newDelegate(this, &ColourWindow::notifyEditSelectAccept);
+		mAdd->eventMouseButtonClick += MyGUI::newDelegate(this, &ColourWindow::notifyMouseButtonClick);
+		mLine->eventEditSelectAccept += MyGUI::newDelegate(this, &ColourWindow::notifyEditSelectAccept);
 
 		if (_parent)
 		{
@@ -55,16 +52,16 @@ namespace demo
 		//mBox.shutdown();
 	}
 
-	void ColourWindow::notifyScrollChangePosition(MyGUI::VScroll* _sender, size_t _position)
+	void ColourWindow::notifyScrollChangePosition(MyGUI::ScrollBar* _sender, size_t _position)
 	{
 		MyGUI::Colour colour(float(mSliderRed->getScrollPosition()) / float(mSliderRed->getScrollRange()),
 			float(mSliderGreen->getScrollPosition()) / float(mSliderGreen->getScrollRange()),
 			float(mSliderBlue->getScrollPosition()) / float(mSliderBlue->getScrollRange()) );
 
-		mRawColourView->setRectColour(colour, colour, colour, colour);
+		mColour->setColour(colour);
 	}
 
-	void ColourWindow::notifyEditSelectAccept(MyGUI::Edit* _sender)
+	void ColourWindow::notifyEditSelectAccept(MyGUI::EditBox* _sender)
 	{
 		notifyMouseButtonClick(nullptr);
 	}
@@ -75,7 +72,7 @@ namespace demo
 			float(mSliderGreen->getScrollPosition()) / float(mSliderGreen->getScrollRange()),
 			float(mSliderBlue->getScrollPosition()) / float(mSliderBlue->getScrollRange()) );
 
-		mBox->addColourItem(colour, mLine->getCaption());
+		mBox->addColourItem(colour, mLine->getOnlyText());
 		mLine->setCaption("");
 	}
 

@@ -2,10 +2,9 @@
 	@file
 	@author		Albert Semenov
 	@date		1/2009
-	@module
 */
 
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "PointerManager.h"
 #include <MyGUI.h>
 

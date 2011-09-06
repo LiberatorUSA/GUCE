@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #include "CommandManager.h"
@@ -29,7 +28,7 @@ namespace demo
 			(*item).second(_name, _data);
 	}
 
-	void CommandManager::registerCommand(const std::string& _name, CommandDelegate::IDelegate * _delegate)
+	void CommandManager::registerCommand(const std::string& _name, CommandDelegate::IDelegate* _delegate)
 	{
 		mDelegates[_name] = _delegate;
 	}

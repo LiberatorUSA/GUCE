@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		04/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -23,13 +22,9 @@
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_Timer.h"
 
-#if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
+#if MYGUI_COMPILER == MYGUI_COMPILER_MSVC
 #	include <windows.h>
-#	ifndef __MINGW32__
-#		pragma comment(lib, "winmm.lib")
-#	else
-#		pragma comment(lib, "libwinmm.a")
-#	endif
+#	pragma comment(lib, "winmm.lib")
 #else
 #	include <sys/time.h>
 #endif
@@ -40,7 +35,6 @@ namespace MyGUI
 	Timer::Timer() :
 		mTimeStart(0)
 	{
-
 	}
 
 	void Timer::reset()
@@ -55,7 +49,7 @@ namespace MyGUI
 
 	unsigned long Timer::getCurrentMilliseconds()
 	{
-#if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
+#if MYGUI_COMPILER == MYGUI_COMPILER_MSVC
 		/*
 		We do this because clock() is not affected by timeBeginPeriod on Win32.
 		QueryPerformanceCounter is a little overkill for the amount of precision that
@@ -70,10 +64,9 @@ namespace MyGUI
 #else
 		struct timeval now;
 		gettimeofday(&now, NULL);
-		return (now.tv_sec)*1000+(now.tv_usec)/1000;
+		return (now.tv_sec) * 1000 + (now.tv_usec) / 1000;
 		//return ( unsigned long )(( double )( clock() ) / (( double )CLOCKS_PER_SEC / 1000.0 ) );
 #endif
 	}
-
 
 } // namespace MyGUI

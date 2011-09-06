@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		05/2008
-	@module
 */
 
 #include "MyGUI_OgreDataManager.h"
@@ -13,49 +12,31 @@
 
 #include "MyGUI_LastHeader.h"
 
-#if MYGUI_PLATFORM == MYGUI_PLATFORM_APPLE
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
 namespace MyGUI
 {
 
-	#if MYGUI_PLATFORM == MYGUI_PLATFORM_APPLE
-	// This function will locate the path to our application on OS X,
-	// unlike windows you can not rely on the curent working directory
-	// for locating your configuration files and resources.
-	std::string MYGUI_EXPORT macBundlePath()
+	OgreDataManager::OgreDataManager() :
+		mIsInitialise(false)
 	{
-		char path[1024];
-		CFBundleRef mainBundle = CFBundleGetMainBundle();    assert(mainBundle);
-		CFURLRef mainBundleURL = CFBundleCopyBundleURL(mainBundle);    assert(mainBundleURL);
-		CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);    assert(cfStringRef);
-		CFStringGetCString(cfStringRef, path, 1024, kCFStringEncodingASCII);
-		CFRelease(mainBundleURL);
-		CFRelease(cfStringRef);
-		return std::string(path);
 	}
-	#endif
-
-	MYGUI_INSTANCE_IMPLEMENT(OgreDataManager)
 
 	void OgreDataManager::initialise(const std::string& _group)
 	{
-		MYGUI_PLATFORM_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_PLATFORM_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		mGroup = _group;
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void OgreDataManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_PLATFORM_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
@@ -63,13 +44,14 @@ namespace MyGUI
 	{
 		try
 		{
-			Ogre::DataStreamPtr stream = Ogre::ResourceGroupManager::getSingleton().openResource(_name, mGroup);
+			Ogre::DataStreamPtr stream = Ogre::ResourceGroupManager::getSingleton().openResource(_name, mGroup, true);
 			OgreDataStream* data = new OgreDataStream(stream);
 
 			return data;
 		}
-		catch(Ogre::FileNotFoundException)
+		catch (const Ogre::FileNotFoundException& _e)
 		{
+			MYGUI_LOG(Warning, _e.getDescription());
 		}
 
 		return nullptr;
@@ -100,7 +82,7 @@ namespace MyGUI
 			if (fi->path.empty())
 			{
 				bool found = false;
-				for (VectorString::iterator iter=result.begin(); iter!=result.end(); ++iter)
+				for (VectorString::iterator iter = result.begin(); iter != result.end(); ++iter)
 				{
 					if (*iter == fi->filename)
 					{

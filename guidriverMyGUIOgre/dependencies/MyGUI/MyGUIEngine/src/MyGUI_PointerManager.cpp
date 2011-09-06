@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -21,9 +20,9 @@
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "MyGUI_Precompiled.h"
+#include "MyGUI_PointerManager.h"
 #include "MyGUI_ResourceManager.h"
 #include "MyGUI_LayerManager.h"
-#include "MyGUI_PointerManager.h"
 #include "MyGUI_CoordConverter.h"
 #include "MyGUI_WidgetManager.h"
 #include "MyGUI_XmlDocument.h"
@@ -43,12 +42,22 @@ namespace MyGUI
 	const std::string XML_TYPE_PROPERTY("Property");
 	const std::string RESOURCE_DEFAULT_NAME("Default");
 
-	MYGUI_INSTANCE_IMPLEMENT( PointerManager )
+	template <> PointerManager* Singleton<PointerManager>::msInstance = nullptr;
+	template <> const char* Singleton<PointerManager>::mClassTypeName("PointerManager");
+
+	PointerManager::PointerManager() :
+		mVisible(false),
+		mWidgetOwner(nullptr),
+		mMousePointer(nullptr),
+		mPointer(nullptr),
+		mIsInitialise(false)
+	{
+	}
 
 	void PointerManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		Gui::getInstance().eventFrameStart += newDelegate(this, &PointerManager::notifyFrameStart);
 		InputManager::getInstance().eventChangeMouseFocus += newDelegate(this, &PointerManager::notifyChangeMouseFocus);
@@ -64,16 +73,16 @@ namespace MyGUI
 		mWidgetOwner = nullptr;
 		mVisible = true;
 
-		mSkinName = "StaticImage";
+		mSkinName = "ImageBox";
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void PointerManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		InputManager::getInstance().eventChangeMouseFocus -= newDelegate(this, &PointerManager::notifyChangeMouseFocus);
 		Gui::getInstance().eventFrameStart -= newDelegate(this, &PointerManager::notifyFrameStart);
@@ -89,13 +98,8 @@ namespace MyGUI
 		WidgetManager::getInstance().unregisterUnlinker(this);
 		ResourceManager::getInstance().unregisterLoadXmlDelegate(XML_TYPE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
-	}
-
-	bool PointerManager::load(const std::string& _file)
-	{
-		return ResourceManager::getInstance()._loadImplement(_file, true, XML_TYPE, INSTANCE_TYPE_NAME);
 	}
 
 	void PointerManager::_load(xml::ElementPtr _node, const std::string& _file, Version _version)
@@ -167,7 +171,7 @@ namespace MyGUI
 						prop->addAttribute("value",  shared_text.empty() ? texture : shared_text);
 					}
 
-					ResourceManager::getInstance()._load(root, _file, _version);
+					ResourceManager::getInstance().loadFromXmlNode(root, _file, _version);
 				}
 
 			}
@@ -176,7 +180,7 @@ namespace MyGUI
 				const std::string& key = node->findAttribute("key");
 				const std::string& value = node->findAttribute("value");
 				if (key == "Default")
-					setDeafultPointer(value);
+					setDefaultPointer(value);
 				else if (key == "Layer")
 					setLayerName(value);
 				else if (key == "Skin")
@@ -188,7 +192,7 @@ namespace MyGUI
 			setLayerName(layer);
 
 		if (!pointer.empty())
-			setDeafultPointer(pointer);
+			setDefaultPointer(pointer);
 
 	}
 
@@ -240,8 +244,11 @@ namespace MyGUI
 	// создает виджет
 	Widget* PointerManager::baseCreateWidget(WidgetStyle _style, const std::string& _type, const std::string& _skin, const IntCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
 	{
-		Widget* widget = WidgetManager::getInstance().createWidget(_style, _type, _skin, _coord, _align, nullptr, nullptr, this, _name);
+		Widget* widget = WidgetManager::getInstance().createWidget(_style, _type, _skin, _coord, /*_align, */nullptr, nullptr, /*this, */_name);
 		mWidgetChild.push_back(widget);
+
+		widget->setAlign(_align);
+
 		// присоединяем виджет с уровню
 		if (!_layer.empty())
 			LayerManager::getInstance().attachToLayerNode(_layer, widget);
@@ -267,7 +274,7 @@ namespace MyGUI
 			WidgetManager::getInstance().unlinkFromUnlinkers(_widget);
 
 			// непосредственное удаление
-			_deleteWidget(widget);
+			WidgetManager::getInstance()._deleteWidget(widget);
 		}
 		else
 		{
@@ -289,11 +296,11 @@ namespace MyGUI
 			manager.unlinkFromUnlinkers(widget);
 
 			// и сами удалим, так как его больше в списке нет
-			_deleteWidget(widget);
+			WidgetManager::getInstance()._deleteWidget(widget);
 		}
 	}
 
-	void PointerManager::setDeafultPointer(const std::string& _value)
+	void PointerManager::setDefaultPointer(const std::string& _value)
 	{
 		Update();
 
@@ -313,7 +320,7 @@ namespace MyGUI
 	void PointerManager::Update()
 	{
 		if (mMousePointer == nullptr)
-			mMousePointer = static_cast<StaticImage*>(baseCreateWidget(WidgetStyle::Overlapped, StaticImage::getClassTypeName(), mSkinName, IntCoord(), Align::Default, "", ""));
+			mMousePointer = static_cast<ImageBox*>(baseCreateWidget(WidgetStyle::Overlapped, ImageBox::getClassTypeName(), mSkinName, IntCoord(), Align::Default, "", ""));
 	}
 
 	IPointer* PointerManager::getByName(const std::string& _name) const
@@ -330,7 +337,7 @@ namespace MyGUI
 
 	void PointerManager::notifyChangeMouseFocus(Widget* _widget)
 	{
-		std::string pointer = _widget == nullptr ? "" : _widget->getPointer();
+		std::string pointer = (_widget == nullptr || !_widget->getEnabled()) ? "" : _widget->getPointer();
 		if (pointer != mCurrentMousePointer)
 		{
 			mCurrentMousePointer = pointer;
@@ -350,6 +357,21 @@ namespace MyGUI
 	void PointerManager::setPointer(const std::string& _name)
 	{
 		setPointer(_name, nullptr);
+	}
+
+	bool PointerManager::isVisible() const
+	{
+		return mVisible;
+	}
+
+	const std::string& PointerManager::getDefaultPointer() const
+	{
+		return mDefaultName;
+	}
+
+	const std::string& PointerManager::getLayerName() const
+	{
+		return mLayerName;
 	}
 
 } // namespace MyGUI

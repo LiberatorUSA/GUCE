@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 #ifndef __DEMO_KEEPER_H__
 #define __DEMO_KEEPER_H__
@@ -12,7 +11,8 @@
 namespace demo
 {
 
-	class DemoKeeper : public base::BaseManager
+	class DemoKeeper :
+		public base::BaseManager
 	{
 	public:
 		virtual void createScene();

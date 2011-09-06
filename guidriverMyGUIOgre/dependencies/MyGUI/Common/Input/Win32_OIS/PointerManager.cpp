@@ -5,7 +5,7 @@
 	@module
 */
 
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "PointerManager.h"
 #include <MyGUI.h>
 
@@ -33,7 +33,7 @@ namespace input
 		manager.eventChangeMousePointer += MyGUI::newDelegate(this, &PointerManager::notifyChangeMousePointer);
 
 		MyGUI::FactoryManager::getInstance().registerFactory<ResourceW32Pointer>("Resource");
-		MyGUI::Gui::getInstance().load("core_pointers_W32.xml");
+		MyGUI::ResourceManager::getInstance().load("PointersW32.xml");
 	}
 
 	void PointerManager::destroyPointerManager()
@@ -59,7 +59,7 @@ namespace input
 
 	void PointerManager::setPointerHandle(size_t _id)
 	{
-		SetClassLong((HWND)mHwnd, GCL_HCURSOR, (LONG)_id);
+		SetClassLongPtr((HWND)mHwnd, GCLP_HCURSOR, (LONG_PTR)_id);
 		if ((GetCapture() == (HWND)mHwnd)
 			|| isMouseInClient())
 		{

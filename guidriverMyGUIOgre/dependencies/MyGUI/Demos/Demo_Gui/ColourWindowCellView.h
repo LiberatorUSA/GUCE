@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __COLOUR_WINDOW_CELL_VIEW_H__
 #define __COLOUR_WINDOW_CELL_VIEW_H__
@@ -13,21 +12,18 @@
 
 namespace demo
 {
-
-	class ColourWindowCellView : public wraps::BaseCellView<ColourWindowCellData>
+	class ColourWindowCellView :
+		public wraps::BaseCellView<ColourWindowCellData*>
 	{
 	public:
 		ColourWindowCellView(MyGUI::Widget* _parent);
 
-		void update(const MyGUI::IBDrawItemInfo & _info, ColourWindowCellData * _data);
-		static void getCellDimension(MyGUI::Widget* _sender, MyGUI::IntCoord & _coord, bool _drop);
+		void update(const MyGUI::IBDrawItemInfo& _info, ColourWindowCellData* _data);
+		static void getCellDimension(MyGUI::Widget* _sender, MyGUI::IntCoord& _coord, bool _drop);
 
 	private:
-
-		MyGUI::StaticText* mText;
+		MyGUI::TextBox* mText;
 		MyGUI::Widget* mColour;
-		MyGUI::RawRect * mRawColourView;
-
 	};
 
 } // namespace demo

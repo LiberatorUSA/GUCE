@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
 #ifndef __DEMO_RESOURCE_ITEM_INFO_H__
 #define __DEMO_RESOURCE_ITEM_INFO_H__
@@ -16,7 +15,7 @@ namespace demo
 {
 
 	class ResourceItemInfo;
-	typedef ResourceItemInfo * ResourceItemInfoPtr;
+	typedef ResourceItemInfo* ResourceItemInfoPtr;
 
 	class ResourceItemInfo :
 		public MyGUI::IResource,
@@ -33,15 +32,14 @@ namespace demo
 		virtual void deserialization(MyGUI::xml::ElementPtr _node, MyGUI::Version _version);
 
 	public:
-		const std::string& getItemName() { return mItemName; }
-		const std::string& getItemDescription() { return mItemDescription; }
-		const std::string& getItemResourceImage() { return mItemResourceImage; }
+		const std::string& getItemName();
+		const std::string& getItemDescription();
+		const std::string& getItemResourceImage();
 
 	private:
 		std::string mItemName;
 		std::string mItemDescription;
 		std::string mItemResourceImage;
-
 	};
 
 } // namespace demo

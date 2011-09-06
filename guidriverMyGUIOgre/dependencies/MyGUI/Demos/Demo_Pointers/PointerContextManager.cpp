@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "PointerContextManager.h"
 
 namespace demo
@@ -33,7 +32,7 @@ namespace demo
 	void PointerContextManager::addContext(const std::string& _name)
 	{
 		bool found = false;
-		for (VectorContext::iterator item=mContexts.begin(); item!=mContexts.end(); ++item)
+		for (VectorContext::iterator item = mContexts.begin(); item != mContexts.end(); ++item)
 		{
 			if (_name == (*item)->getResourceName())
 			{
@@ -57,7 +56,7 @@ namespace demo
 					else
 					{
 						// вставляем перед первым хаем
-						for (VectorContext::iterator item=mContexts.begin(); item!=mContexts.end(); ++item)
+						for (VectorContext::iterator item = mContexts.begin(); item != mContexts.end(); ++item)
 						{
 							if ((*item)->isHighLevel())
 							{
@@ -76,7 +75,7 @@ namespace demo
 
 	void PointerContextManager::removeContext(const std::string& _name)
 	{
-		for (VectorContext::iterator item=mContexts.begin(); item!=mContexts.end(); ++item)
+		for (VectorContext::iterator item = mContexts.begin(); item != mContexts.end(); ++item)
 		{
 			if (_name == (*item)->getResourceName())
 			{
@@ -90,11 +89,11 @@ namespace demo
 
 	void PointerContextManager::setPointer(const std::string& _name)
 	{
-		 if (mCurrentPointer != _name)
-		 {
-			 mCurrentPointer = _name;
-			 updateCursor();
-		 }
+		if (mCurrentPointer != _name)
+		{
+			mCurrentPointer = _name;
+			updateCursor();
+		}
 	}
 
 	void PointerContextManager::updateCursor()
@@ -118,14 +117,14 @@ namespace demo
 
 	void PointerContextManager::_setPointer(const std::string& _name)
 	{
-		 if (!mContexts.empty())
-		 {
-			 std::string pointer = mContexts.back()->getPointer(_name);
-			 if (!pointer.empty())
-			 {
-				 mPointerSetter->setPointer(pointer);
-			 }
-		 }
+		if (!mContexts.empty())
+		{
+			std::string pointer = mContexts.back()->getPointer(_name);
+			if (!pointer.empty())
+			{
+				mPointerSetter->setPointer(pointer);
+			}
+		}
 	}
 
 } // namespace demo

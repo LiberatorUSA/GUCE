@@ -1,1081 +1,615 @@
-#include "precompiled.h"
-#include "Common.h"
+#include "Precompiled.h"
 #include "EditorState.h"
+#include "Common.h"
 #include "EditorWidgets.h"
 #include "WidgetTypes.h"
 #include "UndoManager.h"
-#include "Base/Main.h"
 #include "GroupMessage.h"
+#include "FileSystemInfo/FileSystemInfo.h"
+#include "CommandManager.h"
+#include "SettingsManager.h"
+#include "WidgetSelectorManager.h"
+#include "HotKeyManager.h"
+#include "MessageBoxManager.h"
+#include "Tools/DialogManager.h"
+#include "StateManager.h"
+#include "Localise.h"
+#include "Application.h"
+#include "RecentFilesManager.h"
+#include "WidgetCreatorManager.h"
 
-const std::string LogSection = "LayoutEditor";
-
-const std::wstring settingsFile = L"settings.xml";
-const std::wstring userSettingsFile = L"le_user_settings.xml";
-
-const float POSITION_CONTROLLER_TIME = 0.5f;
-const int HIDE_REMAIN_PIXELS = 3;
-
-void eventInfo(MyGUI::Widget* _sender, const std::string& _key, const std::string& _event)
+namespace tools
 {
-	MyGUI::MYGUI_OUT("eventInfo: ", _event);
-}
-
-template<typename Type>
-class PtrHolder
-{
-public:
-	PtrHolder(Type* _data) : mData(_data) { }
-	~PtrHolder() { delete mData; }
-private:
-	Type* mData;
-};
-
-//===================================================================================
-void EditorState::setupResources()
-{
-	base::BaseManager::setupResources();
-	addResourceLocation(getRootMedia() + "/Tools/LayoutEditor");
-	addResourceLocation(getRootMedia() + "/Tools/LayoutEditor/Panels");
-	addResourceLocation(getRootMedia() + "/Tools/LayoutEditor/Themes");
-	addResourceLocation(getRootMedia() + "/Tools/LayoutEditor/Settings");
-	addResourceLocation(getRootMedia() + "/Common/Wallpapers");
-	setResourceFilename("editor.xml");
-}
-//===================================================================================
-void EditorState::createScene()
-{
-	getStatisticInfo()->setVisible(false);
-
-	MyGUI::LogManager::registerSection(LogSection, "MyGUI.log");
-
-	//FIXME
-	// set locale language if it was taken from OS
-	//if (! BasisManager::getInstance().getLanguage().empty() )
-	//	MyGUI::LanguageManager::getInstance().setCurrentLanguage(BasisManager::getInstance().getLanguage());
-	// if you want to test LanguageManager uncomment next line
-	//MyGUI::LanguageManager::getInstance().setCurrentLanguage("Russian");
-	testMode = false;
-
-	wt = new WidgetTypes();
-	wt->initialise();
-	ew = new EditorWidgets();
-	ew->initialise();
-	um = new UndoManager();
-	um->initialise(ew);
-	mGroupMessage = new GroupMessage();
-
-	MyGUI::ResourceManager::getInstance().load("initialise.xml");
-
-	mToolTip = new EditorToolTip();
-	//MyGUI::DelegateManager::getInstance().addDelegate("eventInfo", MyGUI::newDelegate(eventInfo));
-	//MyGUI::DelegateManager::getInstance().addDelegate("eventEditorToolTip", MyGUI::newDelegate(this, &EditorState::notifyToolTip));
-
-	interfaceWidgets = MyGUI::LayoutManager::getInstance().loadLayout("interface.layout", "LayoutEditor_");
-
-	// settings window
-	mSettingsWindow = new SettingsWindow();
-	mSettingsWindow->eventWidgetsUpdate = MyGUI::newDelegate(this, &EditorState::notifyWidgetsUpdate);
-	interfaceWidgets.push_back(mSettingsWindow->getMainWidget());
-
-	// properties panelView
-	mPropertiesPanelView = new PropertiesPanelView();
-	mPropertiesPanelView->eventRecreate = MyGUI::newDelegate(this, &EditorState::notifyRecreate);
-	interfaceWidgets.push_back(mPropertiesPanelView->getMainWidget());
-
-	mWidgetsWindow = new WidgetsWindow();
-	mWidgetsWindow->eventToolTip = MyGUI::newDelegate(this, &EditorState::notifyToolTip);
-	mWidgetsWindow->eventSelectWidget = MyGUI::newDelegate(this, &EditorState::notifySelectWidget);
-	interfaceWidgets.push_back(mWidgetsWindow->getMainWidget());
-
-	mMetaSolutionWindow = new MetaSolutionWindow();
-	mMetaSolutionWindow->eventLoadFile = MyGUI::newDelegate(this, &EditorState::saveOrLoadLayoutEvent<false>);
-	mMetaSolutionWindow->eventSelectWidget = MyGUI::newDelegate(this, &EditorState::notifySelectWidget);
-	interfaceWidgets.push_back(mMetaSolutionWindow->getMainWidget());
-
-	mOpenSaveFileDialog = new common::OpenSaveFileDialog();
-	mOpenSaveFileDialog->setVisible(false);
-	mOpenSaveFileDialog->setFileMask("*.layout");
-	mOpenSaveFileDialog->eventEndDialog = MyGUI::newDelegate(this, &EditorState::notifyOpenSaveEndDialog);
-
-	loadSettings(settingsFile, true);
-	loadSettings(userSettingsFile, false);
-
-	// создание меню
-	createMainMenu();
-
-	mPropertiesPanelView->getMainWidget()->setCoord(
-		getGUI()->getViewSize().width - mPropertiesPanelView->getMainWidget()->getSize().width,
-		bar->getHeight(),
-		mPropertiesPanelView->getMainWidget()->getSize().width,
-		getGUI()->getViewHeight() - bar->getHeight()
-		);
-
-	// после загрузки настроек инициализируем
-	mWidgetsWindow->initialise();
-
-	if (mSettingsWindow->getEdgeHide())
+	EditorState::EditorState() :
+		mSettingsWindow(nullptr),
+		mCodeGenerator(nullptr),
+		mOpenSaveFileDialog(nullptr),
+		mMessageBoxFadeControl(nullptr),
+		mBackgroundControl(nullptr),
+		mMainPaneControl(nullptr),
+		mFileName("unnamed.layout"),
+		mDefaultFileName("unnamed.layout")
 	{
-		for (MyGUI::VectorWidgetPtr::iterator iter = interfaceWidgets.begin(); iter != interfaceWidgets.end(); ++iter)
+		CommandManager::getInstance().registerCommand("Command_FileLoad", MyGUI::newDelegate(this, &EditorState::command_Load));
+		CommandManager::getInstance().registerCommand("Command_FileSave", MyGUI::newDelegate(this, &EditorState::command_Save));
+		CommandManager::getInstance().registerCommand("Command_FileSaveAs", MyGUI::newDelegate(this, &EditorState::command_SaveAs));
+		CommandManager::getInstance().registerCommand("Command_ClearAll", MyGUI::newDelegate(this, &EditorState::command_Clear));
+		CommandManager::getInstance().registerCommand("Command_Test", MyGUI::newDelegate(this, &EditorState::command_Test));
+		CommandManager::getInstance().registerCommand("Command_Quit", MyGUI::newDelegate(this, &EditorState::command_Quit));
+		CommandManager::getInstance().registerCommand("Command_Settings", MyGUI::newDelegate(this, &EditorState::command_Settings));
+		CommandManager::getInstance().registerCommand("Command_CodeGenerator", MyGUI::newDelegate(this, &EditorState::command_CodeGenerator));
+		CommandManager::getInstance().registerCommand("Command_OpenRecentFile", MyGUI::newDelegate(this, &EditorState::command_OpenRecentFile));
+		CommandManager::getInstance().registerCommand("Command_FileDrop", MyGUI::newDelegate(this, &EditorState::command_FileDrop));
+		CommandManager::getInstance().registerCommand("Command_SaveItemAs", MyGUI::newDelegate(this, &EditorState::command_SaveItemAs));
+		CommandManager::getInstance().registerCommand("Command_UpdateItemName", MyGUI::newDelegate(this, &EditorState::command_UpdateItemName));
+		CommandManager::getInstance().registerCommand("Command_UpdateResources", MyGUI::newDelegate(this, &EditorState::command_UpdateResources));
+	}
+
+	EditorState::~EditorState()
+	{
+	}
+
+	void EditorState::initState()
+	{
+		addUserTag("\\n", "\n");
+		setFileName(mFileName);
+
+		mBackgroundControl = new BackgroundControl();
+		mMainPaneControl = new MainPaneControl();
+
+		mSettingsWindow = new SettingsWindow();
+		mSettingsWindow->eventEndDialog = MyGUI::newDelegate(this, &EditorState::notifySettingsWindowEndDialog);
+
+		mCodeGenerator = new CodeGenerator();
+		mCodeGenerator->eventEndDialog = MyGUI::newDelegate(this, &EditorState::notifyEndDialogCodeGenerator);
+
+		mOpenSaveFileDialog = new OpenSaveFileDialog();
+		mOpenSaveFileDialog->setFileMask("*.layout");
+		mOpenSaveFileDialog->eventEndDialog = MyGUI::newDelegate(this, &EditorState::notifyEndDialogOpenSaveFile);
+		mOpenSaveFileDialog->setCurrentFolder(RecentFilesManager::getInstance().getRecentFolder());
+		mOpenSaveFileDialog->setRecentFilders(RecentFilesManager::getInstance().getRecentFolders());
+
+		mMessageBoxFadeControl = new MessageBoxFadeControl();
+
+		updateCaption();
+
+		if (!Application::getInstance().getParams().empty())
 		{
-			MyGUI::ControllerItem* item = MyGUI::ControllerManager::getInstance().createItem(MyGUI::ControllerEdgeHide::getClassTypeName());
-			MyGUI::ControllerEdgeHide* controller = item->castType<MyGUI::ControllerEdgeHide>();
+			setFileName(Application::getInstance().getParams().front());
 
-			controller->setTime(POSITION_CONTROLLER_TIME);
-			controller->setRemainPixels(HIDE_REMAIN_PIXELS);
-			controller->setShadowSize(3);
-
-			MyGUI::ControllerManager::getInstance().addItem(*iter, controller);
-		}
-	}
-
-	clear();
-
-	/*MyGUI::Widget* mFpsInfo = mGUI->createWidget<MyGUI::Widget>("ButtonSmall", 20, (int)mGUI->getViewHeight() - 80, 120, 70, MyGUI::Align::Left | MyGUI::Align::Bottom, "Main", "fpsInfo");
-	mFpsInfo->setColour(Ogre::ColourValue::White);*/
-
-	//FIXME
-	/*typedef std::vector<std::string> Params;
-	Params params = BasisManager::getInstance().getCommandParams();
-	for (Params::iterator iter=params.begin(); iter!=params.end(); ++iter)
-	{
-		saveOrLoadLayout(false, false, iter->c_str());
-	}*/
-	getGUI()->eventFrameStart += MyGUI::newDelegate(this, &EditorState::notifyFrameStarted);
-
-	for (std::vector<MyGUI::UString>::iterator iter = additionalPaths.begin(); iter != additionalPaths.end(); ++iter)
-	{
-		addResourceLocation(*iter);
-	}
-}
-
-void EditorState::destroyScene()
-{
-	getGUI()->eventFrameStart -= MyGUI::newDelegate(this, &EditorState::notifyFrameStarted);
-
-	saveSettings(userSettingsFile);
-
-	delete mPropertiesPanelView;	
-	mPropertiesPanelView = nullptr;
-
-	delete mGroupMessage;
-
-	um->shutdown();
-	delete um;		
-	um = nullptr;
-
-	ew->shutdown();
-	delete ew;		
-	ew = nullptr;
-
-	wt->shutdown();
-	delete wt;						
-	wt = nullptr;
-
-	delete mToolTip;				
-	mToolTip = nullptr;
-
-	delete mSettingsWindow;			
-	mSettingsWindow = nullptr;
-
-	delete mMetaSolutionWindow;		
-	mMetaSolutionWindow = nullptr;
-
-	delete mWidgetsWindow;			
-	mWidgetsWindow = nullptr;
-
-	delete mOpenSaveFileDialog;		
-	mOpenSaveFileDialog = nullptr;
-
-	MyGUI::LogManager::unregisterSection(LogSection);
-}
-
-void EditorState::createMainMenu()
-{
-	MyGUI::VectorWidgetPtr menu_items = MyGUI::LayoutManager::getInstance().load("interface_menu.layout");
-	MYGUI_ASSERT(menu_items.size() == 1, "Error load main menu");
-	bar = menu_items[0]->castType<MyGUI::MenuBar>();
-	bar->setCoord(0, 0, getGUI()->getViewSize().width, bar->getHeight());
-
-	// главное меню
-	MyGUI::MenuItem* menu_file = bar->getItemById("File");
-	mPopupMenuFile = menu_file->getItemChild();
-	// список последних открытых файлов
-	if (recentFiles.size())
-	{
-		MyGUI::MenuItem* menu_item = mPopupMenuFile->getItemById("File/Quit");
-		for (std::vector<MyGUI::UString>::reverse_iterator iter = recentFiles.rbegin(); iter != recentFiles.rend(); ++iter)
-		{
-			mPopupMenuFile->insertItem(menu_item, *iter, MyGUI::MenuItemType::Normal, "File/RecentFiles",  *iter);
-		}
-		// если есть файлы, то еще один сепаратор
-		mPopupMenuFile->insertItem(menu_item, "", MyGUI::MenuItemType::Separator);
-	}
-
-	//хак, для меню тест двойная замена
-	MyGUI::MenuItem* menu_item_test = mPopupMenuFile->getItemById("File/Test");
-	menu_item_test->setCaption(MyGUI::LanguageManager::getInstance().replaceTags(menu_item_test->getCaption()));
-
-	// меню для виджетов
-	MyGUI::MenuItem* menu_widget = bar->getItemById("Widgets");
-	mPopupMenuWidgets = menu_widget->createItemChild();
-	//FIXME
-	mPopupMenuWidgets->setPopupAccept(true);
-
-	bar->eventMenuCtrlAccept = newDelegate(this, &EditorState::notifyPopupMenuAccept);
-
-	interfaceWidgets.push_back(bar);
-}
-
-void EditorState::notifyPopupMenuAccept(MyGUI::MenuCtrl* _sender, MyGUI::MenuItem* _item)
-{
-	if (mPopupMenuFile == _item->getMenuCtrlParent())
-	{
-		std::string id = _item->getItemId();
-
-		if (id == "File/Load")
-		{
-			notifyLoad();
-		}
-		else if (id == "File/Save")
-		{
-			notifySave();
-		}
-		else if (id == "File/SaveAs")
-		{
-			setModeSaveLoadDialog(true, fileName);
-		}
-		else if (id == "File/Clear")
-		{
-			notifyClear();
-		}
-		else if (id == "File/Settings")
-		{
-			notifySettings();
-		}
-		else if (id == "File/Test")
-		{
-			notifyTest();
-		}
-		else if (id == "File/RecentFiles")
-		{
-			saveOrLoadLayout(false, false, *_item->getItemData<MyGUI::UString>());
-		}
-		else if (id == "File/Quit")
-		{
-			notifyQuit();
-		}
-	}
-}
-
-//===================================================================================
-void EditorState::injectMouseMove(int _absx, int _absy, int _absz)
-{
-	if (testMode)
-	{
-		base::BaseManager::injectMouseMove(_absx, _absy, _absz);
-		return;
-	}
-
-	// drop select depth if we moved mouse
-	const int DIST = 2;
-	if ((abs(x - _absx) > DIST) || (abs(y - _absy) > DIST))
-	{
-		selectDepth = 0;
-		x = _absx;
-		y = _absy;
-	}
-
-	// align to grid if shift not pressed
-	int x2, y2;
-	if (MyGUI::InputManager::getInstance().isShiftPressed() == false)
-	{
-		x2 = toGrid(_absx);
-		y2 = toGrid(_absy);
-	}
-	else
-	{
-		x2 = _absx;
-		y2 = _absy;
-	}
-
-	mWidgetsWindow->createNewWidget(x2, y2);
-
-	base::BaseManager::injectMouseMove(_absx, _absy, _absz);
-}
-//===================================================================================
-void EditorState::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
-{
-	if (testMode)
-	{
-		return base::BaseManager::injectMousePress(_absx, _absy, _id);
-	}
-
-	if (MyGUI::InputManager::getInstance().isModalAny())
-	{
-		// if we have modal widgets we can't select any widget
-		base::BaseManager::injectMousePress(_absx, _absy, _id);
-		return;
-	}
-
-	// align to grid if shift not pressed
-	int x1, y1;
-	if (MyGUI::InputManager::getInstance().isShiftPressed() == false)
-	{
-		x1 = toGrid(_absx);
-		y1 = toGrid(_absy);
-	}
-	else
-	{
-		x1 = _absx;
-		y1 = _absy;
-	}
-
-	// юбилейный комит  =)
-	mWidgetsWindow->startNewWidget(x1, y1, _id);
-
-	// это чтобы можно было двигать прямоугольник у невидимых виджето (или виджетов за границами)
-	//MyGUI::LayerItemInfoPtr rootItem = nullptr;
-	//MyGUI::Widget* itemWithRect = static_cast<MyGUI::Widget*>(MyGUI::LayerManager::getInstance().findWidgetItem(_absx, _absy, rootItem));
-	// не стал это доделывать, т.к. неоднозначность выбора виджета получается, если кто скажет как выбирать - сделаю
-
-	MyGUI::Widget* item = MyGUI::LayerManager::getInstance().getWidgetFromPoint(_absx, _absy);
-
-	// не убираем прямоугольник если нажали на его растягивалку
-	if (item && (item->getParent() != mPropertiesPanelView->getWidgetRectangle()))
-	{
-		// чтобы прямоугольник не мешался
-		mPropertiesPanelView->getWidgetRectangle()->setVisible(false);
-		item = MyGUI::LayerManager::getInstance().getWidgetFromPoint(_absx, _absy);
-	}
-
-	if (nullptr != item)
-	{
-		// find widget registered as container
-		while ((nullptr == ew->find(item)) && (nullptr != item)) item = item->getParent();
-		MyGUI::Widget* oldItem = item;
-
-		// try to selectin depth
-		int depth = selectDepth;
-		while (depth && (nullptr != item))
-		{
-			item = item->getParent();
-			while ((nullptr == ew->find(item)) && (nullptr != item)) item = item->getParent();
-			depth--;
-		}
-		if (nullptr == item)
-		{
-			item = oldItem;
-			selectDepth = 0;
+			load();
+			updateCaption();
 		}
 
-		// found widget
-		if (nullptr != item)
+		UndoManager::getInstance().eventChanges += MyGUI::newDelegate(this, &EditorState::notifyChanges);
+	}
+
+	void EditorState::cleanupState()
+	{
+		UndoManager::getInstance().eventChanges -= MyGUI::newDelegate(this, &EditorState::notifyChanges);
+
+		delete mMessageBoxFadeControl;
+		mMessageBoxFadeControl = nullptr;
+
+		delete mSettingsWindow;
+		mSettingsWindow = nullptr;
+
+		delete mCodeGenerator;
+		mCodeGenerator = nullptr;
+
+		delete mOpenSaveFileDialog;
+		mOpenSaveFileDialog = nullptr;
+
+		delete mBackgroundControl;
+		mBackgroundControl = nullptr;
+
+		delete mMainPaneControl;
+		mMainPaneControl = nullptr;
+	}
+
+	void EditorState::notifySettingsWindowEndDialog(Dialog* _dialog, bool _result)
+	{
+		MYGUI_ASSERT(mSettingsWindow == _dialog, "mSettingsWindow == _sender");
+
+		if (_result)
 		{
-			notifySelectWidget(item);
-			if (mWidgetsWindow->getCreatingStatus() != 1)
-			{
-				//FIXME
-				getGUI()->injectMouseMove(_absx, _absy, 0);// это чтобы сразу можно было тащить
-			}
+			mSettingsWindow->saveSettings();
 		}
-		//FIXME
-		getGUI()->injectMousePress(_absx, _absy, _id);
-	}
-	else
-	{
-		//FIXME
-		getGUI()->injectMousePress(_absx, _absy, _id);
-		notifySelectWidget(nullptr);
+
+		mSettingsWindow->endModal();
 	}
 
-	// вернем прямоугольник
-	if (current_widget && mWidgetsWindow->getCreatingStatus() == 0)
+	void EditorState::command_Test(const MyGUI::UString& _commandName, bool& _result)
 	{
-		mPropertiesPanelView->getWidgetRectangle()->setVisible(true);
-	}
-	else if (mWidgetsWindow->getCreatingStatus())
-	{
-		mPropertiesPanelView->getWidgetRectangle()->setVisible(false);
+		if (!checkCommand())
+			return;
+
+		StateManager::getInstance().stateEvent(this, "Test");
+
+		_result = true;
 	}
 
-	//base::BaseManager::injectMousePress(_absx, _absy, _id);
-}
-//===================================================================================
-void EditorState::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
-{
-	selectDepth++;
-	if (testMode)
+	void EditorState::command_Settings(const MyGUI::UString& _commandName, bool& _result)
 	{
-		base::BaseManager::injectMouseRelease(_absx, _absy, _id);
-		return;
+		if (!checkCommand())
+			return;
+
+		mSettingsWindow->doModal();
+
+		_result = true;
 	}
 
-	if (MyGUI::InputManager::getInstance().isModalAny())
+	void EditorState::command_CodeGenerator(const MyGUI::UString& _commandName, bool& _result)
 	{
+		if (!checkCommand())
+			return;
+
+		mCodeGenerator->loadTemplate();
+		mCodeGenerator->doModal();
+
+		_result = true;
 	}
-	else
+
+	void EditorState::command_OpenRecentFile(const MyGUI::UString& _commandName, bool& _result)
 	{
-		// align to grid if shift not pressed
-		int x2, y2;
-		if (MyGUI::InputManager::getInstance().isShiftPressed() == false)
+		if (!checkCommand())
+			return;
+
+		command_FileDrop(_commandName, _result);
+	}
+
+	void EditorState::command_Load(const MyGUI::UString& _commandName, bool& _result)
+	{
+		if (!checkCommand())
+			return;
+
+		if (UndoManager::getInstance().isUnsaved())
 		{
-			x2 = toGrid(_absx);
-			y2 = toGrid(_absy);
+			MyGUI::Message* message = MessageBoxManager::getInstance().create(
+				replaceTags("Warning"),
+				replaceTags("MessageUnsavedData"),
+				MyGUI::MessageBoxStyle::IconQuest
+					| MyGUI::MessageBoxStyle::Yes
+					| MyGUI::MessageBoxStyle::No
+					| MyGUI::MessageBoxStyle::Cancel);
+			message->eventMessageBoxResult += MyGUI::newDelegate(this, &EditorState::notifyMessageBoxResultLoad);
 		}
 		else
 		{
-			x2 = _absx;
-			y2 = _absy;
+			showLoadWindow();
 		}
 
-		mWidgetsWindow->finishNewWidget(x2, y2);
+		_result = true;
 	}
 
-	um->dropLastProperty();
-
-	base::BaseManager::injectMouseRelease(_absx, _absy, _id);
-}
-//===================================================================================
-void EditorState::injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text)
-{
-	MyGUI::InputManager& input = MyGUI::InputManager::getInstance();
-
-	if (testMode)
+	void EditorState::command_Save(const MyGUI::UString& _commandName, bool& _result)
 	{
-		if (input.isModalAny() == false)
-		{
-			if (_key == MyGUI::KeyCode::Escape)
-			{
-				notifyEndTest();
-			}
-		}
-
-		getGUI()->injectKeyPress(_key, _text);
-		//base::BaseManager::injectKeyPress(_key, _text);
-		return;
-	}
-
-	if (input.isModalAny())
-	{
-		if (mOpenSaveFileDialog->isVisible())
-		{
-			if (_key == MyGUI::KeyCode::Escape)
-				mOpenSaveFileDialog->eventEndDialog(false);
-			else if (_key == MyGUI::KeyCode::Return)
-				mOpenSaveFileDialog->eventEndDialog(true);
-		}
-	}
-	else
-	{
-		if (_key == MyGUI::KeyCode::Escape)
-		{
-			notifyQuit();
+		if (!checkCommand())
 			return;
+
+		if (UndoManager::getInstance().isUnsaved())
+		{
+			save();
 		}
 
-		if (input.isControlPressed())
-		{
-			if (_key == MyGUI::KeyCode::O
-				|| _key == MyGUI::KeyCode::L)
-				notifyLoad();
-			else if (_key == MyGUI::KeyCode::S)
-				notifySave();
-			else if (_key == MyGUI::KeyCode::Z)
-			{
-				um->undo();
-				notifySelectWidget(nullptr);
-			}
-			else if ((_key == MyGUI::KeyCode::Y) || ((input.isShiftPressed()) && (_key == MyGUI::KeyCode::Z)))
-			{
-				um->redo();
-				notifySelectWidget(nullptr);
-			}
-			else if (_key == MyGUI::KeyCode::T)
-			{
-				notifyTest();
-				return;
-			}
-			else if (_key == MyGUI::KeyCode::R)
-			{
-				mPropertiesPanelView->toggleRelativeMode();
-				return;
-			}
-		}
+		_result = true;
 	}
 
-	getGUI()->injectKeyPress(_key, _text);
-	//base::BaseManager::injectKeyPress(_key, _text);
-}
-//===================================================================================
-void EditorState::injectKeyRelease(MyGUI::KeyCode _key)
-{
-	if (testMode)
+	void EditorState::command_SaveAs(const MyGUI::UString& _commandName, bool& _result)
 	{
-		return base::BaseManager::injectKeyRelease(_key);
-	}
-
-	return base::BaseManager::injectKeyRelease(_key);
-}
-//===================================================================================
-void EditorState::notifyFrameStarted(float _time)
-{
-	GroupMessage::getInstance().showMessages();
-
-	if (ew->widgets_changed)
-	{
-		notifyWidgetsUpdate();
-		ew->widgets_changed = false;
-	}
-
-	if (recreate)
-	{
-		recreate = false;
-		notifySelectWidget(nullptr); // виджет пересоздался, теперь никто незнает его адреса :)
-	}
-
-	//return base::BaseManager::frameStarted(evt);
-	//return true;
-}
-//===================================================================================
-/*void EditorState::windowResize()
-{
-	if (testMode)
-		return;
-
-	// force update
-	MyGUI::Widget* current_widget1 = current_widget;
-	current_widget = nullptr;
-	notifySelectWidget(current_widget1);
-}*/
-//===================================================================================
-bool EditorState::isNeedSolutionLoad(MyGUI::xml::ElementEnumerator _field)
-{
-	MyGUI::xml::ElementEnumerator field = _field->getElementEnumerator();
-	while (field.next())
-	{
-		std::string key, value;
-
-		if (field->getName() == "Property")
-		{
-			if (!field->findAttribute("key", key)) continue;
-			if (!field->findAttribute("value", value)) continue;
-
-			if (key == "MetaSolutionName")
-			{
-				return !value.empty();
-			}
-		}
-	}
-	return false;
-}
-//===================================================================================
-void EditorState::loadSettings(const MyGUI::UString& _fileName, bool _internal)
-{
-	std::string _instance = "Editor";
-
-	MyGUI::xml::Document doc;
-	if (_internal)
-	{
-		MyGUI::IDataStream* data = MyGUI::DataManager::getInstance().getData(_fileName);
-		if (data)
-		{
-			PtrHolder<MyGUI::IDataStream> holder = PtrHolder<MyGUI::IDataStream>(data);
-
-			if (!doc.open(data))
-			{
-				MYGUI_LOGGING(LogSection, Error, _instance << " : " << doc.getLastError());
-				return;
-			}
-		}
-	}
-	else
-	{
-		if (!doc.open(_fileName))
-		{
-			MYGUI_LOGGING(LogSection, Error, _instance << " : " << doc.getLastError());
+		if (!checkCommand())
 			return;
-		}
+
+		showSaveAsWindow();
+
+		_result = true;
 	}
 
-	MyGUI::xml::ElementPtr root = doc.getRoot();
-	if (!root || (root->getName() != "MyGUI"))
+	void EditorState::command_Clear(const MyGUI::UString& _commandName, bool& _result)
 	{
-		MYGUI_LOGGING(LogSection, Error, _instance << " : '" << _fileName << "', tag 'MyGUI' not found");
-		return;
-	}
+		if (!checkCommand())
+			return;
 
-	std::string type;
-	if (root->findAttribute("type", type))
-	{
-		if (type == "Settings")
+		if (UndoManager::getInstance().isUnsaved())
 		{
-			// берем детей и крутимся
-			MyGUI::xml::ElementEnumerator field = root->getElementEnumerator();
-			while (field.next())
-			{
-				if (field->getName() == "PropertiesPanelView") mPropertiesPanelView->load(field);
-				else if (field->getName() == "SettingsWindow") mSettingsWindow->load(field);
-				else if (field->getName() == "WidgetsWindow") mWidgetsWindow->load(field);
-				else if (field->getName() == "MetaSolutionWindow")
-				{
-					if (isNeedSolutionLoad(field))
-					{
-						clearWidgetWindow();
-						mMetaSolutionWindow->load(field);
-					}
-				}
-				else if (field->getName() == "RecentFile")
-				{
-					std::string name;
-					if (!field->findAttribute("name", name)) continue;
-					recentFiles.push_back(name);
-				}
-				else if (field->getName() == "AdditionalPath")
-				{
-					std::string name;
-					if (!field->findAttribute("name", name)) continue;
-					additionalPaths.push_back(name);
-				}
-			}
+			MyGUI::Message* message = MessageBoxManager::getInstance().create(
+				replaceTags("Warning"),
+				replaceTags("MessageUnsavedData"),
+				MyGUI::MessageBoxStyle::IconQuest
+					| MyGUI::MessageBoxStyle::Yes
+					| MyGUI::MessageBoxStyle::No
+					| MyGUI::MessageBoxStyle::Cancel);
+			message->eventMessageBoxResult += MyGUI::newDelegate(this, &EditorState::notifyMessageBoxResultClear);
 		}
-	}
-}
+		else
+		{
+			clear();
+		}
 
-void EditorState::saveSettings(const MyGUI::UString& _fileName)
-{
-	std::string _instance = "Editor";
-
-	MyGUI::xml::Document doc;
-	doc.createDeclaration();
-	MyGUI::xml::ElementPtr root = doc.createRoot("MyGUI");
-	root->addAttribute("type", "Settings");
-
-	mPropertiesPanelView->save(root);
-	mSettingsWindow->save(root);
-	mWidgetsWindow->save(root);
-	mMetaSolutionWindow->save(root);
-
-	// cleanup for duplicates
-
-	std::reverse(recentFiles.begin(), recentFiles.end());
-	for (size_t i = 0; i < recentFiles.size(); ++i)
-		recentFiles.erase(std::remove(recentFiles.begin() + i + 1, recentFiles.end(), recentFiles[i]), recentFiles.end());
-
-	// remove old files
-	while (recentFiles.size() > MAX_RECENT_FILES)
-		recentFiles.pop_back();
-	std::reverse(recentFiles.begin(), recentFiles.end());
-
-	for (std::vector<MyGUI::UString>::iterator iter = recentFiles.begin(); iter != recentFiles.end(); ++iter)
-	{
-		MyGUI::xml::ElementPtr nodeProp = root->createChild("RecentFile");
-		nodeProp->addAttribute("name", *iter);
+		_result = true;
 	}
 
-	for (std::vector<MyGUI::UString>::iterator iter = additionalPaths.begin(); iter != additionalPaths.end(); ++iter)
+	void EditorState::command_Quit(const MyGUI::UString& _commandName, bool& _result)
 	{
-		MyGUI::xml::ElementPtr nodeProp = root->createChild("AdditionalPath");
-		nodeProp->addAttribute("name", *iter);
+		if (!checkCommand())
+			return;
+
+		if (UndoManager::getInstance().isUnsaved())
+		{
+			MyGUI::Message* message = MessageBoxManager::getInstance().create(
+				replaceTags("Warning"),
+				replaceTags("MessageUnsavedData"),
+				MyGUI::MessageBoxStyle::IconQuest
+					| MyGUI::MessageBoxStyle::Yes
+					| MyGUI::MessageBoxStyle::No
+					| MyGUI::MessageBoxStyle::Cancel);
+			message->eventMessageBoxResult += MyGUI::newDelegate(this, &EditorState::notifyMessageBoxResultQuit);
+		}
+		else
+		{
+			StateManager::getInstance().stateEvent(this, "Exit");
+		}
+
+		_result = true;
 	}
 
-	if (!doc.save(_fileName))
+	void EditorState::command_FileDrop(const MyGUI::UString& _commandName, bool& _result)
 	{
-		MYGUI_LOGGING(LogSection, Error, _instance << " : " << doc.getLastError());
-		return;
-	}
-}
+		if (!checkCommand())
+			return;
 
-void EditorState::notifyLoad()
-{
-	if (um->isUnsaved())
+		mDropFileName = CommandManager::getInstance().getCommandData();
+		if (mDropFileName.empty())
+			return;
+
+		if (UndoManager::getInstance().isUnsaved())
+		{
+			MyGUI::Message* message = MessageBoxManager::getInstance().create(
+				replaceTags("Warning"),
+				replaceTags("MessageUnsavedData"),
+				MyGUI::MessageBoxStyle::IconQuest
+					| MyGUI::MessageBoxStyle::Yes
+					| MyGUI::MessageBoxStyle::No
+					| MyGUI::MessageBoxStyle::Cancel);
+			message->eventMessageBoxResult += MyGUI::newDelegate(this, &EditorState::notifyMessageBoxResultLoadDropFile);
+		}
+		else
+		{
+			clear();
+
+			loadDropFile();
+		}
+
+		_result = true;
+	}
+
+	void EditorState::command_SaveItemAs(const MyGUI::UString& _commandName, bool& _result)
 	{
-		MyGUI::Message* message = MyGUI::Message::createMessageBox(
-			"Message",
-			localise("Warning"),
-			localise("Warn_unsaved_data"),
-			MyGUI::MessageBoxStyle::IconWarning |
-			MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No | MyGUI::MessageBoxStyle::Cancel
+		if (!checkCommand())
+			return;
+
+		setFileName(CommandManager::getInstance().getCommandData());
+
+		save();
+		updateCaption();
+
+		_result = true;
+	}
+
+	void EditorState::command_UpdateItemName(const MyGUI::UString& _commandName, bool& _result)
+	{
+		if (!checkCommand())
+			return;
+
+		setFileName(mFileName);
+		updateCaption();
+
+		_result = true;
+	}
+
+	void EditorState::clear()
+	{
+		WidgetCreatorManager::getInstance().resetCreatorInfo();
+		EditorWidgets::getInstance().clear();
+
+		WidgetSelectorManager::getInstance().setSelectedWidget(nullptr);
+
+		UndoManager::getInstance().shutdown();
+		UndoManager::getInstance().initialise(EditorWidgets::getInstancePtr());
+
+		setFileName(mDefaultFileName);
+
+		updateCaption();
+	}
+
+	void EditorState::load()
+	{
+		if (EditorWidgets::getInstance().load(mFileName))
+		{
+			if (mFileName != mDefaultFileName && !isProjectFile(mFileName))
+				RecentFilesManager::getInstance().addRecentFile(mFileName);
+
+			UndoManager::getInstance().addValue();
+			UndoManager::getInstance().setUnsaved(false);
+		}
+		else
+		{
+			/*MyGUI::Message* message = */MessageBoxManager::getInstance().create(
+				replaceTags("Error"),
+				replaceTags("MessageFailedLoadFile"),
+				MyGUI::MessageBoxStyle::IconError | MyGUI::MessageBoxStyle::Ok
 			);
-		message->eventMessageBoxResult = newDelegate(this, &EditorState::notifyConfirmLoadMessage);
-		message->setUserString("FileName", fileName);
-		return;
-	}
 
-	setModeSaveLoadDialog(false, fileName);
-}
+			setFileName(mDefaultFileName);
 
-bool EditorState::notifySave()
-{
-	if (fileName != "")
-	{
-		return saveOrLoadLayout(true, false, fileName);
-	}
-	else
-	{
-		setModeSaveLoadDialog(true, fileName);
-		return false;
-	}
-}
-
-void EditorState::notifySettings()
-{
-	mSettingsWindow->setVisible(true);
-	MyGUI::LayerManager::getInstance().upLayerItem(mSettingsWindow->getMainWidget());
-}
-
-void EditorState::notifyTest()
-{
-	for (MyGUI::VectorWidgetPtr::iterator iter = interfaceWidgets.begin(); iter != interfaceWidgets.end(); ++iter)
-	{
-		if ((*iter)->isVisible())
-		{
-			(*iter)->setUserString("WasVisible", "true");
-			(*iter)->setVisible(false);
+			updateCaption();
 		}
 	}
-	testLayout = ew->savexmlDocument();
-	ew->clear();
-	notifySelectWidget(nullptr);
-	ew->loadxmlDocument(testLayout, true);
-	testMode = true;
-}
 
-void EditorState::notifyEndTest()
-{
-	for (MyGUI::VectorWidgetPtr::iterator iter = interfaceWidgets.begin(); iter != interfaceWidgets.end(); ++iter)
+	bool EditorState::save()
 	{
-		if ((*iter)->getUserString("WasVisible") == "true")
+		if (EditorWidgets::getInstance().save(mFileName))
 		{
-			(*iter)->setVisible(true);
-		}
-	}
-	testMode = false;
-	clear(false);
-	ew->loadxmlDocument(testLayout);
-}
+			if (mFileName != mDefaultFileName && !isProjectFile(mFileName))
+				RecentFilesManager::getInstance().addRecentFile(mFileName);
 
-void EditorState::notifyClear()
-{
-	MyGUI::Message* message = MyGUI::Message::createMessageBox("Message", localise("Warning"), localise("Warn_delete_all_widgets"), MyGUI::MessageBoxStyle::IconWarning | MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No);
-	message->eventMessageBoxResult = newDelegate(this, &EditorState::notifyClearMessage);
-}
-
-void EditorState::notifyClearMessage(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
-{
-	if (_result == MyGUI::MessageBoxStyle::Yes || _result == MyGUI::MessageBoxStyle::Button1)
-	{
-		clear();
-	}
-}
-
-void EditorState::clear(bool _clearName)
-{
-	mWidgetsWindow->clearNewWidget();
-	recreate = false;
-	if (_clearName) fileName = "";
-	testMode = false;
-	ew->clear();
-	notifySelectWidget(nullptr);
-	um->shutdown();
-	um->initialise(ew);
-	selectDepth = 0;
-
-	if (_clearName)
-		setWindowCaption("MyGUI Layout Editor");
-}
-
-void EditorState::notifyQuit()
-{
-	if (um->isUnsaved())
-	{
-		MyGUI::Message* message = MyGUI::Message::createMessageBox(
-			"Message",
-			localise("Warning"),
-			localise("Warn_unsaved_data"),
-			MyGUI::MessageBoxStyle::IconWarning |
-			MyGUI::MessageBoxStyle::Yes | MyGUI::MessageBoxStyle::No | MyGUI::MessageBoxStyle::Cancel
-			);
-		message->eventMessageBoxResult = newDelegate(this, &EditorState::notifyConfirmQuitMessage);
-		message->setUserString("FileName", fileName);
-		return;
-	}
-
-	// выходим
-	quit();
-}
-
-void EditorState::notifyConfirmQuitMessage(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
-{
-	if ( _result == MyGUI::MessageBoxStyle::Yes )
-	{
-		if (notifySave())
-		{
-			// выходим
-			quit();
-		}
-	}
-	else if ( _result == MyGUI::MessageBoxStyle::No )
-	{
-		// выходим
-		quit();
-	}
-	/*else if ( _result == MyGUI::MessageBoxStyle::Cancel )
-	{
-		// do nothing
-	}
-	*/
-}
-
-bool EditorState::isMetaSolution(const MyGUI::UString& _fileName)
-{
-	MyGUI::xml::Document doc;
-	if (!doc.open(_fileName))
-	{
-		return false;
-	}
-
-	MyGUI::xml::ElementPtr root = doc.getRoot();
-	if (!root || (root->getName() != "MyGUI"))
-	{
-		return false;
-	}
-
-	std::string type;
-	if (root->findAttribute("type", type))
-	{
-		if (type == "MetaSolution")
-		{
+			UndoManager::getInstance().addValue();
+			UndoManager::getInstance().setUnsaved(false);
 			return true;
 		}
-	}
-
-	return false;
-}
-
-void EditorState::clearWidgetWindow()
-{
-	WidgetTypes::getInstance().clearAllSkins();
-	mWidgetsWindow->clearAllSheets();
-}
-
-void EditorState::loadFile(const std::wstring& _file)
-{
-	// если солюшен, то очищаем
-	bool solution = isMetaSolution(MyGUI::UString(_file).asUTF8_c_str());
-	if (solution)
-	{
-		clearWidgetWindow();
-	}
-
-	if (!saveOrLoadLayout(false, true, MyGUI::UString(_file).asUTF8_c_str()))
-	{
-		MyGUI::ResourceManager::getInstance().load(MyGUI::UString(_file).asUTF8_c_str()/*, ""*/);
-	}
-
-	if (solution)
-	{
-		this->mWidgetsWindow->initialise();
-	}
-}
-
-void EditorState::notifyConfirmLoadMessage(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
-{
-	if ( _result == MyGUI::MessageBoxStyle::Yes )
-	{
-		if (notifySave())
-		{
-			setModeSaveLoadDialog(false, fileName);
-		}
-	}
-	else if ( _result == MyGUI::MessageBoxStyle::No )
-	{
-		setModeSaveLoadDialog(false, fileName);
-	}
-	/*else if ( _result == MyGUI::MessageBoxStyle::Cancel )
-	{
-		// do nothing
-	}
-	*/
-}
-
-void EditorState::notifyWidgetsUpdate()
-{
-	if (mMetaSolutionWindow->isVisible())
-		mMetaSolutionWindow->updateList();
-
-	bool print_name = mSettingsWindow->getShowName();
-	bool print_type = mSettingsWindow->getShowType();
-	bool print_skin = mSettingsWindow->getShowSkin();
-
-	mPopupMenuWidgets->removeAllItems();
-	mPopupMenuWidgets->eventMenuCtrlAccept = MyGUI::newDelegate(this, &EditorState::notifyWidgetsSelect);
-
-	for (std::vector<WidgetContainer*>::iterator iter = ew->widgets.begin(); iter != ew->widgets.end(); ++iter )
-	{
-		createWidgetPopup(*iter, mPopupMenuWidgets, print_name, print_type, print_skin);
-	}
-}
-
-void EditorState::createWidgetPopup(WidgetContainer* _container, MyGUI::MenuCtrl* _parentPopup, bool _print_name, bool _print_type, bool _print_skin)
-{
-	bool submenu = !_container->childContainers.empty();
-
-	_parentPopup->addItem(getDescriptionString(_container->widget, _print_name, _print_type, _print_skin), submenu ? MyGUI::MenuItemType::Popup : MyGUI::MenuItemType::Normal);
-	_parentPopup->setItemDataAt(_parentPopup->getItemCount()-1, _container->widget);
-
-	if (submenu)
-	{
-		MyGUI::MenuCtrl* child = _parentPopup->createItemChildAt(_parentPopup->getItemCount()-1);
-		child->eventMenuCtrlAccept = MyGUI::newDelegate(this, &EditorState::notifyWidgetsSelect);
-		child->setPopupAccept(true);
-
-		for (std::vector<WidgetContainer*>::iterator iter = _container->childContainers.begin(); iter != _container->childContainers.end(); ++iter )
-		{
-			createWidgetPopup(*iter, child, _print_name, _print_type, _print_skin);
-		}
-	}
-}
-
-void EditorState::notifyWidgetsSelect(MyGUI::MenuCtrl* _sender, MyGUI::MenuItem* _item)
-{
-	MyGUI::Widget* widget = *_item->getItemData<MyGUI::Widget*>();
-	notifySelectWidget(widget);
-}
-
-void EditorState::notifySelectWidget(MyGUI::Widget* _sender)
-{
-	if (_sender == current_widget)
-	{
-		if (current_widget)
-		{
-			mPropertiesPanelView->getWidgetRectangle()->setVisible(true);
-			MyGUI::InputManager::getInstance().setKeyFocusWidget(mPropertiesPanelView->getWidgetRectangle());
-		}
-		return;
-	}
-
-	current_widget = _sender;
-
-	mPropertiesPanelView->update(_sender);
-	mWidgetsWindow->update(_sender);
-	mMetaSolutionWindow->update(_sender);
-}
-
-std::string EditorState::getDescriptionString(MyGUI::Widget* _widget, bool _print_name, bool _print_type, bool _print_skin)
-{
-	std::string name = "";
-	std::string type = "";
-	std::string skin = "";
-
-	WidgetContainer * widgetContainer = ew->find(_widget);
-	if (_print_name)
-	{
-		if (widgetContainer->name.empty())
-		{
-			// trim "LayoutEditorWidget_"
-			/*name = _widget->getName();
-			if (0 == strncmp("LayoutEditorWidget_", name.c_str(), 19))
-			{
-					std::string::iterator iter = std::find(name.begin(), name.end(), '_');
-					if (iter != name.end()) name.erase(name.begin(), ++iter);
-					name = "#{ColourMenuName}" + name;
-			}
-			name = "#{ColourMenuName}[" + name + "] ";*/
-		}
 		else
 		{
-			name = "#{ColourMenuName}'" + widgetContainer->name + "' ";
+			/*MyGUI::Message* message = */MessageBoxManager::getInstance().create(
+				replaceTags("Error"),
+				replaceTags("MessageFailedSaveFile"),
+				MyGUI::MessageBoxStyle::IconError | MyGUI::MessageBoxStyle::Ok
+			);
+		}
+		return false;
+	}
+
+	void EditorState::updateCaption()
+	{
+		addUserTag("HasChanged", UndoManager::getInstance().isUnsaved() ? "*" : "");
+
+		CommandManager::getInstance().executeCommand("Command_UpdateAppCaption");
+	}
+
+	void EditorState::notifyMessageBoxResultLoad(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
+	{
+		if (_result == MyGUI::MessageBoxStyle::Yes)
+		{
+			if (save())
+			{
+				clear();
+
+				showLoadWindow();
+			}
+		}
+		else if (_result == MyGUI::MessageBoxStyle::No)
+		{
+			clear();
+
+			showLoadWindow();
 		}
 	}
 
-	if (_print_type)
+	void EditorState::notifyMessageBoxResultLoadDropFile(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
 	{
-		type = "#{ColourMenuType}[" + _widget->getTypeName() + "] ";
+		if (_result == MyGUI::MessageBoxStyle::Yes)
+		{
+			if (save())
+			{
+				clear();
+
+				loadDropFile();
+			}
+		}
+		else if (_result == MyGUI::MessageBoxStyle::No)
+		{
+			clear();
+
+			loadDropFile();
+		}
 	}
 
-	if (_print_skin)
+	void EditorState::loadDropFile()
 	{
-		skin = "#{ColourMenuSkin}" + widgetContainer->skin + " ";
-	}
-	return MyGUI::LanguageManager::getInstance().replaceTags(type + skin + name);
-}
+		setFileName(mDropFileName);
 
-void EditorState::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo & _info)
-{
-	if (_info.type == MyGUI::ToolTipInfo::Show)
-	{
-		mToolTip->show(_sender, _info.point);
-	}
-	else if (_info.type == MyGUI::ToolTipInfo::Hide)
-	{
-		mToolTip->hide();
-	}
-}
-
-void EditorState::notifyOpenSaveEndDialog(bool _result)
-{
-	if (_result)
-	{
-		MyGUI::UString file = mOpenSaveFileDialog->getCurrentFolder() + L"/" + mOpenSaveFileDialog->getFileName();
-		saveOrLoadLayout(mModeSaveDialog, false, file);
-	}
-	else
-	{
-		mOpenSaveFileDialog->setVisible(false);
-	}
-}
-
-void EditorState::setModeSaveLoadDialog(bool _save, const MyGUI::UString& _filename)
-{
-	if (_save)
-		mOpenSaveFileDialog->setDialogInfo(localise("Save"), localise("Save"));
-	else
-		mOpenSaveFileDialog->setDialogInfo(localise("Load"), localise("Load"));
-
-	size_t pos = _filename.find_last_of(L"\\/");
-	if (pos == MyGUI::UString::npos)
-	{
-		mOpenSaveFileDialog->setFileName(_filename);
-	}
-	else
-	{
-		mOpenSaveFileDialog->setCurrentFolder(_filename.substr(0, pos));
-		mOpenSaveFileDialog->setFileName(_filename.substr(pos + 1));
+		load();
+		updateCaption();
 	}
 
-	mOpenSaveFileDialog->setVisible(true);
-	mModeSaveDialog = _save;
-}
-
-bool EditorState::saveOrLoadLayout(bool Save, bool Silent, const MyGUI::UString& _file)
-{
-	if (!Save) clear();
-
-	if ( (Save && ew->save(_file)) ||
-		(!Save && ew->load(_file)) )
+	void EditorState::showLoadWindow()
 	{
-		fileName = _file;
-		setWindowCaption(_file + " - MyGUI Layout Editor");
-		recentFiles.push_back(_file);
+		mOpenSaveFileDialog->setCurrentFolder(RecentFilesManager::getInstance().getRecentFolder());
+		mOpenSaveFileDialog->setRecentFilders(RecentFilesManager::getInstance().getRecentFolders());
+		mOpenSaveFileDialog->setDialogInfo(replaceTags("CaptionOpenFile"), replaceTags("ButtonOpenFile"));
+		mOpenSaveFileDialog->setMode("Load");
+		mOpenSaveFileDialog->doModal();
+	}
 
-		mOpenSaveFileDialog->setVisible(false);
+	void EditorState::notifyEndDialogOpenSaveFile(Dialog* _sender, bool _result)
+	{
+		if (_result)
+		{
+			if (mOpenSaveFileDialog->getMode() == "SaveAs")
+			{
+				RecentFilesManager::getInstance().setRecentFolder(mOpenSaveFileDialog->getCurrentFolder());
+				setFileName(common::concatenatePath(mOpenSaveFileDialog->getCurrentFolder(), mOpenSaveFileDialog->getFileName()));
 
-		um->addValue();
-		um->setUnsaved(false);
+				save();
+				updateCaption();
+			}
+			else if (mOpenSaveFileDialog->getMode() == "Load")
+			{
+				clear();
+
+				RecentFilesManager::getInstance().setRecentFolder(mOpenSaveFileDialog->getCurrentFolder());
+				setFileName(common::concatenatePath(mOpenSaveFileDialog->getCurrentFolder(), mOpenSaveFileDialog->getFileName()));
+
+				load();
+				updateCaption();
+			}
+		}
+
+		mOpenSaveFileDialog->endModal();
+	}
+
+	void EditorState::notifyMessageBoxResultClear(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
+	{
+		if (_result == MyGUI::MessageBoxStyle::Yes)
+		{
+			if (save())
+			{
+				clear();
+			}
+		}
+		else if (_result == MyGUI::MessageBoxStyle::No)
+		{
+			clear();
+		}
+	}
+
+	void EditorState::showSaveAsWindow()
+	{
+		mOpenSaveFileDialog->setCurrentFolder(RecentFilesManager::getInstance().getRecentFolder());
+		mOpenSaveFileDialog->setRecentFilders(RecentFilesManager::getInstance().getRecentFolders());
+		mOpenSaveFileDialog->setDialogInfo(replaceTags("CaptionSaveFile"), replaceTags("ButtonSaveFile"));
+		mOpenSaveFileDialog->setMode("SaveAs");
+		mOpenSaveFileDialog->doModal();
+	}
+
+	void EditorState::notifyMessageBoxResultQuit(MyGUI::Message* _sender, MyGUI::MessageBoxStyle _result)
+	{
+		if (_result == MyGUI::MessageBoxStyle::Yes)
+		{
+			if (save())
+			{
+				StateManager::getInstance().stateEvent(this, "Exit");
+			}
+		}
+		else if (_result == MyGUI::MessageBoxStyle::No)
+		{
+			StateManager::getInstance().stateEvent(this, "Exit");
+		}
+	}
+
+	bool EditorState::checkCommand()
+	{
+		if (DialogManager::getInstance().getAnyDialog())
+			return false;
+
+		if (MessageBoxManager::getInstance().hasAny())
+			return false;
+
+		if (!StateManager::getInstance().getStateActivate(this))
+			return false;
+
 		return true;
 	}
-	else if (!Silent)
+
+	void EditorState::notifyChanges(bool _changes)
 	{
-		std::string saveLoad = Save ? localise("Save") : localise("Load");
-		/*MyGUI::Message* message =*/ MyGUI::Message::createMessageBox(
-			"Message",
-			localise("Warning"),
-			"Failed to " + saveLoad + " file '" + _file + "'",
-			MyGUI::MessageBoxStyle::IconWarning | MyGUI::MessageBoxStyle::Ok
-			);
+		updateCaption();
 	}
 
-	return false;
-}
+	void EditorState::notifyEndDialogCodeGenerator(Dialog* _dialog, bool _result)
+	{
+		mCodeGenerator->endModal();
+		if (_result)
+			mCodeGenerator->saveTemplate();
+	}
 
-MYGUI_APP(EditorState)
+	void EditorState::pauseState()
+	{
+		mMainPaneControl->setVisible(false);
+	}
+
+	void EditorState::resumeState()
+	{
+		mMainPaneControl->setVisible(true);
+	}
+
+	void EditorState::setFileName(const MyGUI::UString& _fileName)
+	{
+		mFileName = _fileName;
+		addUserTag("CurrentFileName", convertProjectName(mFileName));
+
+		size_t pos = mFileName.find_last_of("\\/");
+		MyGUI::UString shortName = pos == MyGUI::UString::npos ? mFileName : mFileName.substr(pos + 1);
+		addUserTag("CurrentFileName_Short", shortName);
+	}
+
+	MyGUI::UString EditorState::convertProjectName(const MyGUI::UString& _fileName)
+	{
+		size_t index = _fileName.find("|");
+		if (index == MyGUI::UString::npos)
+			return _fileName;
+
+		MyGUI::UString fileName = _fileName.substr(0, index);
+		MyGUI::UString itemIndexName = _fileName.substr(index + 1);
+		size_t itemIndex = MyGUI::utility::parseValue<size_t>(itemIndexName);
+
+		MyGUI::xml::Document doc;
+		if (!doc.open(fileName))
+			return _fileName;
+
+		MyGUI::xml::ElementPtr root = doc.getRoot();
+		if ((nullptr == root) || (root->getName() != "MyGUI"))
+			return _fileName;
+
+		if (root->findAttribute("type") == "Resource")
+		{
+			// берем детей и крутимся
+			MyGUI::xml::ElementEnumerator element = root->getElementEnumerator();
+			while (element.next("Resource"))
+			{
+				if (element->findAttribute("type") == "ResourceLayout")
+				{
+					if (itemIndex == 0)
+					{
+						// поменять на теги
+						return MyGUI::utility::toString(fileName, " [", element->findAttribute("name"), "]");
+					}
+					else
+					{
+						itemIndex --;
+					}
+				}
+			}
+		}
+
+		return _fileName;
+	}
+
+	bool EditorState::isProjectFile(const MyGUI::UString& _fileName)
+	{
+		size_t index = _fileName.find("|");
+		return (index != MyGUI::UString::npos);
+	}
+
+	void EditorState::command_UpdateResources(const MyGUI::UString& _commandName, bool& _result)
+	{
+		if (!checkCommand())
+			return;
+
+		typedef std::vector<MyGUI::UString> VectorUString;
+		VectorUString resources = SettingsManager::getInstance().getSector("Settings")->getPropertyValueList("UpdateResources");
+		if (resources.empty())
+			return;
+
+		for (VectorUString::iterator resource = resources.begin(); resource != resources.end(); ++resource)
+			MyGUI::ResourceManager::getInstance().load(*resource);
+
+		MyGUI::xml::Document* savedDoc = EditorWidgets::getInstance().savexmlDocument();
+		EditorWidgets::getInstance().clear();
+		EditorWidgets::getInstance().loadxmlDocument(savedDoc);
+		delete savedDoc;
+		WidgetSelectorManager::getInstance().setSelectedWidget(nullptr);
+
+		_result = true;
+	}
+
+} // namespace tools

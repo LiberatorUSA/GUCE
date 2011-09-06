@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -31,7 +30,6 @@
 
 namespace MyGUI
 {
-
 	const float WINDOW_ALPHA_ACTIVE = ALPHA_MAX;
 	const float WINDOW_ALPHA_FOCUS = 0.7f;
 	const float WINDOW_ALPHA_DEACTIVE = 0.3f;
@@ -45,97 +43,96 @@ namespace MyGUI
 		mKeyRootFocus(false),
 		mIsAutoAlpha(false),
 		mSnap(false),
-		mAnimateSmooth(false)
+		mAnimateSmooth(false),
+		mClient(nullptr),
+		mMovable(true)
 	{
 	}
 
-	void Window::_initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name)
+	void Window::initialiseOverride()
 	{
-		Base::_initialise(_style, _coord, _align, _info, _parent, _croppedParent, _creator, _name);
+		Base::initialiseOverride();
 
-		initialiseWidgetSkin(_info);
-	}
-
-	Window::~Window()
-	{
-		shutdownWidgetSkin();
-	}
-
-	void Window::baseChangeWidgetSkin(ResourceSkin* _info)
-	{
-		shutdownWidgetSkin();
-		Base::baseChangeWidgetSkin(_info);
-		initialiseWidgetSkin(_info);
-	}
-
-	void Window::initialiseWidgetSkin(ResourceSkin* _info)
-	{
-		// нам нужен фокус клавы
-		mNeedKeyFocus = true;
+		// FIXME нам нужен фокус клавы
+		setNeedKeyFocus(true);
 
 		// дефолтные размеры
-		mMinmax.set(0, 0, 3000, 3000);
+		mMinmax.set(
+			(std::numeric_limits<int>::min)(),
+			(std::numeric_limits<int>::min)(),
+			(std::numeric_limits<int>::max)(),
+			(std::numeric_limits<int>::max)());
 
 		bool main_move = false;
-		// парсим свойства
-		const MapString& properties = _info->getProperties();
-		if (!properties.empty())
+		if (isUserString("MainMove"))
 		{
-			MapString::const_iterator iter = properties.find("Snap");
-			if (iter != properties.end()) mSnap = utility::parseBool(iter->second);
-			iter = properties.find("MainMove");
-			if (iter != properties.end())
-			{
-				setUserString("Scale", "1 1 0 0");
-				main_move = true;
-			}
+			setUserString("Scale", "1 1 0 0");
+			main_move = true;
 		}
 
-		for (VectorWidgetPtr::iterator iter=mWidgetChildSkin.begin(); iter!=mWidgetChildSkin.end(); ++iter)
+		assignWidget(mClient, "Client");
+		if (mClient != nullptr)
 		{
-			if (*(*iter)->_getInternalData<std::string>() == "Client")
+			if (main_move)
 			{
-				MYGUI_DEBUG_ASSERT( ! mWidgetClient, "widget already assigned");
-				mWidgetClient = (*iter);
-				if (main_move)
-				{
-					(*iter)->setUserString("Scale", "1 1 0 0");
-					(*iter)->eventMouseButtonPressed = newDelegate(this, &Window::notifyMousePressed);
-					(*iter)->eventMouseDrag = newDelegate(this, &Window::notifyMouseDrag);
-				}
+				mClient->setUserString("Scale", "1 1 0 0");
+				mClient->eventMouseButtonPressed += newDelegate(this, &Window::notifyMousePressed);
+				mClient->eventMouseButtonReleased += newDelegate(this, &Window::notifyMouseReleased);
+				mClient->eventMouseDrag += newDelegate(this, &Window::notifyMouseDrag);
 			}
-			else if (*(*iter)->_getInternalData<std::string>() == "Caption")
-			{
-				MYGUI_DEBUG_ASSERT( ! mWidgetCaption, "widget already assigned");
-				mWidgetCaption = (*iter);
-				mWidgetCaption->eventMouseButtonPressed = newDelegate(this, &Window::notifyMousePressed);
-				mWidgetCaption->eventMouseDrag = newDelegate(this, &Window::notifyMouseDrag);
-			}
-			else if (*(*iter)->_getInternalData<std::string>() == "Button")
-			{
-				(*iter)->eventMouseButtonClick = newDelegate(this, &Window::notifyPressedButtonEvent);
-			}
-			else if (*(*iter)->_getInternalData<std::string>() == "Action")
-			{
-				(*iter)->eventMouseButtonPressed = newDelegate(this, &Window::notifyMousePressed);
-				(*iter)->eventMouseDrag = newDelegate(this, &Window::notifyMouseDrag);
-			}
+			setWidgetClient(mClient);
 		}
 
+		assignWidget(mWidgetCaption, "Caption");
+		if (mWidgetCaption != nullptr)
+		{
+			mWidgetCaption->setUserString("Scale", "1 1 0 0");
+			mWidgetCaption->eventMouseButtonPressed += newDelegate(this, &Window::notifyMousePressed);
+			mWidgetCaption->eventMouseButtonReleased += newDelegate(this, &Window::notifyMouseReleased);
+			mWidgetCaption->eventMouseDrag += newDelegate(this, &Window::notifyMouseDrag);
+		}
+
+		VectorWidgetPtr buttons = getSkinWidgetsByName("Button");
+		for (VectorWidgetPtr::iterator iter = buttons.begin(); iter != buttons.end(); ++iter)
+		{
+			(*iter)->eventMouseButtonClick += newDelegate(this, &Window::notifyPressedButtonEvent);
+		}
+
+		VectorWidgetPtr actions = getSkinWidgetsByName("Action");
+		for (VectorWidgetPtr::iterator iter = actions.begin(); iter != actions.end(); ++iter)
+		{
+			(*iter)->eventMouseButtonPressed += newDelegate(this, &Window::notifyMousePressed);
+			(*iter)->eventMouseButtonReleased += newDelegate(this, &Window::notifyMouseReleased);
+			(*iter)->eventMouseDrag += newDelegate(this, &Window::notifyMouseDrag);
+		}
+
+		const size_t countNames = 8;
+		const char* resizers[2][countNames] =
+		{
+			{"ResizeLeftTop", "ResizeTop", "ResizeRightTop", "ResizeRight", "ResizeRightBottom", "ResizeBottom", "ResizeLeftBottom", "ResizeLeft"},
+			{"Left Top", "Top", "Right Top", "Right", "Right Bottom", "Bottom", "Left Bottom", "Left"}
+		};
+
+		for (size_t index = 0; index < countNames; ++ index)
+		{
+			Widget* widget = nullptr;
+			assignWidget(widget, resizers[0][index]);
+			if (widget != nullptr)
+			{
+				widget->eventMouseButtonPressed += newDelegate(this, &Window::notifyMousePressed);
+				widget->eventMouseButtonReleased += newDelegate(this, &Window::notifyMouseReleased);
+				widget->eventMouseDrag += newDelegate(this, &Window::notifyMouseDrag);
+				widget->setUserString("Action", resizers[1][index]);
+			}
+		}
 	}
 
-	void Window::shutdownWidgetSkin()
+	void Window::shutdownOverride()
 	{
-		mWidgetClient = nullptr;
+		mClient = nullptr;
 		mWidgetCaption = nullptr;
-	}
 
-	// переопределяем для присвоению клиенту
-	Widget* Window::baseCreateWidget(WidgetStyle _style, const std::string& _type, const std::string& _skin, const IntCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
-	{
-		MYGUI_ASSERT(mWidgetClient != this, "mWidgetClient can not be this widget");
-		if (mWidgetClient != nullptr) return mWidgetClient->createWidgetT(_style, _type, _skin, _coord, _align, _layer, _name);
-		return Base::baseCreateWidget(_style, _type, _skin, _coord, _align, _layer, _name);
+		Base::shutdownOverride();
 	}
 
 	void Window::onMouseChangeRootFocus(bool _focus)
@@ -154,12 +151,12 @@ namespace MyGUI
 		Base::onKeyChangeRootFocus(_focus);
 	}
 
-	void Window::onMouseDrag(int _left, int _top)
+	void Window::onMouseDrag(int _left, int _top, MouseButton _id)
 	{
 		// на тот случай, если двигать окно, можно за любое место виджета
-		notifyMouseDrag(this, _left, _top);
+		notifyMouseDrag(this, _left, _top, _id);
 
-		Base::onMouseDrag(_left, _top);
+		Base::onMouseDrag(_left, _top, _id);
 	}
 
 	void Window::onMouseButtonPressed(int _left, int _top, MouseButton _id)
@@ -169,12 +166,19 @@ namespace MyGUI
 		Base::onMouseButtonPressed(_left, _top, _id);
 	}
 
+	void Window::onMouseButtonReleased(int _left, int _top, MouseButton _id)
+	{
+		notifyMouseReleased(this, _left, _top, _id);
+
+		Base::onMouseButtonReleased(_left, _top, _id);
+	}
+
 	void Window::notifyMousePressed(MyGUI::Widget* _sender, int _left, int _top, MouseButton _id)
 	{
 		if (MouseButton::Left == _id)
 		{
 			mPreActionCoord = mCoord;
-			mCurrentActionScale = IntCoord::parse(_sender->getUserString("Scale"));
+			mCurrentActionScale = _getActionScale(_sender);
 		}
 	}
 
@@ -183,8 +187,11 @@ namespace MyGUI
 		eventWindowButtonPressed(this, _sender->getUserString("Event"));
 	}
 
-	void Window::notifyMouseDrag(MyGUI::Widget* _sender, int _left, int _top)
+	void Window::notifyMouseDrag(MyGUI::Widget* _sender, int _left, int _top, MouseButton _id)
 	{
+		if (_id != MouseButton::Left)
+			return;
+
 		const IntPoint& point = InputManager::getInstance().getLastLeftPressed();
 
 		IntCoord coord = mCurrentActionScale;
@@ -192,6 +199,9 @@ namespace MyGUI
 		coord.top *= (_top - point.top);
 		coord.width *= (_left - point.left);
 		coord.height *= (_top - point.top);
+
+		if (coord.empty())
+			return;
 
 		if (coord.left == 0 && coord.top == 0)
 			setSize((mPreActionCoord + coord).size());
@@ -206,26 +216,34 @@ namespace MyGUI
 
 	void Window::updateAlpha()
 	{
-		if (!mIsAutoAlpha) return;
+		if (!mIsAutoAlpha)
+			return;
 
 		float alpha;
-		if (mKeyRootFocus) alpha = WINDOW_ALPHA_ACTIVE;
-		else if (mMouseRootFocus) alpha = WINDOW_ALPHA_FOCUS;
-		else alpha = WINDOW_ALPHA_DEACTIVE;
+		if (mKeyRootFocus)
+			alpha = WINDOW_ALPHA_ACTIVE;
+		else if (mMouseRootFocus)
+			alpha = WINDOW_ALPHA_FOCUS;
+		else
+			alpha = WINDOW_ALPHA_DEACTIVE;
 
-		ControllerFadeAlpha * controller = createControllerFadeAlpha(alpha, WINDOW_SPEED_COEF, true);
+		ControllerFadeAlpha* controller = createControllerFadeAlpha(alpha, WINDOW_SPEED_COEF, true);
 		ControllerManager::getInstance().addItem(this, controller);
 	}
 
 	void Window::setAutoAlpha(bool _auto)
 	{
 		mIsAutoAlpha = _auto;
-		if (!_auto) setAlpha(ALPHA_MAX);
+		if (!_auto)
+			setAlpha(ALPHA_MAX);
 		else
 		{
-			if (mKeyRootFocus) setAlpha(WINDOW_ALPHA_ACTIVE);
-			else if (mMouseRootFocus) setAlpha(WINDOW_ALPHA_FOCUS);
-			else setAlpha(WINDOW_ALPHA_DEACTIVE);
+			if (mKeyRootFocus)
+				setAlpha(WINDOW_ALPHA_ACTIVE);
+			else if (mMouseRootFocus)
+				setAlpha(WINDOW_ALPHA_FOCUS);
+			else
+				setAlpha(WINDOW_ALPHA_DEACTIVE);
 		}
 	}
 
@@ -248,11 +266,16 @@ namespace MyGUI
 		IntSize size = _size;
 		// прилепляем к краям
 
-		if (size.width < mMinmax.left) size.width = mMinmax.left;
-		else if (size.width > mMinmax.right) size.width = mMinmax.right;
-		if (size.height < mMinmax.top) size.height = mMinmax.top;
-		else if (size.height > mMinmax.bottom) size.height = mMinmax.bottom;
-		if ((size.width == mCoord.width) && (size.height == mCoord.height) ) return;
+		if (size.width < mMinmax.left)
+			size.width = mMinmax.left;
+		else if (size.width > mMinmax.right)
+			size.width = mMinmax.right;
+		if (size.height < mMinmax.top)
+			size.height = mMinmax.top;
+		else if (size.height > mMinmax.bottom)
+			size.height = mMinmax.bottom;
+		if ((size.width == mCoord.width) && (size.height == mCoord.height))
+			return;
 
 		if (mSnap)
 		{
@@ -273,29 +296,37 @@ namespace MyGUI
 		{
 			int offset = mMinmax.left - size.width;
 			size.width = mMinmax.left;
-			if ((pos.left - mCoord.left) > offset) pos.left -= offset;
-			else pos.left = mCoord.left;
+			if ((pos.left - mCoord.left) > offset)
+				pos.left -= offset;
+			else
+				pos.left = mCoord.left;
 		}
 		else if (size.width > mMinmax.right)
 		{
 			int offset = mMinmax.right - size.width;
 			size.width = mMinmax.right;
-			if ((pos.left - mCoord.left) < offset) pos.left -= offset;
-			else pos.left = mCoord.left;
+			if ((pos.left - mCoord.left) < offset)
+				pos.left -= offset;
+			else
+				pos.left = mCoord.left;
 		}
 		if (size.height < mMinmax.top)
 		{
 			int offset = mMinmax.top - size.height;
 			size.height = mMinmax.top;
-			if ((pos.top - mCoord.top) > offset) pos.top -= offset;
-			else pos.top = mCoord.top;
+			if ((pos.top - mCoord.top) > offset)
+				pos.top -= offset;
+			else
+				pos.top = mCoord.top;
 		}
 		else if (size.height > mMinmax.bottom)
 		{
 			int offset = mMinmax.bottom - size.height;
 			size.height = mMinmax.bottom;
-			if ((pos.top - mCoord.top) < offset) pos.top -= offset;
-			else pos.top = mCoord.top;
+			if ((pos.top - mCoord.top) < offset)
+				pos.top -= offset;
+			else
+				pos.top = mCoord.top;
 		}
 
 		// прилепляем к краям
@@ -307,27 +338,31 @@ namespace MyGUI
 		}
 
 		IntCoord coord(pos, size);
-		if (coord == mCoord) return;
+		if (coord == mCoord)
+			return;
 
 		Base::setCoord(coord);
 	}
 
 	void Window::setCaption(const UString& _caption)
 	{
-		if (mWidgetCaption != nullptr) mWidgetCaption->setCaption(_caption);
-		else Base::setCaption(_caption);
+		if (mWidgetCaption != nullptr)
+			mWidgetCaption->setCaption(_caption);
+		else
+			Base::setCaption(_caption);
 	}
 
 	const UString& Window::getCaption()
 	{
-		if (mWidgetCaption != nullptr) return mWidgetCaption->getCaption();
+		if (mWidgetCaption != nullptr)
+			return mWidgetCaption->getCaption();
 		return Base::getCaption();
 	}
 
 	void Window::destroySmooth()
 	{
-		ControllerFadeAlpha * controller = createControllerFadeAlpha(ALPHA_MIN, WINDOW_SPEED_COEF, false);
-		controller->eventPostAction = newDelegate(action::actionWidgetDestroy);
+		ControllerFadeAlpha* controller = createControllerFadeAlpha(ALPHA_MIN, WINDOW_SPEED_COEF, false);
+		controller->eventPostAction += newDelegate(action::actionWidgetDestroy);
 		ControllerManager::getInstance().addItem(this, controller);
 	}
 
@@ -342,7 +377,6 @@ namespace MyGUI
 
 	void Window::setVisible(bool _visible)
 	{
-
 		if (mAnimateSmooth)
 		{
 			ControllerManager::getInstance().removeItem(this);
@@ -364,14 +398,12 @@ namespace MyGUI
 		if (abs(_coord.left) <= WINDOW_SNAP_DISTANSE) _coord.left = 0;
 		if (abs(_coord.top) <= WINDOW_SNAP_DISTANSE) _coord.top = 0;
 
-		IntSize view_size;
-		if (getCroppedParent() == nullptr)
-			view_size = this->getLayer()->getSize();
-		else
-			view_size = ((Widget*)getCroppedParent())->getSize();
+		const IntSize view_size = getParentSize();
 
-		if ( abs(_coord.left + _coord.width - view_size.width) < WINDOW_SNAP_DISTANSE) _coord.left = view_size.width - _coord.width;
-		if ( abs(_coord.top + _coord.height - view_size.height) < WINDOW_SNAP_DISTANSE) _coord.top = view_size.height - _coord.height;
+		if ( abs(_coord.left + _coord.width - view_size.width) < WINDOW_SNAP_DISTANSE)
+			_coord.left = view_size.width - _coord.width;
+		if ( abs(_coord.top + _coord.height - view_size.height) < WINDOW_SNAP_DISTANSE)
+			_coord.top = view_size.height - _coord.height;
 	}
 
 	void Window::setVisibleSmooth(bool _visible)
@@ -382,20 +414,20 @@ namespace MyGUI
 		if (_visible)
 		{
 			setEnabledSilent(true);
-			if ( ! isVisible() )
+			if (!getVisible())
 			{
 				setAlpha(ALPHA_MIN);
 				Base::setVisible(true);
 			}
-			ControllerFadeAlpha * controller = createControllerFadeAlpha(getAlphaVisible(), WINDOW_SPEED_COEF, true);
-			controller->eventPostAction = newDelegate(this, &Window::animateStop);
+			ControllerFadeAlpha* controller = createControllerFadeAlpha(getAlphaVisible(), WINDOW_SPEED_COEF, true);
+			controller->eventPostAction += newDelegate(this, &Window::animateStop);
 			ControllerManager::getInstance().addItem(this, controller);
 		}
 		else
 		{
 			setEnabledSilent(false);
-			ControllerFadeAlpha * controller = createControllerFadeAlpha(ALPHA_MIN, WINDOW_SPEED_COEF, false);
-			controller->eventPostAction = newDelegate(action::actionWidgetHide);
+			ControllerFadeAlpha* controller = createControllerFadeAlpha(ALPHA_MIN, WINDOW_SPEED_COEF, false);
+			controller->eventPostAction += newDelegate(action::actionWidgetHide);
 			ControllerManager::getInstance().addItem(this, controller);
 		}
 	}
@@ -434,29 +466,143 @@ namespace MyGUI
 		return IntSize(mMinmax.right, mMinmax.bottom);
 	}
 
-	void Window::setProperty(const std::string& _key, const std::string& _value)
+	void Window::setPropertyOverride(const std::string& _key, const std::string& _value)
 	{
-		if (_key == "Window_AutoAlpha") setAutoAlpha(utility::parseValue<bool>(_value));
-		else if (_key == "Window_Snap") setSnap(utility::parseValue<bool>(_value));
-		else if (_key == "Window_MinSize") setMinSize(utility::parseValue<IntSize>(_value));
-		else if (_key == "Window_MaxSize") setMaxSize(utility::parseValue<IntSize>(_value));
-
-#ifndef MYGUI_DONT_USE_OBSOLETE
-		else if (_key == "Window_MinMax")
-		{
-			IntRect rect = IntRect::parse(_value);
-			setMinSize(rect.left, rect.top);
-			setMaxSize(rect.right, rect.bottom);
-			MYGUI_LOG(Warning, "Window_MinMax is obsolete, use Window_MinSize or Window_MaxSize");
-		}
-#endif // MYGUI_DONT_USE_OBSOLETE
-
+		if (_key == "AutoAlpha")
+			setAutoAlpha(utility::parseValue<bool>(_value));
+		else if (_key == "Snap")
+			setSnap(utility::parseValue<bool>(_value));
+		else if (_key == "MinSize")
+			setMinSize(utility::parseValue<IntSize>(_value));
+		else if (_key == "MaxSize")
+			setMaxSize(utility::parseValue<IntSize>(_value));
+		else if (_key == "Movable")
+			setMovable(utility::parseValue<bool>(_value));
 		else
 		{
-			Base::setProperty(_key, _value);
+			Base::setPropertyOverride(_key, _value);
 			return;
 		}
 		eventChangeProperty(this, _key, _value);
+	}
+
+	const IntCoord& Window::getActionScale()
+	{
+		return mCurrentActionScale;
+	}
+
+	bool Window::getAutoAlpha() const
+	{
+		return mIsAutoAlpha;
+	}
+
+	TextBox* Window::getCaptionWidget()
+	{
+		return mWidgetCaption;
+	}
+
+	void Window::setMinSize(int _width, int _height)
+	{
+		setMinSize(IntSize(_width, _height));
+	}
+
+	void Window::setMaxSize(int _width, int _height)
+	{
+		setMaxSize(IntSize(_width, _height));
+	}
+
+	void Window::setPosition(int _left, int _top)
+	{
+		setPosition(IntPoint(_left, _top));
+	}
+
+	void Window::setSize(int _width, int _height)
+	{
+		setSize(IntSize(_width, _height));
+	}
+
+	void Window::setCoord(int _left, int _top, int _width, int _height)
+	{
+		setCoord(IntCoord(_left, _top, _width, _height));
+	}
+
+	bool Window::getSnap() const
+	{
+		return mSnap;
+	}
+
+	void Window::setSnap(bool _value)
+	{
+		mSnap = _value;
+	}
+
+	void Window::notifyMouseReleased(MyGUI::Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		if (MouseButton::Left == _id)
+		{
+			mCurrentActionScale.clear();
+		}
+	}
+
+	IntCoord Window::_getActionScale(Widget* _widget)
+	{
+		if (_widget->isUserString("Scale"))
+		{
+			IntCoord result = IntCoord::parse(_widget->getUserString("Scale"));
+
+			if (result == IntCoord(1, 1, 0, 0) && !mMovable)
+				result.clear();
+
+			return result;
+		}
+		else if (_widget->isUserString("Action"))
+		{
+			const std::string& action = _widget->getUserString("Action");
+			if (action == "Move")
+			{
+				if (mMovable)
+					return IntCoord(1, 1, 0, 0);
+				else
+					return IntCoord();
+			}
+
+			IntCoord coord;
+			Align align = Align::parse(action);
+
+			if (align.isLeft())
+			{
+				coord.left = 1;
+				coord.width = -1;
+			}
+			else if (align.isRight())
+			{
+				coord.width = 1;
+			}
+
+			if (align.isTop())
+			{
+				coord.top = 1;
+				coord.height = -1;
+			}
+			else if (align.isBottom())
+			{
+				coord.height = 1;
+			}
+
+			return coord;
+		}
+
+		return IntCoord();
+	}
+
+	void Window::setMovable(bool _value)
+	{
+		mMovable = _value;
+	}
+
+	bool Window::getMovable() const
+	{
+		return mMovable;
 	}
 
 } // namespace MyGUI

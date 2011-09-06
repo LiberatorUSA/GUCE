@@ -1,95 +1,119 @@
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "UndoManager.h"
+#include "CommandManager.h"
+#include "WidgetSelectorManager.h"
 
-const int UNDO_COUNT = 64;
+template <> tools::UndoManager* MyGUI::Singleton<tools::UndoManager>::msInstance = nullptr;
+template <> const char* MyGUI::Singleton<tools::UndoManager>::mClassTypeName("UndoManager");
 
-const std::string INSTANCE_TYPE_NAME("UndoManager");
-UndoManager* UndoManager::msInstance = 0;
-UndoManager* UndoManager::getInstancePtr()
+namespace tools
 {
-	return msInstance;
-}
-UndoManager& UndoManager::getInstance()
-{
-	MYGUI_ASSERT(0 != msInstance, "instance " << INSTANCE_TYPE_NAME << " was not created");
-	return (*msInstance);
-}
-UndoManager::UndoManager() :
-	mIsInitialise(false),
-	pos(0),
-	operations(UNDO_COUNT),
-	last_property(0),
-	ew(nullptr),
-	mUnsaved(false)
-{
-	MYGUI_ASSERT(0 == msInstance, "instance " << INSTANCE_TYPE_NAME << " is exsist");
-	msInstance=this;
-}
-UndoManager::~UndoManager() { msInstance=0; }
+	const int UNDO_COUNT = 64;
 
-void UndoManager::initialise(EditorWidgets * _ew)
-{
-	pos = 0;
-	last_property = PR_DEFAULT;
-	ew = _ew;
-	mUnsaved = false;
-}
-
-void UndoManager::shutdown()
-{
-	for (size_t i=0; i<operations.GetSize(); i++)
+	UndoManager::UndoManager() :
+		mPosition(0),
+		mOperations(UNDO_COUNT),
+		mLastProperty(0),
+		mEditorWidgets(nullptr),
+		mUnsaved(false)
 	{
-		delete operations[i];
-	}
-	operations.Clear();
-}
-
-void UndoManager::undo()
-{
-	mUnsaved = true;
-
-	if (pos == operations.GetSize() - 1) return;
-	pos++;
-	ew->clear();
-	ew->loadxmlDocument(operations[pos]);
-}
-
-void UndoManager::redo()
-{
-	mUnsaved = true;
-
-	if (pos == 0) return;
-	pos--;
-	ew->clear();
-	ew->loadxmlDocument(operations[pos]);
-}
-
-void UndoManager::addValue(int _property)
-{
-	mUnsaved = true;
-
-	if ((_property != PR_DEFAULT) && (_property == last_property))
-	{
-		delete operations.Front();
-		operations.PopFirst();
-		operations.Push( ew->savexmlDocument() );
-		return;
+		CommandManager::getInstance().registerCommand("Command_Undo", MyGUI::newDelegate(this, &UndoManager::commandUndo));
+		CommandManager::getInstance().registerCommand("Command_Redo", MyGUI::newDelegate(this, &UndoManager::commandRedo));
 	}
 
-	last_property = _property;
-
-	if ( pos != 0 )
+	void UndoManager::initialise(EditorWidgets* _ew)
 	{
-		last_property = PR_DEFAULT;
-		while (pos)
+		mPosition = 0;
+		mLastProperty = PR_DEFAULT;
+		mEditorWidgets = _ew;
+		UndoManager::getInstance().addValue();
+		setUnsaved(false);
+	}
+
+	void UndoManager::shutdown()
+	{
+		for (size_t i = 0; i < mOperations.GetSize(); i++)
 		{
-			delete operations.Front();
-			operations.PopFirst();
-			pos--;
+			delete mOperations[i];
+		}
+		mOperations.Clear();
+	}
+
+	void UndoManager::undo()
+	{
+		if (mPosition == mOperations.GetSize() - 1) return;
+
+		setUnsaved(true);
+
+		mPosition++;
+		mEditorWidgets->clear();
+		mEditorWidgets->loadxmlDocument(mOperations[mPosition]);
+	}
+
+	void UndoManager::redo()
+	{
+		if (mPosition == 0) return;
+
+		setUnsaved(true);
+
+		mPosition--;
+		mEditorWidgets->clear();
+		mEditorWidgets->loadxmlDocument(mOperations[mPosition]);
+	}
+
+	void UndoManager::addValue(int _property)
+	{
+		setUnsaved(true);
+
+		if ((_property != PR_DEFAULT) && (_property == mLastProperty))
+		{
+			delete mOperations.Front();
+			mOperations.PopFirst();
+			mOperations.Push( mEditorWidgets->savexmlDocument() );
+			return;
+		}
+
+		mLastProperty = _property;
+
+		if ( mPosition != 0 )
+		{
+			mLastProperty = PR_DEFAULT;
+			while (mPosition)
+			{
+				delete mOperations.Front();
+				mOperations.PopFirst();
+				mPosition--;
+			}
+		}
+
+		if ( mOperations.IsFull() ) delete mOperations.Back();
+		mOperations.Push( mEditorWidgets->savexmlDocument() );
+		mPosition = 0;
+	}
+
+	void UndoManager::commandUndo(const MyGUI::UString& _commandName, bool& _result)
+	{
+		undo();
+		WidgetSelectorManager::getInstance().setSelectedWidget(nullptr);
+
+		_result = true;
+	}
+
+	void UndoManager::commandRedo(const MyGUI::UString& _commandName, bool& _result)
+	{
+		redo();
+		WidgetSelectorManager::getInstance().setSelectedWidget(nullptr);
+
+		_result = true;
+	}
+
+	void UndoManager::setUnsaved(bool _value)
+	{
+		if (mUnsaved != _value)
+		{
+			mUnsaved = _value;
+			eventChanges(mUnsaved);
 		}
 	}
 
-	if ( operations.IsFull() ) delete operations.Back();
-	operations.Push( ew->savexmlDocument() );
-	pos = 0;
-}
+} // namespace tools

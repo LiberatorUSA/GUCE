@@ -2,15 +2,15 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "EditorWindow.h"
 
 namespace demo
 {
 
-	EditorWindow::EditorWindow() : BaseLayout("EditorWindow.layout")
+	EditorWindow::EditorWindow() :
+		BaseLayout("EditorWindow.layout")
 	{
 	}
 
@@ -19,5 +19,9 @@ namespace demo
 		MyGUI::WidgetManager::getInstance().destroyWidgets(mMainWidget->getEnumerator());
 	}
 
+	MyGUI::Widget* EditorWindow::getView()
+	{
+		return mMainWidget;
+	}
 
 } // namespace demo

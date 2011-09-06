@@ -15,12 +15,16 @@ namespace demo
 	};
 
 	template <typename Type>
-	class GraphNodeConstruct : public IGraphNodeConstruct
+	class GraphNodeConstruct :
+		public IGraphNodeConstruct
 	{
 	public:
 		GraphNodeConstruct() { }
 		virtual ~GraphNodeConstruct() { }
-		virtual BaseAnimationNode* create(const std::string& _name) { return new Type(_name); }
+		virtual BaseAnimationNode* create(const std::string& _name)
+		{
+			return new Type(_name);
+		}
 	};
 
 }

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __I_ANIMATION_GRAPH_H__
 #define __I_ANIMATION_GRAPH_H__
@@ -14,7 +13,8 @@
 namespace animation
 {
 
-	class IAnimationGraph : public IAnimationNode
+	class IAnimationGraph :
+		public IAnimationNode
 	{
 	public:
 		IAnimationGraph() : IAnimationNode() { }

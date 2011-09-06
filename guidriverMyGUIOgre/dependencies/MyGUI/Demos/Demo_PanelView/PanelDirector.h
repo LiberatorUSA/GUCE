@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __PANEL_DIRECTOR_H__
 #define __PANEL_DIRECTOR_H__
@@ -22,7 +21,8 @@ namespace demo
 
 	typedef MyGUI::delegates::CDelegate2<int, size_t> EventHandle_EventDirector;
 
-	class PanelDirector : public wraps::BasePanelViewItem
+	class PanelDirector :
+		public wraps::BasePanelViewItem
 	{
 	public:
 		PanelDirector();
@@ -40,7 +40,6 @@ namespace demo
 		MyGUI::Button* mCheckShowStatic;
 		MyGUI::Button* mCheckShowDynamic;
 		MyGUI::ComboBox* mComboCount;
-
 	};
 
 } // namespace demo

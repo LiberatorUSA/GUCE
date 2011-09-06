@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __GRAPH_NODE_POSITION_H__
 #define __GRAPH_NODE_POSITION_H__
@@ -14,14 +13,17 @@
 namespace demo
 {
 
-	class GraphNodePositionController : public BaseAnimationNode
+	class GraphNodePositionController :
+		public BaseAnimationNode
 	{
 	public:
 		GraphNodePositionController(const std::string& _name) :
 			BaseAnimationNode("GraphNodePosition.layout", "PositionController", _name),
 			mConnectionOut(nullptr),
-			mPosition(0),
-			mLength(1)
+			mEditPosition(nullptr),
+			mScrollPosition(nullptr),
+			mPosition(0.0f),
+			mLength(1.0f)
 		{
 		}
 
@@ -74,13 +76,13 @@ namespace demo
 
 		virtual void initialise()
 		{
-			mMainWidget->setCaption(getName());
+			mMainWidget->castType<MyGUI::Window>()->setCaption(getName());
 			assignBase(mConnectionOut, "ConnectionOut");
 			assignWidget(mEditPosition, "EditPosition");
 			assignWidget(mScrollPosition, "ScrollPosition");
 
-			mEditPosition->eventEditSelectAccept = MyGUI::newDelegate(this, &GraphNodePositionController::notifyEditSelectAccept);
-			mScrollPosition->eventScrollChangePosition = MyGUI::newDelegate(this, &GraphNodePositionController::notifyScrollChangePosition);
+			mEditPosition->eventEditSelectAccept += MyGUI::newDelegate(this, &GraphNodePositionController::notifyEditSelectAccept);
+			mScrollPosition->eventScrollChangePosition += MyGUI::newDelegate(this, &GraphNodePositionController::notifyScrollChangePosition);
 
 			updateWidgets();
 		}
@@ -104,7 +106,7 @@ namespace demo
 			onChangePosition(mPosition);
 		}
 
-		void notifyEditSelectAccept(MyGUI::EditPtr _sender)
+		void notifyEditSelectAccept(MyGUI::EditBox* _sender)
 		{
 			mPosition = MyGUI::utility::parseValue<float>(_sender->getCaption());
 			if (mPosition < 0) mPosition = 0;
@@ -113,7 +115,7 @@ namespace demo
 			updateWidgets();
 		}
 
-		void notifyScrollChangePosition(MyGUI::VScrollPtr _sender, size_t _position)
+		void notifyScrollChangePosition(MyGUI::ScrollBar* _sender, size_t _position)
 		{
 			double range = (double)_sender->getScrollRange() - 1;
 			double position = (double)_position;
@@ -130,9 +132,9 @@ namespace demo
 		}
 
 	private:
-		wraps::BaseGraphConnection * mConnectionOut;
-		MyGUI::EditPtr mEditPosition;
-		MyGUI::HScrollPtr mScrollPosition;
+		wraps::BaseGraphConnection* mConnectionOut;
+		MyGUI::EditBox* mEditPosition;
+		MyGUI::ScrollBar* mScrollPosition;
 		float mPosition;
 		float mLength;
 

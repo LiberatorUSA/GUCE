@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		04/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -26,31 +25,19 @@
 namespace MyGUI
 {
 
-	const std::string INSTANCE_TYPE_NAME("RenderManager");
+	template <> RenderManager* Singleton<RenderManager>::msInstance = nullptr;
+	template <> const char* Singleton<RenderManager>::mClassTypeName("RenderManager");
 
-	RenderManager* RenderManager::msInstance = 0;
-
-	RenderManager::RenderManager() :
-		mIsInitialise(false)
+	bool RenderManager::isFormatSupported(PixelFormat _format, TextureUsage _usage)
 	{
-		MYGUI_ASSERT(0 == msInstance, "instance " << INSTANCE_TYPE_NAME << " is exsist");
-		msInstance = this;
+		return true;
 	}
 
-	RenderManager::~RenderManager()
+#if MYGUI_DEBUG_MODE == 1
+	bool RenderManager::checkTexture(ITexture* _texture)
 	{
-		msInstance = 0;
+		return true;
 	}
-
-	RenderManager* RenderManager::getInstancePtr()
-	{
-		return msInstance;
-	}
-
-	RenderManager& RenderManager::getInstance()
-	{
-		MYGUI_ASSERT(0 != msInstance, "instance " << INSTANCE_TYPE_NAME << " was not created");
-		return (*msInstance);
-	}
+#endif
 
 } // namespace MyGUI

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #ifndef __CONTROLLER_RANDOM_SELECTED_H__
@@ -49,7 +48,7 @@ namespace demo
 			{
 				MyGUI::Button* button = _widget->castType<MyGUI::Button>(false);
 				if (button != nullptr)
-					button->setButtonPressed(!button->getButtonPressed());
+					button->setStateSelected(!button->getStateSelected());
 			}
 		}
 

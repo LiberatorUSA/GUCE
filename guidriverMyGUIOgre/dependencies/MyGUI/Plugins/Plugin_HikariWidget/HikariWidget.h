@@ -2,14 +2,12 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2009
-	@module
 */
 #ifndef __HIKARI_WIDGET_H__
 #define __HIKARI_WIDGET_H__
 
 #include "MyGUI_Prerequest.h"
 #include "MyGUI_Canvas.h"
-#include "MyGUI_IWidgetFactory.h"
 #include "FlashControl.h"
 
 namespace Hikari
@@ -18,7 +16,7 @@ namespace Hikari
 	class HikariWidget :
 		public MyGUI::Canvas
 	{
-		MYGUI_RTTI_CHILD_HEADER( HikariWidget, Canvas );
+		MYGUI_RTTI_DERIVED( HikariWidget );
 
 	public:
 		HikariWidget();
@@ -128,7 +126,7 @@ namespace Hikari
 
 		/**
 		* Attempts to call a function declared as a callback in the ActionScript of the currently-loaded movie.
-		* 
+		*
 		* @param	funcName	The name of the callback that was declared using 'ExternalInterface.addCallback(funcName, function)'
 		*						in the ActionScript of the currently-loaded movie.
 		* @param	args	The arguments to pass to the ActionScript function.
@@ -140,26 +138,19 @@ namespace Hikari
 
 		FlashValue callFunction(MyGUI::UString funcName, const Arguments& args = Args());
 
-		FlashControl* getControl() { return mControl; }
-
-		virtual void setProperty(const std::string& _key, const std::string& _value);
-
-	/*internal:*/
-		virtual void _initialise(MyGUI::WidgetStyle _style, const MyGUI::IntCoord& _coord, MyGUI::Align _align, MyGUI::ResourceSkin* _info, MyGUI::Widget* _parent, MyGUI::ICroppedRectangle * _croppedParent, MyGUI::IWidgetCreator * _creator, const std::string& _name);
+		FlashControl* getControl();
 
 	protected:
-		virtual ~HikariWidget();
+		virtual void initialiseOverride();
+		virtual void shutdownOverride();
 
-		virtual void baseChangeWidgetSkin(MyGUI::ResourceSkin* _info);
+		virtual void setPropertyOverride(const std::string& _key, const std::string& _value);
 
 	private:
-		void initialiseWidgetSkin(MyGUI::ResourceSkin* _info);
-		void shutdownWidgetSkin();
-
 		void notifyUpdateCanvas(MyGUI::Canvas* _canvas, MyGUI::Canvas::Event _event);
 		void notifyFrameStart(float _time);
 
-		virtual void onMouseDrag(int _left, int _top);
+		virtual void onMouseDrag(int _left, int _top, MyGUI::MouseButton _id);
 		virtual void onMouseMove(int _left, int _top);
 		virtual void onMouseWheel(int _rel);
 		virtual void onMouseButtonPressed(int _left, int _top, MyGUI::MouseButton _id);

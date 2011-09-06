@@ -2,7 +2,6 @@
 	@file
 	@author     Pavel Turin
 	@date       08/2009
-	@module
 */
 #ifndef __TREE_CONTROL_ITEM_H__
 #define __TREE_CONTROL_ITEM_H__
@@ -13,38 +12,37 @@
 namespace MyGUI
 {
 
-    class TreeControlItem : public Button
-    {
-        MYGUI_RTTI_DERIVED( TreeControlItem )
+	class TreeControlItem :
+		public Button
+	{
+		MYGUI_RTTI_DERIVED( TreeControlItem )
 
-    public:
-        TreeControlItem();
+	public:
+		TreeControlItem();
 
-        virtual void _initialise(WidgetStyle _style, const IntCoord& _coord, Align _align, ResourceSkin* _info, Widget* _parent, ICroppedRectangle * _croppedParent, IWidgetCreator * _creator, const std::string& _name);
+		TreeControl::Node* getNode() const;
+		Button* getButtonExpandCollapse() const
+		{
+			return mpButtonExpandCollapse;
+		}
+		ImageBox* getIcon() const
+		{
+			return mpIcon;
+		}
 
-        TreeControl::Node* getNode() const;
-        Button* getButtonExpandCollapse() const { return mpButtonExpandCollapse; }
-        StaticImage* getIcon() const  { return mpIcon; }
+	protected:
+		virtual void initialiseOverride();
+		virtual void shutdownOverride();
 
-        void setLevel(size_t nLevel);
+		void notifyMouseSetFocus(Widget* pSender, Widget* pPreviousWidget);
+		void notifyMouseLostFocus(Widget* pSender, Widget* pNextWidget);
+		void notifyMouseWheel(Widget* pSender, int nValue);
 
-    protected:
-        virtual ~TreeControlItem();
-
-        virtual void baseChangeWidgetSkin(ResourceSkin* pSkinInformation);
-
-        void notifyMouseSetFocus(Widget* pSender, Widget* pPreviousWidget);
-        void notifyMouseLostFocus(Widget* pSender, Widget* pNextWidget);
-        void notifyMouseWheel(Widget* pSender, int nValue);
-
-    private:
-        void initialiseWidgetSkin(ResourceSkin* pSkinInformation);
-        void shutdownWidgetSkin();
-
-        Button* mpButtonExpandCollapse;
-        StaticImage* mpIcon;
-        int mnLevelOffset;
-    };
+	private:
+		Button* mpButtonExpandCollapse;
+		ImageBox* mpIcon;
+		//int mnLevelOffset;
+	};
 
 }
 

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2008
-	@module
 */
 
 #include "MyGUI_RTTLayerNode.h"
@@ -18,11 +17,12 @@ namespace MyGUI
 		mVertexBuffer(nullptr),
 		mTexture(nullptr),
 		mOutOfDate(false),
-		mChacheUsing(true),
 		mMajorUpdate(false),
-		mIsAnimate(false),
-		mDestroy(false)
+		mChacheUsing(true),
+		mDestroy(false),
+		mIsAnimate(false)
 	{
+		mTimer.reset();
 	}
 
 	RTTLayerNode::~RTTLayerNode()
@@ -39,10 +39,18 @@ namespace MyGUI
 			MyGUI::RenderManager::getInstance().destroyTexture( mTexture );
 			mTexture = nullptr;
 		}
+
+		for (VectorLayerNodeAnimation::iterator item = mLayerNodeAnimation.begin(); item != mLayerNodeAnimation.end(); ++item)
+			delete (*item);
+		mLayerNodeAnimation.clear();
 	}
 
 	void RTTLayerNode::renderToTarget(IRenderTarget* _target, bool _update)
 	{
+		unsigned long time = mTimer.getMilliseconds();
+		mTimer.reset();
+
+		float frameTime = (float)((double)(time) / (double)1000);
 		// скорее всего рендер таргет пересоздается,
 		// необходимо пересчитать смещение рендер таргета
 		if (_update)
@@ -67,7 +75,7 @@ namespace MyGUI
 		if (mVertexBuffer == nullptr)
 		{
 			mVertexBuffer = render.createVertexBuffer();
-			mVertexBuffer->setVertextCount(VertexQuad::VertexCount);
+			mVertexBuffer->setVertexCount(VertexQuad::VertexCount);
 			mData.resize(1);
 
 			_update = true;
@@ -114,7 +122,7 @@ namespace MyGUI
 			mDefaultData.set(
 				vertex_left, vertex_top, vertex_right, vertex_bottom, vertex_z,
 				0, 0, texture_u, texture_v, 0xFFFFFFFF
-				);
+			);
 		}
 
 		// анимируем и проверяем, использовалась ли анимация
@@ -127,17 +135,16 @@ namespace MyGUI
 		Enumerator<VectorLayerNodeAnimation> anim = Enumerator<VectorLayerNodeAnimation>(mLayerNodeAnimation);
 		while (anim.next())
 		{
-			float time = 0.005;// FIX ME Gui::getInstance().getLastFrameTime();
-			count_quad = anim->animate(_update, count_quad, mData, time, mVertexBuffer, mTexture, _target->getInfo(), mCurrentCoord, mIsAnimate);
+			count_quad = anim->animate(_update, count_quad, mData, frameTime, mVertexBuffer, mTexture, _target->getInfo(), mCurrentCoord, mIsAnimate);
 		}
 
 		if (mIsAnimate)
 		{
 			// блитим анимацию
-			mVertexBuffer->setVertextCount(count_quad * VertexQuad::VertexCount);
+			mVertexBuffer->setVertexCount(count_quad * VertexQuad::VertexCount);
 			VertexQuad* quad = (VertexQuad*)mVertexBuffer->lock();
 
-			for (size_t index=0; index<count_quad; ++index)
+			for (size_t index = 0; index < count_quad; ++index)
 			{
 				// копируем дефолтные данные
 				quad[index].vertex[VertexQuad::CornerLT] = mData[index].vertex[QuadData::CornerLT];
@@ -156,7 +163,7 @@ namespace MyGUI
 
 			if (_update || need_update)
 			{
-				mVertexBuffer->setVertextCount(count_quad * VertexQuad::VertexCount);
+				mVertexBuffer->setVertexCount(count_quad * VertexQuad::VertexCount);
 				VertexQuad* quad = (VertexQuad*)mVertexBuffer->lock();
 
 				// копируем дефолтные данные
@@ -187,7 +194,7 @@ namespace MyGUI
 			mOutOfDate = false;
 		}
 
-		if (!(!mIsAnimate && mDestroy))
+		if (mIsAnimate || !mDestroy)
 		{
 			_target->doRender(mVertexBuffer, mTexture, count_quad * VertexQuad::VertexCount);
 		}
@@ -197,7 +204,7 @@ namespace MyGUI
 	{
 		if (mTextureSize.width < mCurrentCoord.width || mTextureSize.height < mCurrentCoord.height)
 		{
-			RenderManager& render = RenderManager::getInstance();
+			//RenderManager& render = RenderManager::getInstance();
 
 			if (mTexture != nullptr)
 			{
@@ -231,7 +238,7 @@ namespace MyGUI
 		Enumerator<VectorLayerNodeAnimation> anim = Enumerator<VectorLayerNodeAnimation>(mLayerNodeAnimation);
 		while (anim.next())
 			anim->create();
-		
+
 		Base::attachLayerItem(_item);
 	}
 

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -51,10 +50,10 @@ namespace MyGUI
 		virtual void upChildItemNode(ILayerNode* _node);
 
 		// список детей
-		virtual EnumeratorILayerNode getEnumerator();
+		virtual EnumeratorILayerNode getEnumerator() const;
 
 		// возвращает виджет по позиции
-		virtual ILayerItem* getLayerItemByPoint(int _left, int _top);
+		virtual ILayerItem* getLayerItemByPoint(int _left, int _top) const;
 
 		virtual IntPoint getPosition(int _left, int _top) const;
 
@@ -63,11 +62,12 @@ namespace MyGUI
 		// рисует леер
 		virtual void renderToTarget(IRenderTarget* _target, bool _update);
 
-		virtual void dumpStatisticToLog();
+		bool isOutOfDate() const;
 
 	protected:
 		bool mIsPick;
 		SharedLayerNode* mChildItem;
+		bool mOutOfDate;
 	};
 
 } // namespace MyGUI

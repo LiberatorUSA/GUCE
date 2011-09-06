@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -22,7 +21,7 @@
 */
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_ResourceImageSetPointer.h"
-#include "MyGUI_StaticImage.h"
+#include "MyGUI_ImageBox.h"
 #include "MyGUI_ResourceManager.h"
 
 namespace MyGUI
@@ -30,6 +29,10 @@ namespace MyGUI
 
 	ResourceImageSetPointer::ResourceImageSetPointer() :
 		mImageSet(nullptr)
+	{
+	}
+
+	ResourceImageSetPointer::~ResourceImageSetPointer()
 	{
 	}
 
@@ -44,19 +47,22 @@ namespace MyGUI
 			const std::string& key = info->findAttribute("key");
 			const std::string& value = info->findAttribute("value");
 
-			if (key == "Point") mPoint = IntPoint::parse(value);
-			else if (key == "Size") mSize = IntSize::parse(value);
-			else if (key == "Resource") mImageSet = ResourceManager::getInstance().getByName(value)->castType<ResourceImageSet>();
+			if (key == "Point")
+				mPoint = IntPoint::parse(value);
+			else if (key == "Size")
+				mSize = IntSize::parse(value);
+			else if (key == "Resource")
+				mImageSet = ResourceManager::getInstance().getByName(value)->castType<ResourceImageSet>();
 		}
 	}
 
-	void ResourceImageSetPointer::setImage(StaticImage* _image)
+	void ResourceImageSetPointer::setImage(ImageBox* _image)
 	{
 		if (mImageSet != nullptr)
 			_image->setItemResourceInfo(mImageSet->getIndexInfo(0, 0));
 	}
 
-	void ResourceImageSetPointer::setPosition(StaticImage* _image, const IntPoint& _point)
+	void ResourceImageSetPointer::setPosition(ImageBox* _image, const IntPoint& _point)
 	{
 		_image->setCoord(_point.left - mPoint.left, _point.top - mPoint.top, mSize.width, mSize.height);
 	}

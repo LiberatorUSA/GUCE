@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		07/2008
-	@module
 */
 #ifndef __ITEM_BOXV_H__
 #define __ITEM_BOXV_H__
@@ -14,14 +13,18 @@
 namespace demo
 {
 
-	class ItemBoxWindow : public wraps::BaseLayout
+	class ItemBoxWindow :
+		public wraps::BaseLayout
 	{
 	public:
 		ItemBoxWindow(const std::string& _layout);
-		ItemBox * getItemBox() { return mItemBox; }
+		ItemBox* getItemBox()
+		{
+			return mItemBox;
+		}
 
 	private:
-		ItemBox * mItemBox;
+		ItemBox* mItemBox;
 	};
 
 } // namespace demo

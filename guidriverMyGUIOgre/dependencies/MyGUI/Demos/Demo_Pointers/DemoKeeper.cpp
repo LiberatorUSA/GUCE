@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 #include "ResourcePointerContext.h"
@@ -34,26 +33,26 @@ namespace demo
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/Demos/Demo_Pointers");
 		addResourceLocation(getRootMedia() + "/Common/Scene");
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void DemoKeeper::createScene()
 	{
 		createEntities();
 
-		MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().load("BackHelp.layout");
-		root.at(0)->findWidget("Text")->setCaption("");
+		const MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().loadLayout("HelpPanel.layout");
+		root.at(0)->findWidget("Text")->castType<MyGUI::TextBox>()->setCaption("Implementation of custom complex cursor behaviour, interaction of system and in-game cursors.");
 
 		MyGUI::FactoryManager::getInstance().registerFactory<ResourcePointerContext>("Resource");
 
-		getGUI()->load("Contexts.xml");
+		MyGUI::ResourceManager::getInstance().load("Contexts.xml");
 
-#ifdef MYGUI_SAMPLES_INPUT_WIN32
-		getGUI()->load("Pointers_W32.xml");
+#ifdef MYGUI_SAMPLES_INPUT_OIS
+		MyGUI::ResourceManager::getInstance().load("Pointers.xml");
+#elif MYGUI_SAMPLES_INPUT_WIN32
+		MyGUI::ResourceManager::getInstance().load("PointersW32.xml");
 #elif MYGUI_SAMPLES_INPUT_WIN32_OIS
-		getGUI()->load("Pointers_W32.xml");
-#else
-		getGUI()->load("Pointers.xml");
+		MyGUI::ResourceManager::getInstance().load("PointersW32.xml");
 #endif
 
 		mPointerContextManager = new PointerContextManager(this);
@@ -64,7 +63,7 @@ namespace demo
 		mFriendPanel = new FriendPanel();
 		mControlPanel = new ControlPanel(mPointerContextManager);
 
-		MyGUI::IntSize size = getGUI()->getViewSize();
+		MyGUI::IntSize size = MyGUI::RenderManager::getInstance().getViewSize();
 		setMousePosition(size.width / 2, size.height / 2);
 		updateCursorPosition();
 
@@ -95,7 +94,7 @@ namespace demo
 
 	void DemoKeeper::injectMouseMove(int _absx, int _absy, int _absz)
 	{
-		if (!getGUI())
+		if (MyGUI::Gui::getInstancePtr() == nullptr)
 			return;
 
 		// при зажатой правой вращаем сцену
@@ -116,7 +115,7 @@ namespace demo
 		else
 		{
 			// ввод мыши находить вне гу€
-			if (!getGUI()->injectMouseMove(_absx, _absy, _absz))
+			if (!MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz))
 			{
 				// пикаем сцену
 				std::string pointer = getCursorFromScene(_absx, _absy);
@@ -127,10 +126,10 @@ namespace demo
 
 	void DemoKeeper::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
 	{
-		if (!getGUI())
+		if (MyGUI::Gui::getInstancePtr() == nullptr)
 			return;
 
-		if (!getGUI()->injectMousePress(_absx, _absy, _id))
+		if (!MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id))
 		{
 			// вращаем сцену только когда не над гуем
 			if (_id == MyGUI::MouseButton::Right)
@@ -145,7 +144,7 @@ namespace demo
 
 	void DemoKeeper::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
 	{
-		if (!getGUI())
+		if (MyGUI::Gui::getInstancePtr() == nullptr)
 			return;
 
 		if (_id == MyGUI::MouseButton::Right)
@@ -154,7 +153,7 @@ namespace demo
 			setPointerVisible(true);
 		}
 
-		if (!getGUI()->injectMouseRelease(_absx, _absy, _id))
+		if (!MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id))
 		{
 		}
 	}
@@ -175,7 +174,7 @@ namespace demo
 	void DemoKeeper::updateCamera(int _x, int _y)
 	{
 #ifdef MYGUI_OGRE_PLATFORM
-		gAngleH += (float)_x * -0.1;
+		gAngleH += (float)_x * -0.1f;
 
 		Ogre::Quaternion quatH(Ogre::Radian(Ogre::Degree(gAngleH)), Ogre::Vector3::UNIT_Y);
 		Ogre::Quaternion quatV(Ogre::Radian(Ogre::Degree(gAngleV)), Ogre::Vector3::UNIT_X);
@@ -205,18 +204,18 @@ namespace demo
 		node->setPosition(0, 0, -300);
 		//node->showBoundingBox(true);
 
-        Ogre::MeshManager::getSingleton().createPlane(
-            "FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-            Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 2000, 2000, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
+		Ogre::MeshManager::getSingleton().createPlane(
+			"FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+			Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 2000, 2000, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
 
-        entity = getSceneManager()->createEntity("floor", "FloorPlane");
-        entity->setMaterialName("Ground");
+		entity = getSceneManager()->createEntity("floor", "FloorPlane");
+		entity->setMaterialName("Ground");
 		node = getSceneManager()->getRootSceneNode()->createChildSceneNode();
 		node->attachObject(entity);
 
 		gRaySceneQuery = getSceneManager()->createRayQuery(Ogre::Ray());
 #else
-		getGUI()->load("Wallpaper0.layout");
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
 #endif
 	}
 
@@ -230,14 +229,14 @@ namespace demo
 	std::string DemoKeeper::getCursorFromScene(int _x, int _y)
 	{
 #ifdef MYGUI_OGRE_PLATFORM
-		MyGUI::IntSize size = getGUI()->getViewSize();
+		MyGUI::IntSize size = MyGUI::RenderManager::getInstance().getViewSize();
 		Ogre::Ray ray = getCamera()->getCameraToViewportRay(
 			_x / float(size.width),
 			_y / float(size.height));
 		gRaySceneQuery->setRay(ray);
 		gRaySceneQuery->setSortByDistance(true);
-		Ogre::RaySceneQueryResult &result = gRaySceneQuery->execute();
-		for (Ogre::RaySceneQueryResult::iterator iter = result.begin(); iter!=result.end(); ++iter)
+		Ogre::RaySceneQueryResult& result = gRaySceneQuery->execute();
+		for (Ogre::RaySceneQueryResult::iterator iter = result.begin(); iter != result.end(); ++iter)
 		{
 			if (iter->movable != 0)
 			{
@@ -260,4 +259,3 @@ namespace demo
 } // namespace demo
 
 MYGUI_APP(demo::DemoKeeper)
-

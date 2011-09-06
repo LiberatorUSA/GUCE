@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -41,49 +40,52 @@
 #include "MyGUI_ResourceManager.h"
 #include "MyGUI_RenderManager.h"
 #include "MyGUI_FactoryManager.h"
+#include "MyGUI_ToolTipManager.h"
 
 namespace MyGUI
 {
 
-	const std::string INSTANCE_TYPE_NAME("Gui");
-
-	Gui* Gui::msInstance = nullptr;
-
-	Gui* Gui::getInstancePtr()
-	{
-		return msInstance;
-	}
-
-	Gui& Gui::getInstance()
-	{
-		MYGUI_ASSERT(0 != msInstance, "instance " << INSTANCE_TYPE_NAME << " was not created");
-		return (*msInstance);
-	}
+	template <> Gui* Singleton<Gui>::msInstance = nullptr;
+	template <> const char* Singleton<Gui>::mClassTypeName("Gui");
 
 	Gui::Gui() :
+		mInputManager(nullptr),
+		mSubWidgetManager(nullptr),
+		mLayerManager(nullptr),
+		mSkinManager(nullptr),
+		mWidgetManager(nullptr),
+		mFontManager(nullptr),
+		mControllerManager(nullptr),
+		mPointerManager(nullptr),
+		mClipboardManager(nullptr),
+		mLayoutManager(nullptr),
+		mDynLibManager(nullptr),
+		mPluginManager(nullptr),
+		mLanguageManager(nullptr),
+		mResourceManager(nullptr),
+		mFactoryManager(nullptr),
+		mToolTipManager(nullptr),
 		mIsInitialise(false)
 	{
-		MYGUI_ASSERT(0 == msInstance, "instance " << INSTANCE_TYPE_NAME << " is exsist");
-		msInstance = this;
 	}
 
-	Gui::~Gui()
+	void Gui::initialise(const std::string& _core)
 	{
-		msInstance = nullptr;
-	}
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
-	void Gui::initialise(const std::string& _core, const std::string& _logFileName)
-	{
-		// самый первый лог
-		LogManager::registerSection(MYGUI_LOG_SECTION, _logFileName);
-
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+#ifdef MYGUI_SVN_REVISION
+		MYGUI_LOG(Info, "* MyGUI version "
+			<< MYGUI_VERSION_MAJOR << "."
+			<< MYGUI_VERSION_MINOR << "."
+			<< MYGUI_VERSION_PATCH << "."
+			<< MYGUI_SVN_REVISION);
+#else
 		MYGUI_LOG(Info, "* MyGUI version "
 			<< MYGUI_VERSION_MAJOR << "."
 			<< MYGUI_VERSION_MINOR << "."
 			<< MYGUI_VERSION_PATCH);
+#endif
 
 		// создаем и инициализируем синглтоны
 		mResourceManager = new ResourceManager();
@@ -101,6 +103,7 @@ namespace MyGUI
 		mPluginManager = new PluginManager();
 		mLanguageManager = new LanguageManager();
 		mFactoryManager = new FactoryManager();
+		mToolTipManager = new ToolTipManager();
 
 		mResourceManager->initialise();
 		mLayerManager->initialise();
@@ -117,23 +120,36 @@ namespace MyGUI
 		mPluginManager->initialise();
 		mLanguageManager->initialise();
 		mFactoryManager->initialise();
+		mToolTipManager->initialise();
 
 		WidgetManager::getInstance().registerUnlinker(this);
 
 		// загружаем дефолтные настройки если надо
-		if ( _core.empty() == false ) mResourceManager->load(_core);
+		if ( _core.empty() == false )
+			mResourceManager->load(_core);
 
 		mViewSize = RenderManager::getInstance().getViewSize();
-		resizeWindow(mViewSize);
+		_resizeWindow(mViewSize);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		BackwardCompatibility::initialise();
+
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
+#ifndef MYGUI_DONT_USE_OBSOLETE
+	void Gui::initialise(const std::string& _core, const std::string& _logFileName)
+	{
+		initialise(_core);
+	}
+#endif // MYGUI_DONT_USE_OBSOLETE
+
 	void Gui::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
+
+		BackwardCompatibility::shutdown();
 
 		_destroyAllChildWidget();
 
@@ -152,6 +168,7 @@ namespace MyGUI
 		mLanguageManager->shutdown();
 		mResourceManager->shutdown();
 		mFactoryManager->shutdown();
+		mToolTipManager->shutdown();
 
 		WidgetManager::getInstance().unregisterUnlinker(this);
 		mWidgetManager->shutdown();
@@ -171,35 +188,28 @@ namespace MyGUI
 		delete mLanguageManager;
 		delete mResourceManager;
 		delete mFactoryManager;
+		delete mToolTipManager;
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
-
-		// last gui log
-		LogManager::unregisterSection(MYGUI_LOG_SECTION);
-
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
-	bool Gui::injectMouseMove( int _absx, int _absy, int _absz) { return mInputManager->injectMouseMove(_absx, _absy, _absz); }
-	bool Gui::injectMousePress( int _absx, int _absy, MouseButton _id ) { return mInputManager->injectMousePress(_absx, _absy, _id); }
-	bool Gui::injectMouseRelease( int _absx, int _absy, MouseButton _id ) { return mInputManager->injectMouseRelease(_absx, _absy, _id); }
-
-	bool Gui::injectKeyPress(KeyCode _key, Char _text) { return mInputManager->injectKeyPress(_key, _text); }
-	bool Gui::injectKeyRelease(KeyCode _key) { return mInputManager->injectKeyRelease(_key); }
-
-
 	Widget* Gui::baseCreateWidget(WidgetStyle _style, const std::string& _type, const std::string& _skin, const IntCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
 	{
-		Widget* widget = WidgetManager::getInstance().createWidget(_style, _type, _skin, _coord, _align, nullptr, nullptr, this, _name);
+		Widget* widget = WidgetManager::getInstance().createWidget(_style, _type, _skin, _coord, /*_align, */nullptr, nullptr, _name);
 		mWidgetChild.push_back(widget);
+
+		widget->setAlign(_align);
+
 		// присоединяем виджет с уровню
-		if (!_layer.empty()) LayerManager::getInstance().attachToLayerNode(_layer, widget);
+		if (!_layer.empty())
+			LayerManager::getInstance().attachToLayerNode(_layer, widget);
 		return widget;
 	}
 
 	Widget* Gui::findWidgetT(const std::string& _name, bool _throw)
 	{
-		for (VectorWidgetPtr::iterator iter = mWidgetChild.begin(); iter!=mWidgetChild.end(); ++iter)
+		for (VectorWidgetPtr::iterator iter = mWidgetChild.begin(); iter != mWidgetChild.end(); ++iter)
 		{
 			Widget* widget = (*iter)->findWidget(_name);
 			if (widget != nullptr) return widget;
@@ -227,9 +237,12 @@ namespace MyGUI
 			mWidgetManager->unlinkFromUnlinkers(_widget);
 
 			// непосредственное удаление
-			_deleteWidget(widget);
+			WidgetManager::getInstance()._deleteWidget(widget);
 		}
-		else MYGUI_EXCEPT("Widget '" << _widget->getName() << "' not found");
+		else
+		{
+			MYGUI_EXCEPT("Widget '" << _widget->getName() << "' not found");
+		}
 	}
 
 	// удаляет всех детей
@@ -241,44 +254,35 @@ namespace MyGUI
 			Widget* widget = mWidgetChild.back();
 			mWidgetChild.pop_back();
 
-			//widget->detachWidget();
-
 			// отписываем от всех
 			mWidgetManager->unlinkFromUnlinkers(widget);
 
 			// и сами удалим, так как его больше в списке нет
-			_deleteWidget(widget);
+			WidgetManager::getInstance()._deleteWidget(widget);
 		}
-	}
-
-	bool Gui::load(const std::string& _file)
-	{
-		return mResourceManager->load(_file);
 	}
 
 	void Gui::destroyWidget(Widget* _widget)
 	{
-		mWidgetManager->destroyWidget(_widget);
+		Widget* parent = _widget->getParent();
+		if (parent != nullptr)
+			parent->_destroyChildWidget(_widget);
+		else
+			_destroyChildWidget(_widget);
 	}
 
-	void Gui::destroyWidgets(VectorWidgetPtr& _widgets)
+	void Gui::destroyWidgets(const VectorWidgetPtr& _widgets)
 	{
-		mWidgetManager->destroyWidgets(_widgets);
+		for (VectorWidgetPtr::const_iterator iter = _widgets.begin(); iter != _widgets.end(); ++iter)
+			destroyWidget(*iter);
 	}
 
 	void Gui::destroyWidgets(EnumeratorWidgetPtr& _widgets)
 	{
-		mWidgetManager->destroyWidgets(_widgets);
-	}
-
-	void Gui::setVisiblePointer(bool _value)
-	{
-		mPointerManager->setVisible(_value);
-	}
-
-	bool Gui::isVisiblePointer()
-	{
-		return mPointerManager->isVisible();
+		VectorWidgetPtr widgets;
+		while (_widgets.next())
+			widgets.push_back(_widgets.current());
+		destroyWidgets(widgets);
 	}
 
 	void Gui::_injectFrameEntered(float _time)
@@ -305,16 +309,54 @@ namespace MyGUI
 		mWidgetChild.erase(iter);
 	}
 
-	void Gui::resizeWindow(const IntSize& _size)
+	void Gui::_resizeWindow(const IntSize& _size)
 	{
 		IntSize oldViewSize = mViewSize;
 		mViewSize = _size;
 
 		// выравниваем рутовые окна
-		for (VectorWidgetPtr::iterator iter = mWidgetChild.begin(); iter!=mWidgetChild.end(); ++iter)
-		{
-			((ICroppedRectangle*)(*iter))->_setAlign(oldViewSize, true);
-		}
+		for (VectorWidgetPtr::iterator iter = mWidgetChild.begin(); iter != mWidgetChild.end(); ++iter)
+			(*iter)->_setAlign(oldViewSize);
+	}
+
+	Widget* Gui::createWidgetT(const std::string& _type, const std::string& _skin, const IntCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
+	{
+		return baseCreateWidget(WidgetStyle::Overlapped, _type, _skin, _coord, _align, _layer, _name);
+	}
+	/** See Gui::createWidgetT */
+	Widget* Gui::createWidgetT(const std::string& _type, const std::string& _skin, int _left, int _top, int _width, int _height, Align _align, const std::string& _layer, const std::string& _name)
+	{
+		return createWidgetT(_type, _skin, IntCoord(_left, _top, _width, _height), _align, _layer, _name);
+	}
+	/** Create widget using coordinates relative to parent widget. see Gui::createWidgetT */
+	Widget* Gui::createWidgetRealT(const std::string& _type, const std::string& _skin, const FloatCoord& _coord, Align _align, const std::string& _layer, const std::string& _name)
+	{
+		return createWidgetT(_type, _skin, IntCoord((int)(_coord.left * mViewSize.width), (int)(_coord.top * mViewSize.height), (int)(_coord.width * mViewSize.width), (int)(_coord.height * mViewSize.height)), _align, _layer, _name);
+	}
+	/** Create widget using coordinates relative to parent. see Gui::createWidgetT */
+	Widget* Gui::createWidgetRealT(const std::string& _type, const std::string& _skin, float _left, float _top, float _width, float _height, Align _align, const std::string& _layer, const std::string& _name)
+	{
+		return createWidgetT(_type, _skin, IntCoord((int)(_left * mViewSize.width), (int)(_top * mViewSize.height), (int)(_width * mViewSize.width), (int)(_height * mViewSize.height)), _align, _layer, _name);
+	}
+
+	Widget* Gui::findWidgetT(const std::string& _name, const std::string& _prefix, bool _throw)
+	{
+		return findWidgetT(_prefix + _name, _throw);
+	}
+
+	void Gui::destroyChildWidget(Widget* _widget)
+	{
+		_destroyChildWidget(_widget);
+	}
+
+	void Gui::destroyAllChildWidget()
+	{
+		_destroyAllChildWidget();
+	}
+
+	EnumeratorWidgetPtr Gui::getEnumerator() const
+	{
+		return EnumeratorWidgetPtr(mWidgetChild);
 	}
 
 } // namespace MyGUI

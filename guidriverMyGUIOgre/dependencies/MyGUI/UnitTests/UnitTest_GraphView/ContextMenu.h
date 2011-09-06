@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __CONTEXT_MENU_H__
 #define __CONTEXT_MENU_H__
@@ -13,15 +12,16 @@
 namespace wraps
 {
 
-	class ContextMenu : public BaseLayout
+	class ContextMenu :
+		public BaseLayout
 	{
 	public:
 		ContextMenu(const std::string& _layout) :
-	  		BaseLayout(_layout, nullptr)
+			BaseLayout(_layout, nullptr)
 		{
 			assignWidget(mMenu, "_Main");
 			mMenu->setVisible(false);
-			mMenu->eventMenuCtrlAccept = MyGUI::newDelegate(this, &ContextMenu::notifyMenuCtrlAccept);
+			mMenu->eventMenuCtrlAccept += MyGUI::newDelegate(this, &ContextMenu::notifyMenuCtrlAccept);
 		}
 
 		void setVisible(bool _value)
@@ -32,7 +32,7 @@ namespace wraps
 
 		bool isVisible()
 		{
-			return mMenu->isVisible();
+			return mMenu->getVisible();
 		}
 
 		/** Event : Menu accept.\n
@@ -43,13 +43,13 @@ namespace wraps
 		MyGUI::delegates::CDelegate2<ContextMenu*, const std::string&> eventMenuAccept;
 
 	private:
-		void notifyMenuCtrlAccept(MyGUI::MenuCtrlPtr _sender, MyGUI::MenuItemPtr _item)
+		void notifyMenuCtrlAccept(MyGUI::MenuControl* _sender, MyGUI::MenuItem* _item)
 		{
 			eventMenuAccept(this, _item->getItemId());
 		}
 
 	private:
-		MyGUI::PopupMenuPtr mMenu;
+		MyGUI::PopupMenu* mMenu;
 
 	};
 

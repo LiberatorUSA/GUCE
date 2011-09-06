@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 #ifndef __EDITOR_WINDOW_H__
 #define __EDITOR_WINDOW_H__
@@ -13,14 +12,15 @@
 namespace demo
 {
 
-	class EditorWindow : public wraps::BaseLayout
+	class EditorWindow :
+		public wraps::BaseLayout
 	{
 	public:
 		EditorWindow();
 
 		void clearView();
-		MyGUI::Widget* getView() { return mMainWidget; }
 
+		MyGUI::Widget* getView();
 	};
 
 } // namespace demo

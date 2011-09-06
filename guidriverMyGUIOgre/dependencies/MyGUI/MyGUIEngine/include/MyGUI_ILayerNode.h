@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -36,12 +35,12 @@ namespace MyGUI
 	class ILayerNode;
 
 	class RenderItem;
-	class ISubWidget;
 
 	typedef std::vector<ILayerNode*> VectorILayerNode;
 	typedef Enumerator<VectorILayerNode> EnumeratorILayerNode;
 
-	class MYGUI_EXPORT ILayerNode : public IObject
+	class MYGUI_EXPORT ILayerNode :
+		public IObject
 	{
 		MYGUI_RTTI_DERIVED( ILayerNode )
 
@@ -49,10 +48,10 @@ namespace MyGUI
 		virtual ~ILayerNode() { }
 
 		// леер, которому мы принадлежим
-		virtual ILayer* getLayer() = 0;
+		virtual ILayer* getLayer() const = 0;
 
 		// возвращает отца или nullptr
-		virtual ILayerNode* getParent() = 0;
+		virtual ILayerNode* getParent() const = 0;
 
 		// создаем дочерний нод
 		virtual ILayerNode* createChildItemNode() = 0;
@@ -63,7 +62,7 @@ namespace MyGUI
 		virtual void upChildItemNode(ILayerNode* _node) = 0;
 
 		// список детей
-		virtual EnumeratorILayerNode getEnumerator() = 0;
+		virtual EnumeratorILayerNode getEnumerator() const = 0;
 
 
 		// добавляем айтем к ноду
@@ -72,18 +71,15 @@ namespace MyGUI
 		virtual void detachLayerItem(ILayerItem* _root) = 0;
 
 		// добавляет саб айтем и возвращает рендер айтем
-		virtual RenderItem* addToRenderItem(ITexture* _texture, ISubWidget* _item) = 0;
+		virtual RenderItem* addToRenderItem(ITexture* _texture, bool _firstQueue, bool _separate) = 0;
 		// необходимо обновление нода
 		virtual void outOfDate(RenderItem* _item) = 0;
 
 		// возвращает виджет по позиции
-		virtual ILayerItem* getLayerItemByPoint(int _left, int _top) = 0;
+		virtual ILayerItem* getLayerItemByPoint(int _left, int _top) const = 0;
 
 		// рисует леер
 		virtual void renderToTarget(IRenderTarget* _target, bool _update) = 0;
-
-		virtual void dumpStatisticToLog(size_t _level) { }
-
 	};
 
 } // namespace MyGUI

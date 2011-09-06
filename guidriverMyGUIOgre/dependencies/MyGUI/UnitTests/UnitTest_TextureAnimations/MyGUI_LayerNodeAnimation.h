@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2008
-	@module
 */
 
 #ifndef __MYGUI_LAYER_NODE_ANIMATION_H__
@@ -43,7 +42,8 @@ namespace MyGUI
 
 	class ILayerNode;
 
-	class /*MYGUI_EXPORT */LayerNodeAnimation : public ISerializable
+	class /*MYGUI_EXPORT */LayerNodeAnimation :
+		public ISerializable
 	{
 		MYGUI_RTTI_DERIVED( LayerNodeAnimation )
 

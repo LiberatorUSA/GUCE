@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #ifndef __CONTROLLER_SMOOTH_CAPTION_H__
@@ -46,7 +45,7 @@ namespace demo
 			mTime = 0;
 			mCurrentPosition = 0;
 
-			_widget->eventChangeProperty = MyGUI::newDelegate(this, &ControllerSmoothCaption::notifyChangeProperty);
+			_widget->eventChangeProperty += MyGUI::newDelegate(this, &ControllerSmoothCaption::notifyChangeProperty);
 		}
 
 		void update(MyGUI::Widget* _widget)
@@ -54,20 +53,27 @@ namespace demo
 			if (mCurrentPosition < mNeedCaption.size())
 			{
 				mCurrentPosition ++;
-				if (mCurrentPosition == mNeedCaption.size())
-					_widget->setCaption(mNeedCaption);
-				else
-					_widget->setCaption(mNeedCaption.substr(0, mCurrentPosition) + " _");
+				MyGUI::TextBox* text = _widget->castType<MyGUI::TextBox>(false);
+				if (text != nullptr)
+				{
+					if (mCurrentPosition == mNeedCaption.size())
+						text->setCaption(mNeedCaption);
+					else
+						text->setCaption(mNeedCaption.substr(0, mCurrentPosition) + " _");
+				}
 			}
 		}
 
 		void notifyChangeProperty(MyGUI::Widget* _sender, const std::string& _key, const std::string& _value)
 		{
-			if (_key == "Widget_Caption")
+			if (_key == "Caption")
 			{
 				mNeedCaption = _value;
 				mCurrentPosition = 0;
-				_sender->setCaption("");
+
+				MyGUI::TextBox* text = _sender->castType<MyGUI::TextBox>(false);
+				if (text != nullptr)
+					text->setCaption("");
 			}
 		}
 

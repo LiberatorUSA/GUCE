@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 
 #ifndef __CONTROLLER_SMOOTH_PROGRESS_H__
@@ -48,10 +47,10 @@ namespace demo
 			mCurrentPosition = 0;
 			mNeedPosition = 0;
 
-			MyGUI::Progress* progress = _widget->castType<MyGUI::Progress>(false);
+			MyGUI::ProgressBar* progress = _widget->castType<MyGUI::ProgressBar>(false);
 			if (progress != nullptr)
 			{
-				_widget->eventChangeProperty = MyGUI::newDelegate(this, &ControllerSmoothProgress::notifyChangeProperty);
+				_widget->eventChangeProperty += MyGUI::newDelegate(this, &ControllerSmoothProgress::notifyChangeProperty);
 			}
 		}
 
@@ -59,7 +58,7 @@ namespace demo
 		{
 			if (mCurrentPosition != mNeedPosition)
 			{
-				MyGUI::Progress* progress = _widget->castType<MyGUI::Progress>(false);
+				MyGUI::ProgressBar* progress = _widget->castType<MyGUI::ProgressBar>(false);
 				if (progress != nullptr)
 				{
 					if (mCurrentPosition > mNeedPosition)
@@ -78,9 +77,9 @@ namespace demo
 
 		void notifyChangeProperty(MyGUI::Widget* _sender, const std::string& _key, const std::string& _value)
 		{
-			if (_key == "Progress_Position")
+			if (_key == "RangePosition")
 			{
-				MyGUI::Progress* progress = _sender->castType<MyGUI::Progress>(false);
+				MyGUI::ProgressBar* progress = _sender->castType<MyGUI::ProgressBar>(false);
 				if (progress != nullptr)
 				{
 					progress->setProgressPosition(mCurrentPosition);

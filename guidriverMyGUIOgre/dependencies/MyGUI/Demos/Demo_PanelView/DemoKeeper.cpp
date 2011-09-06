@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 
@@ -23,14 +22,17 @@ namespace demo
 	{
 		base::BaseManager::setupResources();
 		addResourceLocation(getRootMedia() + "/Demos/Demo_PanelView");
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		addResourceLocation(getRootMedia() + "/Common/Demos");
+		addResourceLocation(getRootMedia() + "/Common/Tools");
 	}
 
 	void DemoKeeper::createScene()
 	{
-		getGUI()->load("Wallpaper0.layout");
-		MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().load("BackHelp.layout");
-		root.at(0)->findWidget("Text")->setCaption("Panel View control implementation.");
+		MyGUI::LayoutManager::getInstance().loadLayout("Wallpaper.layout");
+		const MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().loadLayout("HelpPanel.layout");
+		root.at(0)->findWidget("Text")->castType<MyGUI::TextBox>()->setCaption("Panel View control implementation.");
+
+		MyGUI::ResourceManager::getInstance().load("FrameworkSkin.xml");
 
 		mView = new PanelViewWindow();
 		mPanelDirector = new PanelDirector();
@@ -61,11 +63,11 @@ namespace demo
 	{
 		if (_key == EVENT_SHOW_STATIC)
 		{
-			mView->getPanelView()->setItemShow(mPanelStatic, _value != 0);
+			mPanelStatic->setVisible(_value != 0);
 		}
 		else if (_key == EVENT_SHOW_DYNAMIC)
 		{
-			mView->getPanelView()->setItemShow(mPanelDynamic, _value != 0);
+			mPanelDynamic->setVisible(_value != 0);
 		}
 		else if (_key == EVENT_COUNT_DYNAMIC)
 		{

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 #ifndef __INFORMATION_WINDOW_H__
 #define __INFORMATION_WINDOW_H__
@@ -13,7 +12,8 @@
 namespace demo
 {
 
-	class InformationWindow : public wraps::BaseLayout
+	class InformationWindow :
+		public wraps::BaseLayout
 	{
 	public:
 		InformationWindow(MyGUI::Widget* _parent);
@@ -24,7 +24,7 @@ namespace demo
 		int getRand(int _min, int _max);
 
 	private:
-		MyGUI::Edit* mInfo;
+		MyGUI::EditBox* mInfo;
 		MyGUI::Widget* mFocus;
 	};
 

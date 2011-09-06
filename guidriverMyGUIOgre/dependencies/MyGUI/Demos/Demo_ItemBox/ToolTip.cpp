@@ -2,15 +2,15 @@
 	@file
 	@author		Albert Semenov
 	@date		07/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "ToolTip.h"
 
 namespace demo
 {
 
-	ToolTip::ToolTip() : BaseLayout("ToolTip.layout")
+	ToolTip::ToolTip() :
+		BaseLayout("ToolTip.layout")
 	{
 		assignWidget(mTextName, "text_Name");
 		assignWidget(mTextCount, "text_Count");
@@ -22,26 +22,10 @@ namespace demo
 		mOffsetHeight = mMainWidget->getHeight() - coord.height;
 	}
 
-	void ToolTip::show(ItemData * _data, const MyGUI::IntPoint & _point)
+	void ToolTip::show(ItemData* _data)
 	{
-		const MyGUI::IntPoint offset(10, 10);
-
-		if ((_data == nullptr) || _data->isEmpty()) return;
-
-		MyGUI::IntPoint point = MyGUI::InputManager::getInstance().getMousePosition() + offset;
-		MyGUI::Gui * gui = MyGUI::Gui::getInstancePtr();
-
-		const MyGUI::IntSize & size = mMainWidget->getSize();
-		const MyGUI::IntSize & view_size = gui->getViewSize();
-
-		if ((point.left + size.width) > view_size.width)
-		{
-			point.left -= offset.left + offset.left + size.width;
-		}
-		if ((point.top + size.height) > view_size.height)
-		{
-			point.top -= offset.top + offset.top + size.height;
-		}
+		if ((_data == nullptr) || _data->isEmpty())
+			return;
 
 		mTextCount->setCaption(MyGUI::utility::toString(_data->getCount()));
 		mTextName->setCaption(_data->getInfo()->getItemName());
@@ -56,14 +40,33 @@ namespace demo
 		const MyGUI::IntSize& text_size = text ? text->getTextSize() : MyGUI::IntSize();
 		mMainWidget->setSize(mMainWidget->getWidth(), mOffsetHeight + text_size.height);
 
-		mMainWidget->setPosition(point);
 		mMainWidget->setVisible(true);
-
 	}
 
 	void ToolTip::hide()
 	{
 		mMainWidget->setVisible(false);
+	}
+
+	void ToolTip::move(const MyGUI::IntPoint& _point)
+	{
+		const MyGUI::IntPoint offset(10, 10);
+
+		MyGUI::IntPoint point = MyGUI::InputManager::getInstance().getMousePosition() + offset;
+
+		const MyGUI::IntSize& size = mMainWidget->getSize();
+		const MyGUI::IntSize& view_size = mMainWidget->getParentSize();
+
+		if ((point.left + size.width) > view_size.width)
+		{
+			point.left -= offset.left + offset.left + size.width;
+		}
+		if ((point.top + size.height) > view_size.height)
+		{
+			point.top -= offset.top + offset.top + size.height;
+		}
+
+		mMainWidget->setPosition(point);
 	}
 
 } // namespace demo

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		05/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -22,7 +21,7 @@
 */
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_Exception.h"
-#include "MyGUI_Utility.h"
+#include "MyGUI_StringUtility.h"
 
 namespace MyGUI
 {
@@ -39,7 +38,12 @@ namespace MyGUI
 		mDescription(_rhs.mDescription),
 		mSource(_rhs.mSource),
 		mFile(_rhs.mFile),
-		mLine(_rhs.mLine)
+		mLine(_rhs.mLine),
+		mFullDesc(_rhs.mFullDesc)
+	{
+	}
+
+	Exception::~Exception() throw()
 	{
 	}
 
@@ -52,7 +56,6 @@ namespace MyGUI
 		mFullDesc = _rhs.mFullDesc;
 		return *this;
 	}
-
 
 	const std::string& Exception::getFullDescription() const
 	{
@@ -69,6 +72,32 @@ namespace MyGUI
 		}
 
 		return mFullDesc;
+	}
+
+	const std::string& Exception::getSource() const
+	{
+		return mSource;
+	}
+
+	const std::string& Exception::getFile() const
+	{
+		return mFile;
+	}
+
+	long Exception::getLine() const
+	{
+		return mLine;
+	}
+
+	const std::string& Exception::getDescription() const
+	{
+		return mDescription;
+	}
+
+	// Override std::exception::what
+	const char* Exception::what() const throw()
+	{
+		return getFullDescription().c_str();
 	}
 
 } // namespace MyGUI

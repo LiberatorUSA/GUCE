@@ -2,7 +2,6 @@
 	@file
 	@author		George Evmenov
 	@date		07/2009
-	@module
 */
 
 #include "MyGUI_OpenGLVertexBuffer.h"
@@ -31,7 +30,7 @@ namespace MyGUI
 		destroy();
 	}
 
-	void OpenGLVertexBuffer::setVertextCount(size_t _count)
+	void OpenGLVertexBuffer::setVertexCount(size_t _count)
 	{
 		if (_count != mNeedVertexCount)
 		{
@@ -41,7 +40,7 @@ namespace MyGUI
 		}
 	}
 
-	size_t OpenGLVertexBuffer::getVertextCount()
+	size_t OpenGLVertexBuffer::getVertexCount()
 	{
 		return mNeedVertexCount;
 	}
@@ -77,7 +76,7 @@ namespace MyGUI
 	{
 		if (mBufferID != 0)
 		{
-		    glDeleteBuffersARB(1, &mBufferID);
+			glDeleteBuffersARB(1, &mBufferID);
 			mBufferID = 0;
 		}
 	}

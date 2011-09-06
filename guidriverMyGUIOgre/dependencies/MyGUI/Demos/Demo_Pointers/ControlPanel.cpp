@@ -2,9 +2,8 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "ControlPanel.h"
 
 namespace demo
@@ -15,12 +14,12 @@ namespace demo
 	{
 		initialiseByAttributes(this);
 
-		const MyGUI::IntSize& size = MyGUI::Gui::getInstance().getViewSize();
+		const MyGUI::IntSize& size = mMainWidget->getParentSize();
 		mMainWidget->setPosition(10, size.height - 10 - mMainWidget->getHeight());
 
-		mBusy->eventMouseButtonClick = MyGUI::newDelegate(this, &ControlPanel::notifyMouseButtonClick);
-		mRepair->eventMouseButtonClick = MyGUI::newDelegate(this, &ControlPanel::notifyMouseButtonClick);
-		mAttack->eventMouseButtonClick = MyGUI::newDelegate(this, &ControlPanel::notifyMouseButtonClick);
+		mBusy->eventMouseButtonClick += MyGUI::newDelegate(this, &ControlPanel::notifyMouseButtonClick);
+		mRepair->eventMouseButtonClick += MyGUI::newDelegate(this, &ControlPanel::notifyMouseButtonClick);
+		mAttack->eventMouseButtonClick += MyGUI::newDelegate(this, &ControlPanel::notifyMouseButtonClick);
 	}
 
 	void ControlPanel::notifyMouseButtonClick(MyGUI::Widget* _sender)
@@ -28,8 +27,8 @@ namespace demo
 		MyGUI::Button* button = _sender->castType<MyGUI::Button>();
 		std::string context = button->getUserString("Context");
 
-		bool pressed = button->getButtonPressed();
-		button->setButtonPressed(!pressed);
+		bool pressed = button->getStateSelected();
+		button->setStateSelected(!pressed);
 		if (pressed)
 			mPointerContextManager->removeContext(context);
 		else
@@ -38,17 +37,17 @@ namespace demo
 		// сбрасываем радио
 		if (button == mRepair)
 		{
-			if (mAttack->getButtonPressed())
+			if (mAttack->getStateSelected())
 			{
-				mAttack->setButtonPressed(false);
+				mAttack->setStateSelected(false);
 				mPointerContextManager->removeContext(mAttack->getUserString("Context"));
 			}
 		}
 		else if (button == mAttack)
 		{
-			if (mRepair->getButtonPressed())
+			if (mRepair->getStateSelected())
 			{
-				mRepair->setButtonPressed(false);
+				mRepair->setStateSelected(false);
 				mPointerContextManager->removeContext(mRepair->getUserString("Context"));
 			}
 		}

@@ -2,7 +2,6 @@
 	@file
 	@author		Losev Vasiliy aka bool
 	@date		06/2009
-	@module
 */
 
 #include "MyGUI_DirectXRenderManager.h"
@@ -17,16 +16,21 @@
 namespace MyGUI
 {
 
-	MYGUI_INSTANCE_IMPLEMENT( DirectXRenderManager )
-
-	void DirectXRenderManager::initialise(IDirect3DDevice9 *_device)
+	DirectXRenderManager::DirectXRenderManager() :
+		mIsInitialise(false),
+		mpD3DDevice(nullptr),
+		mUpdate(false)
 	{
-		MYGUI_PLATFORM_ASSERT(false == mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_PLATFORM_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+	}
+
+	void DirectXRenderManager::initialise(IDirect3DDevice9* _device)
+	{
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		mpD3DDevice = _device;
 
-		mVertexFormat = VertexColourType::ColourARGB;  
+		mVertexFormat = VertexColourType::ColourARGB;
 
 		memset(&mInfo, 0, sizeof(mInfo));
 		if (mpD3DDevice != nullptr)
@@ -38,19 +42,19 @@ namespace MyGUI
 
 		mUpdate = false;
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void DirectXRenderManager::shutdown()
 	{
-		if (false == mIsInitialise) return;
-		MYGUI_PLATFORM_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		destroyAllResources();
 		mpD3DDevice = nullptr;
 
-		MYGUI_PLATFORM_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
@@ -66,9 +70,9 @@ namespace MyGUI
 
 	void DirectXRenderManager::doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count)
 	{
-		DirectXTexture *dxTex = static_cast<DirectXTexture*>(_texture);
+		DirectXTexture* dxTex = static_cast<DirectXTexture*>(_texture);
 		mpD3DDevice->SetTexture(0, dxTex->getDirectXTexture());
-		DirectXVertexBuffer *dxVB = static_cast<DirectXVertexBuffer*>(_buffer);
+		DirectXVertexBuffer* dxVB = static_cast<DirectXVertexBuffer*>(_buffer);
 		dxVB->setToStream(0);
 		// count in vertexes, triangle_list = vertexes / 3
 		mpD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _count / 3);
@@ -76,14 +80,16 @@ namespace MyGUI
 
 	void DirectXRenderManager::drawOneFrame()
 	{
+		Gui* gui = Gui::getInstancePtr();
+		if (gui == nullptr)
+			return;
+
 		static Timer timer;
 		static unsigned long last_time = timer.getMilliseconds();
 		unsigned long now_time = timer.getMilliseconds();
 		unsigned long time = now_time - last_time;
 
-		Gui* gui = Gui::getInstancePtr();
-		if (gui != nullptr)
-			gui->_injectFrameEntered((float)((double)(time) / (double)1000));
+		gui->_injectFrameEntered((float)((double)(time) / (double)1000));
 
 		last_time = now_time;
 
@@ -110,7 +116,7 @@ namespace MyGUI
 		mpD3DDevice->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
 		mpD3DDevice->SetSamplerState( 0, D3DSAMP_MIPFILTER, D3DTEXF_NONE );
 
-		mpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP); 
+		mpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		mpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
 		mpD3DDevice->SetRenderState(D3DRS_SRCBLEND,   D3DBLEND_SRCALPHA);
@@ -164,7 +170,7 @@ namespace MyGUI
 
 	void DirectXRenderManager::destroyAllResources()
 	{
-		for (MapTexture::const_iterator item=mTextures.begin(); item!=mTextures.end(); ++item)
+		for (MapTexture::const_iterator item = mTextures.begin(); item != mTextures.end(); ++item)
 		{
 			delete item->second;
 		}
@@ -184,13 +190,13 @@ namespace MyGUI
 		mInfo.hOffset = -0.5f / float(mViewSize.width);
 		mInfo.vOffset = -0.5f / float(mViewSize.height);
 		mInfo.aspectCoef = float(mViewSize.height) / float(mViewSize.width);
-		mInfo.pixScaleX = 1.0 / float(mViewSize.width);
-		mInfo.pixScaleY = 1.0 / float(mViewSize.height);
+		mInfo.pixScaleX = 1.0f / float(mViewSize.width);
+		mInfo.pixScaleY = 1.0f / float(mViewSize.height);
 
 		Gui* gui = Gui::getInstancePtr();
 		if (gui != nullptr)
 		{
-			gui->resizeWindow(mViewSize);
+			gui->_resizeWindow(mViewSize);
 			mUpdate = true;
 		}
 	}
@@ -199,7 +205,7 @@ namespace MyGUI
 	{
 		MYGUI_PLATFORM_LOG(Info, "device D3D lost");
 
-		for (MapTexture::const_iterator item=mTextures.begin(); item!=mTextures.end(); ++item)
+		for (MapTexture::const_iterator item = mTextures.begin(); item != mTextures.end(); ++item)
 		{
 			static_cast<DirectXTexture*>(item->second)->deviceLost();
 		}
@@ -209,7 +215,7 @@ namespace MyGUI
 	{
 		MYGUI_PLATFORM_LOG(Info, "device D3D restore");
 
-		for (MapTexture::const_iterator item=mTextures.begin(); item!=mTextures.end(); ++item)
+		for (MapTexture::const_iterator item = mTextures.begin(); item != mTextures.end(); ++item)
 		{
 			static_cast<DirectXTexture*>(item->second)->deviceRestore();
 		}

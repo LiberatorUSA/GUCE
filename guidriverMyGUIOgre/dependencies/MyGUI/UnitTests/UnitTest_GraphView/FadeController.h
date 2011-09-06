@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __FADE_CONTROLLER_H__
 #define __FADE_CONTROLLER_H__
@@ -14,7 +13,8 @@
 namespace animation
 {
 
-	class FadeController : public IAnimationNode
+	class FadeController :
+		public IAnimationNode
 	{
 	public:
 		FadeController() :
@@ -75,7 +75,7 @@ namespace animation
 					mWeight -= _value * (1 / fade_time);
 					if (mWeight < 0) mWeight = 0;
 					mConnection.forceEvent("Weight", mWeight);
-	 
+
 					if (mWeight == 0)
 						mConnection.forceEvent("Stop");
 				}

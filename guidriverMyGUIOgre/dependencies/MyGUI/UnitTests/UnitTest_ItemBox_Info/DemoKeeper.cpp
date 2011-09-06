@@ -2,9 +2,8 @@
 	@file
 	@author		George Evmenov
 	@date		08/2000
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "DemoKeeper.h"
 #include "Base/Main.h"
 
@@ -13,7 +12,7 @@ namespace demo
 
 	void requestCreateWidgetItem(MyGUI::ItemBox* _sender, MyGUI::Widget* _item)
 	{
-		MyGUI::StaticText* text = _item->createWidget<MyGUI::StaticText>("StaticText", MyGUI::IntCoord(0, 0, _item->getWidth(), _item->getHeight()), MyGUI::Align::Stretch);
+		MyGUI::TextBox* text = _item->createWidget<MyGUI::TextBox>("TextBox", MyGUI::IntCoord(0, 0, _item->getWidth(), _item->getHeight()), MyGUI::Align::Stretch);
 		text->setNeedMouseFocus(false);
 		_item->setUserData(text);
 	}
@@ -25,7 +24,7 @@ namespace demo
 
 	void requestDrawItem(MyGUI::ItemBox* _sender, MyGUI::Widget* _item, const MyGUI::IBDrawItemInfo& _info)
 	{
-		MyGUI::StaticText* text = *_item->getUserData<MyGUI::StaticText*>();
+		MyGUI::TextBox* text = *_item->getUserData<MyGUI::TextBox*>();
 		int data = *_sender->getItemDataAt<int>(_info.index);
 		if (_info.drag)
 		{
@@ -70,7 +69,8 @@ namespace demo
 
 	void eventDropResult(MyGUI::DDContainer* _sender, const MyGUI::DDItemInfo& _info, bool _result)
 	{
-		if (!_result) return;
+		if (!_result)
+			return;
 
 		if (_info.receiver_index == MyGUI::ITEM_NONE)
 		{
@@ -91,27 +91,27 @@ namespace demo
 		}
 	}
 
-	void init(MyGUI::Gui* _gui)
+	void init()
 	{
-		MyGUI::ItemBox* box1 = _gui->createWidget<MyGUI::ItemBox>("ItemBoxV", MyGUI::IntCoord(10, 10, 300, 300), MyGUI::Align::Default, "Overlapped");
+		MyGUI::ItemBox* box1 = MyGUI::Gui::getInstance().createWidget<MyGUI::ItemBox>("ItemBoxV", MyGUI::IntCoord(10, 10, 300, 300), MyGUI::Align::Default, "Overlapped");
 		box1->requestCreateWidgetItem = MyGUI::newDelegate(requestCreateWidgetItem);
 		box1->requestCoordItem = MyGUI::newDelegate(requestCoordItem);
 		box1->requestDrawItem = MyGUI::newDelegate(requestDrawItem);
-		box1->eventStartDrag = MyGUI::newDelegate(eventStartDrag);
-		box1->eventRequestDrop = MyGUI::newDelegate(eventRequestDrop);
-		box1->eventDropResult = MyGUI::newDelegate(eventDropResult);
+		box1->eventStartDrag += MyGUI::newDelegate(eventStartDrag);
+		box1->eventRequestDrop += MyGUI::newDelegate(eventRequestDrop);
+		box1->eventDropResult += MyGUI::newDelegate(eventDropResult);
 
 		box1->addItem((int)101);
 		box1->addItem((int)43);
 		box1->addItem((int)54);
 
-		MyGUI::ItemBox* box2 = _gui->createWidget<MyGUI::ItemBox>("ItemBoxV", MyGUI::IntCoord(410, 10, 300, 300), MyGUI::Align::Default, "Overlapped");
+		MyGUI::ItemBox* box2 = MyGUI::Gui::getInstance().createWidget<MyGUI::ItemBox>("ItemBoxV", MyGUI::IntCoord(410, 10, 300, 300), MyGUI::Align::Default, "Overlapped");
 		box2->requestCreateWidgetItem = MyGUI::newDelegate(requestCreateWidgetItem);
 		box2->requestCoordItem = MyGUI::newDelegate(requestCoordItem);
 		box2->requestDrawItem = MyGUI::newDelegate(requestDrawItem);
-		box2->eventStartDrag = MyGUI::newDelegate(eventStartDrag);
-		box2->eventRequestDrop = MyGUI::newDelegate(eventRequestDrop);
-		box2->eventDropResult = MyGUI::newDelegate(eventDropResult);
+		box2->eventStartDrag += MyGUI::newDelegate(eventStartDrag);
+		box2->eventRequestDrop += MyGUI::newDelegate(eventRequestDrop);
+		box2->eventDropResult += MyGUI::newDelegate(eventDropResult);
 
 		box2->addItem((int)14);
 		box2->addItem((int)273);
@@ -121,15 +121,15 @@ namespace demo
 	void DemoKeeper::setupResources()
 	{
 		base::BaseManager::setupResources();
-		addResourceLocation(getRootMedia() + "/Common/Wallpapers");
+		//addResourceLocation(getRootMedia() + "/Common/Demos");
 	}
 
 	void DemoKeeper::createScene()
 	{
-		MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().load("BackHelp.layout");
-		root.at(0)->findWidget("Text")->setCaption("This demo shows different events used in ItemBox. You can drag and drop items from one ItemBox to another.\nFor more colourfull ItemBox see Demo_ItemBox.");
+		//const MyGUI::VectorWidgetPtr& root = MyGUI::LayoutManager::getInstance().loadLayout("HelpPanel.layout");
+		//root.at(0)->findWidget("Text")->castType<MyGUI::TextBox>()->setCaption("This demo shows different events used in ItemBox. You can drag and drop items from one ItemBox to another.\nFor more colourfull ItemBox see Demo_ItemBox.");
 
-		init(getGUI());
+		init();
 	}
 
 	void DemoKeeper::destroyScene()

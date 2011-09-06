@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 #ifndef __MAIN_PANEL_H__
 #define __MAIN_PANEL_H__
@@ -13,22 +12,22 @@
 namespace demo
 {
 
-	class MainPanel : public wraps::BaseLayout
+	class MainPanel :
+		public wraps::BaseLayout
 	{
 	public:
-
-		typedef enum
+		enum TypeEvents
 		{
 			EventNew,
 			EventLoad,
 			EventQuit,
 			EventCreate
-		} TypeEvents;
+		};
 
 	public:
 		MainPanel();
 
-		void addObject(const MyGUI::UString & _name);
+		void addObject(const MyGUI::UString& _name);
 
 	private:
 		void notifyMouseButtonClick(MyGUI::Widget* _sender);

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -21,8 +20,8 @@
 	along with MyGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "MyGUI_Precompiled.h"
-#include "MyGUI_ResourceManager.h"
 #include "MyGUI_LanguageManager.h"
+#include "MyGUI_ResourceManager.h"
 #include "MyGUI_XmlDocument.h"
 #include "MyGUI_DataManager.h"
 #include "MyGUI_FactoryManager.h"
@@ -32,33 +31,34 @@ namespace MyGUI
 
 	const std::string XML_TYPE("Language");
 
-	MYGUI_INSTANCE_IMPLEMENT( LanguageManager )
+	template <> LanguageManager* Singleton<LanguageManager>::msInstance = nullptr;
+	template <> const char* Singleton<LanguageManager>::mClassTypeName("LanguageManager");
+
+	LanguageManager::LanguageManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void LanguageManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		ResourceManager::getInstance().registerLoadXmlDelegate(XML_TYPE) = newDelegate(this, &LanguageManager::_load);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void LanguageManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		ResourceManager::getInstance().unregisterLoadXmlDelegate(XML_TYPE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
-	}
-
-	bool LanguageManager::load(const std::string& _file)
-	{
-		return ResourceManager::getInstance()._loadImplement(_file, true, XML_TYPE, INSTANCE_TYPE_NAME);
 	}
 
 	void LanguageManager::_load(xml::ElementPtr _node, const std::string& _file, Version _version)
@@ -119,10 +119,6 @@ namespace MyGUI
 
 	void LanguageManager::setCurrentLanguage(const std::string& _name)
 	{
-		mMapLanguage.clear();
-
-		mCurrentLanguageName = _name;
-
 		MapListString::iterator item = mMapFile.find(_name);
 		if (item == mMapFile.end())
 		{
@@ -130,7 +126,10 @@ namespace MyGUI
 			return;
 		}
 
-		for (VectorString::const_iterator iter=item->second.begin(); iter!=item->second.end(); ++iter)
+		mMapLanguage.clear();
+		mCurrentLanguageName = _name;
+
+		for (VectorString::const_iterator iter = item->second.begin(); iter != item->second.end(); ++iter)
 		{
 			loadLanguage(*iter, false);
 		}
@@ -140,19 +139,18 @@ namespace MyGUI
 
 	bool LanguageManager::loadLanguage(const std::string& _file, bool _user)
 	{
-		IDataStream* data = DataManager::getInstance().getData(_file);
-		if (data == nullptr)
+		DataStreamHolder data = DataManager::getInstance().getData(_file);
+		if (data.getData() == nullptr)
 		{
 			MYGUI_LOG(Error, "file '" << _file << "' not found");
 			return false;
 		}
 
 		if (_file.find(".xml") != std::string::npos)
-			_loadLanguageXML(data, _user);
+			_loadLanguageXML(data.getData(), _user);
 		else
-			_loadLanguage(data, _user);
+			_loadLanguage(data.getData(), _user);
 
-		delete data;
 		return true;
 	}
 
@@ -192,95 +190,35 @@ namespace MyGUI
 				read.erase(0, 3);
 			}
 
-			if (read[read.size()-1] == '\r') read.erase(read.size()-1, 1);
+			if (read[read.size()-1] == '\r') read.erase(read.size() - 1, 1);
 			if (read.empty()) continue;
 
 			size_t pos = read.find_first_of(" \t");
 			if (_user)
 			{
 				if (pos == std::string::npos) mUserMapLanguage[read] = "";
-				else mUserMapLanguage[read.substr(0, pos)] = read.substr(pos+1, std::string::npos);
+				else mUserMapLanguage[read.substr(0, pos)] = read.substr(pos + 1, std::string::npos);
 			}
 			else
 			{
 				if (pos == std::string::npos) mMapLanguage[read] = "";
-				else mMapLanguage[read.substr(0, pos)] = read.substr(pos+1, std::string::npos);
+				else mMapLanguage[read.substr(0, pos)] = read.substr(pos + 1, std::string::npos);
 			}
 		}
 	}
 
 	UString LanguageManager::replaceTags(const UString& _line)
 	{
-		// вот хз, что быстрее, итераторы или математика указателей,
-		// для непонятно какого размера одного символа UTF8
-		UString line(_line);
+		UString result(_line);
 
-		if (mMapLanguage.empty() && mUserMapLanguage.empty())
-			return _line;
-
-		UString::iterator end = line.end();
-		for (UString::iterator iter=line.begin(); iter!=end; )
+		bool replace = false;
+		do
 		{
-			if (*iter == '#')
-			{
-				++iter;
-				if (iter == end)
-				{
-					return line;
-				}
-				else
-				{
-					if (*iter != '{')
-					{
-						++iter;
-						continue;
-					}
-					UString::iterator iter2 = iter;
-					++iter2;
-					while (true)
-					{
-						if (iter2 == end) return line;
-						if (*iter2 == '}')
-						{
-							size_t start = iter - line.begin();
-							size_t len = (iter2 - line.begin()) - start - 1;
-							const UString& tag = line.substr(start + 1, len);
-
-							bool find = true;
-							MapLanguageString::iterator replace = mMapLanguage.find(tag);
-							if (replace == mMapLanguage.end())
-							{
-								replace = mUserMapLanguage.find(tag);
-								find = replace != mUserMapLanguage.end();
-							}
-
-							if (!find)
-							{
-								iter = line.insert(iter, '#') + size_t(len + 2);
-								end = line.end();
-								break;
-							}
-
-							iter = line.erase(iter - size_t(1), iter2 + size_t(1));
-							size_t pos = iter - line.begin();
-							line.insert(pos, replace->second);
-							iter = line.begin() + pos + replace->second.length();
-							end = line.end();
-							if (iter == end) return line;
-							break;
-
-						}
-						++iter2;
-					}
-				}
-			}
-			else
-			{
-				++iter;
-			}
+			result = replaceTagsPass(result, replace);
 		}
+		while (replace);
 
-		return line;
+		return result;
 	}
 
 	UString LanguageManager::getTag(const UString& _tag)
@@ -296,7 +234,7 @@ namespace MyGUI
 		return iter->second;
 	}
 
-	const std::string& LanguageManager::getCurrentLanguage()
+	const std::string& LanguageManager::getCurrentLanguage() const
 	{
 		return mCurrentLanguageName;
 	}
@@ -314,6 +252,109 @@ namespace MyGUI
 	bool LanguageManager::loadUserTags(const std::string& _file)
 	{
 		return loadLanguage(_file, true);
+	}
+
+	UString LanguageManager::replaceTagsPass(const UString& _line, bool& _replaceResult)
+	{
+		_replaceResult = false;
+
+		// вот хз, что быстрее, итераторы или математика указателей,
+		// для непонятно какого размера одного символа UTF8
+		UString line(_line);
+
+		if (mMapLanguage.empty() && mUserMapLanguage.empty())
+			return _line;
+
+		UString::iterator end = line.end();
+		for (UString::iterator iter = line.begin(); iter != end; )
+		{
+			if (*iter == '#')
+			{
+				++iter;
+				if (iter == end)
+				{
+					return line;
+				}
+				else
+				{
+					if (*iter != '{')
+					{
+						++iter;
+						continue;
+					}
+					UString::iterator iter2 = iter;
+					++iter2;
+
+					while (true)
+					{
+						if (iter2 == end)
+							return line;
+
+						if (*iter2 == '}')
+						{
+							size_t start = iter - line.begin();
+							size_t len = (iter2 - line.begin()) - start - 1;
+							const UString& tag = line.substr(start + 1, len);
+							UString replacement;
+
+							bool find = true;
+							// try to find in loaded from resources language strings
+							MapLanguageString::iterator replace = mMapLanguage.find(tag);
+							if (replace != mMapLanguage.end())
+							{
+								replacement = replace->second;
+							}
+							else
+							{
+								// try to find in user language strings
+								replace = mUserMapLanguage.find(tag);
+								if (replace != mUserMapLanguage.end())
+								{
+									replacement = replace->second;
+								}
+								else
+								{
+									find = false;
+								}
+							}
+
+							// try to ask user if event assigned or use #{_tag} instead
+							if (!find)
+							{
+								if (!eventRequestTag.empty())
+								{
+									eventRequestTag(tag, replacement);
+								}
+								else
+								{
+									iter = line.insert(iter, '#') + size_t(len + 2);
+									end = line.end();
+									break;
+								}
+							}
+
+							_replaceResult = true;
+
+							iter = line.erase(iter - size_t(1), iter2 + size_t(1));
+							size_t pos = iter - line.begin();
+							line.insert(pos, replacement);
+							iter = line.begin() + pos + replacement.length();
+							end = line.end();
+							if (iter == end)
+								return line;
+							break;
+						}
+						++iter2;
+					}
+				}
+			}
+			else
+			{
+				++iter;
+			}
+		}
+
+		return line;
 	}
 
 } // namespace MyGUI

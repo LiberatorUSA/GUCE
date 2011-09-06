@@ -2,10 +2,9 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "BaseManager.h"
 #include <MyGUI_OgrePlatform.h>
 
@@ -15,6 +14,27 @@
 
 namespace base
 {
+
+#if MYGUI_PLATFORM == MYGUI_PLATFORM_APPLE
+#include <CoreFoundation/CoreFoundation.h>
+	// This function will locate the path to our application on OS X,
+	// unlike windows you can not rely on the curent working directory
+	// for locating your configuration files and resources.
+	std::string macBundlePath()
+	{
+		char path[1024];
+		CFBundleRef mainBundle = CFBundleGetMainBundle();
+		assert(mainBundle);
+		CFURLRef mainBundleURL = CFBundleCopyBundleURL(mainBundle);
+		assert(mainBundleURL);
+		CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
+		assert(cfStringRef);
+		CFStringGetCString(cfStringRef, path, 1024, kCFStringEncodingASCII);
+		CFRelease(mainBundleURL);
+		CFRelease(cfStringRef);
+		return std::string(path);
+	}
+#endif
 
 	BaseManager::BaseManager() :
 		mGUI(nullptr),
@@ -28,11 +48,11 @@ namespace base
 		mExit(false),
 		mPluginCfgName("plugins.cfg"),
 		mResourceXMLName("resources.xml"),
-		mResourceFileName("core.xml"),
+		mResourceFileName("MyGUI_Core.xml"),
 		mNode(nullptr)
 	{
 		#if MYGUI_PLATFORM == MYGUI_PLATFORM_APPLE
-			mResourcePath = MyGUI::helper::macBundlePath() + "/Contents/Resources/";
+			mResourcePath = macBundlePath() + "/Contents/Resources/";
 		#else
 			mResourcePath = "";
 		#endif
@@ -98,11 +118,11 @@ namespace base
 		Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 		mSceneManager->setAmbientLight(Ogre::ColourValue::White);
-		Ogre::Light* l = mSceneManager->createLight("MainLight");
-        l->setType(Ogre::Light::LT_DIRECTIONAL);
+		Ogre::Light* light = mSceneManager->createLight("MainLight");
+		light->setType(Ogre::Light::LT_DIRECTIONAL);
 		Ogre::Vector3 vec(-0.3, -0.3, -0.3);
 		vec.normalise();
-        l->setDirection(vec);
+		light->setDirection(vec);
 
 		// Load resources
 		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -155,6 +175,8 @@ namespace base
 
 		destroyPointerManager();
 
+		destroyInput();
+
 		destroyGui();
 
 		// очищаем сцену
@@ -163,9 +185,8 @@ namespace base
 			mSceneManager->clearScene();
 			mSceneManager->destroyAllCameras();
 			mSceneManager = nullptr;
+			mCamera = nullptr;
 		}
-
-		destroyInput();
 
 		if (mWindow)
 		{
@@ -192,6 +213,7 @@ namespace base
 		mGUI->initialise(mResourceFileName);
 
 		mInfo = new diagnostic::StatisticInfo();
+		mFocusInfo = new diagnostic::InputFocusInfo();
 	}
 
 	void BaseManager::destroyGui()
@@ -248,6 +270,8 @@ namespace base
 				addResourceLocation(node->getContent());
 			}
 		}
+
+		addResourceLocation(getRootMedia() + "/Common/Base");
 	}
 
 	bool BaseManager::frameStarted(const Ogre::FrameEvent& evt)
@@ -278,6 +302,7 @@ namespace base
 				}
 				catch (...)
 				{
+					MYGUI_LOG(Warning, "Error get statistics");
 				}
 			}
 		}
@@ -301,9 +326,13 @@ namespace base
 		int width = (int)_rw->getWidth();
 		int height = (int)_rw->getHeight();
 
-		mCamera->setAspectRatio((float)width / (float)height);
+		// при удалении окна может вызываться этот метод
+		if (mCamera)
+		{
+			mCamera->setAspectRatio((float)width / (float)height);
 
-		setInputViewSize(width, height);
+			setInputViewSize(width, height);
+		}
 	}
 
 	void BaseManager::windowClosed(Ogre::RenderWindow* _rw)
@@ -312,16 +341,16 @@ namespace base
 		destroyInput();
 	}
 
-	void BaseManager::setWindowCaption(const std::string& _text)
+	void BaseManager::setWindowCaption(const std::wstring& _text)
 	{
 	#if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
 		size_t handle = 0;
 		mWindow->getCustomAttribute("WINDOW", &handle);
-		::SetWindowTextA((HWND)handle, _text.c_str());
+		::SetWindowTextW((HWND)handle, _text.c_str());
 	#endif
 	}
 
-	void BaseManager::prepare(int argc, char **argv)
+	void BaseManager::prepare()
 	{
 	}
 
@@ -329,13 +358,13 @@ namespace base
 	{
 		#if MYGUI_PLATFORM == MYGUI_PLATFORM_APPLE
 			// OS X does not set the working directory relative to the app, In order to make things portable on OS X we need to provide the loading with it's own bundle path location
-			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(Ogre::String(MyGUI::helper::macBundlePath() + "/" + _name), _type, _group, _recursive);
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(Ogre::String(macBundlePath() + "/" + _name), _type, _group, _recursive);
 		#else
 			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_name, _type, _group, _recursive);
 		#endif
 	}
 
-	void BaseManager::addResourceLocation(const std::string & _name, bool _recursive)
+	void BaseManager::addResourceLocation(const std::string& _name, bool _recursive)
 	{
 		addResourceLocation(_name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, "FileSystem", false);
 	}
@@ -356,7 +385,7 @@ namespace base
 		try
 		{
 			Ogre::MeshManager::getSingleton().createPlane(
-				"FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+				"FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 				Ogre::Plane(Ogre::Vector3::UNIT_Y, 0), 1000, 1000, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
 
 			Ogre::Entity* entity = getSceneManager()->createEntity("FloorPlane", "FloorPlane");
@@ -374,7 +403,7 @@ namespace base
 		if (!mGUI)
 			return;
 
-		mGUI->injectMouseMove(_absx, _absy, _absz);
+		MyGUI::InputManager::getInstance().injectMouseMove(_absx, _absy, _absz);
 	}
 
 	void BaseManager::injectMousePress(int _absx, int _absy, MyGUI::MouseButton _id)
@@ -382,7 +411,7 @@ namespace base
 		if (!mGUI)
 			return;
 
-		mGUI->injectMousePress(_absx, _absy, _id);
+		MyGUI::InputManager::getInstance().injectMousePress(_absx, _absy, _id);
 	}
 
 	void BaseManager::injectMouseRelease(int _absx, int _absy, MyGUI::MouseButton _id)
@@ -390,7 +419,7 @@ namespace base
 		if (!mGUI)
 			return;
 
-		mGUI->injectMouseRelease(_absx, _absy, _id);
+		MyGUI::InputManager::getInstance().injectMouseRelease(_absx, _absy, _id);
 	}
 
 	void BaseManager::injectKeyPress(MyGUI::KeyCode _key, MyGUI::Char _text)
@@ -426,18 +455,46 @@ namespace base
 		}
 		else if (_key == MyGUI::KeyCode::F12)
 		{
-			if (mFocusInfo == nullptr)
-				mFocusInfo = new diagnostic::InputFocusInfo();
-
 			bool visible = mFocusInfo->getFocusVisible();
 			mFocusInfo->setFocusVisible(!visible);
 		}
-		else if (_key == MyGUI::KeyCode::F11)
-		{
-			MyGUI::LayerManager::getInstance().dumpStatisticToLog();
-		}
 
-		mGUI->injectKeyPress(_key, _text);
+		// change polygon mode
+		else if (_key == MyGUI::KeyCode::F5)
+		{
+			getCamera()->setPolygonMode(Ogre::PM_SOLID);
+		}
+		else if (_key == MyGUI::KeyCode::F6)
+		{
+			getCamera()->setPolygonMode(Ogre::PM_WIREFRAME);
+		}
+		else if (_key == MyGUI::KeyCode::F7)
+		{
+			getCamera()->setPolygonMode(Ogre::PM_POINTS);
+		}
+#if OGRE_VERSION >= MYGUI_DEFINE_VERSION(1, 7, 0) && OGRE_NO_VIEWPORT_ORIENTATIONMODE == 0
+		else if (_key == MyGUI::KeyCode::F1)
+		{
+			mWindow->getViewport(0)->setOrientationMode(Ogre::OR_DEGREE_0, false);
+			mPlatform->getRenderManagerPtr()->setRenderWindow(mWindow);
+		}
+		else if (_key == MyGUI::KeyCode::F2)
+		{
+			mWindow->getViewport(0)->setOrientationMode(Ogre::OR_DEGREE_90, false);
+			mPlatform->getRenderManagerPtr()->setRenderWindow(mWindow);
+		}
+		else if (_key == MyGUI::KeyCode::F3)
+		{
+			mWindow->getViewport(0)->setOrientationMode(Ogre::OR_DEGREE_180, false);
+			mPlatform->getRenderManagerPtr()->setRenderWindow(mWindow);
+		}
+		else if (_key == MyGUI::KeyCode::F4)
+		{
+			mWindow->getViewport(0)->setOrientationMode(Ogre::OR_DEGREE_270, false);
+			mPlatform->getRenderManagerPtr()->setRenderWindow(mWindow);
+		}
+#endif
+		MyGUI::InputManager::getInstance().injectKeyPress(_key, _text);
 	}
 
 	void BaseManager::injectKeyRelease(MyGUI::KeyCode _key)
@@ -445,7 +502,42 @@ namespace base
 		if (!mGUI)
 			return;
 
-		mGUI->injectKeyRelease(_key);
+		MyGUI::InputManager::getInstance().injectKeyRelease(_key);
+	}
+
+	void BaseManager::quit()
+	{
+		mExit = true;
+	}
+
+	const std::string& BaseManager::getRootMedia()
+	{
+		return mRootMedia;
+	}
+
+	void BaseManager::setResourceFilename(const std::string& _flename)
+	{
+		mResourceFileName = _flename;
+	}
+
+	diagnostic::StatisticInfo* BaseManager::getStatisticInfo()
+	{
+		return mInfo;
+	}
+
+	diagnostic::InputFocusInfo* BaseManager::getFocusInput()
+	{
+		return mFocusInfo;
+	}
+
+	Ogre::SceneManager* BaseManager::getSceneManager()
+	{
+		return mSceneManager;
+	}
+
+	Ogre::Camera* BaseManager::getCamera()
+	{
+		return mCamera;
 	}
 
 } // namespace base

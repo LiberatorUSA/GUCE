@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __DEMO_KEEPER_H__
 #define __DEMO_KEEPER_H__
@@ -16,7 +15,8 @@
 namespace demo
 {
 
-	class DemoKeeper : public base::BaseManager
+	class DemoKeeper :
+		public base::BaseManager
 	{
 	public:
 		DemoKeeper();
@@ -29,12 +29,14 @@ namespace demo
 		void destroyWindows();
 		void createWindows();
 		virtual void setupResources();
+		void removeRenderBoxes();
+		void createRenderBox(MyGUI::Canvas* _canvas);
 
 	private:
-		EditorWindow * mEditorWindow;
-		MainPanel * mMainPanel;
-		InformationWindow * mInformationWindow;
-		ColourWindow * mColourWindow;
+		EditorWindow* mEditorWindow;
+		MainPanel* mMainPanel;
+		InformationWindow* mInformationWindow;
+		ColourWindow* mColourWindow;
 	};
 
 } // namespace demo

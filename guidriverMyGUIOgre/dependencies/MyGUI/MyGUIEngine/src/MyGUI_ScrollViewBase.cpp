@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -23,8 +22,7 @@
 
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_ScrollViewBase.h"
-#include "MyGUI_VScroll.h"
-#include "MyGUI_HScroll.h"
+#include "MyGUI_ScrollBar.h"
 
 namespace MyGUI
 {
@@ -38,6 +36,10 @@ namespace MyGUI
 		mVRange(0),
 		mHRange(0),
 		mChangeContentByResize(false)
+	{
+	}
+
+	ScrollViewBase::~ScrollViewBase()
 	{
 	}
 
@@ -55,7 +57,7 @@ namespace MyGUI
 		{
 			if (mVScroll != nullptr)
 			{
-				if (( ! mVScroll->isVisible()) && (mVisibleVScroll))
+				if (!mVScroll->getVisible() && mVisibleVScroll)
 				{
 					mVScroll->setVisible(true);
 					mClient->setSize(mClient->getWidth() - mVScroll->getWidth(), mClient->getHeight());
@@ -74,7 +76,7 @@ namespace MyGUI
 
 						// если показали вертикальный скрол бар, уменьшилось вью по горизонтали,
 						// пересчитываем горизонтальный скрол на предмет показа
-						if ((contentSize.width > viewSize.width) && ( ! mHScroll->isVisible()) && (mVisibleHScroll))
+						if ((contentSize.width > viewSize.width) && ( ! mHScroll->getVisible()) && (mVisibleHScroll))
 						{
 							mHScroll->setVisible(true);
 							mClient->setSize(mClient->getWidth(), mClient->getHeight() - mHScroll->getHeight());
@@ -98,7 +100,7 @@ namespace MyGUI
 		{
 			if (mVScroll != nullptr)
 			{
-				if (mVScroll->isVisible())
+				if (mVScroll->getVisible())
 				{
 					mVScroll->setVisible(false);
 					mClient->setSize(mClient->getWidth() + mVScroll->getWidth(), mClient->getHeight());
@@ -117,7 +119,7 @@ namespace MyGUI
 
 						// если скрыли вертикальный скрол бар, увеличилось вью по горизонтали,
 						// пересчитываем горизонтальный скрол на предмет скрытия
-						if ((contentSize.width <= viewSize.width) && (mHScroll->isVisible()))
+						if ((contentSize.width <= viewSize.width) && (mHScroll->getVisible()))
 						{
 							mHScroll->setVisible(false);
 							mClient->setSize(mClient->getWidth(), mClient->getHeight() + mHScroll->getHeight());
@@ -143,7 +145,7 @@ namespace MyGUI
 		{
 			if (mHScroll != nullptr)
 			{
-				if (( ! mHScroll->isVisible()) && (mVisibleHScroll))
+				if (!mHScroll->getVisible() && mVisibleHScroll)
 				{
 					mHScroll->setVisible(true);
 					mClient->setSize(mClient->getWidth(), mClient->getHeight() - mHScroll->getHeight());
@@ -162,7 +164,7 @@ namespace MyGUI
 
 						// если показали горизонтальный скрол бар, уменьшилось вью по вертикали,
 						// пересчитываем вертикальный скрол на предмет показа
-						if ((contentSize.height > viewSize.height) && ( ! mVScroll->isVisible()) && (mVisibleVScroll))
+						if ((contentSize.height > viewSize.height) && ( ! mVScroll->getVisible()) && (mVisibleVScroll))
 						{
 							mVScroll->setVisible(true);
 							mClient->setSize(mClient->getWidth() - mVScroll->getWidth(), mClient->getHeight());
@@ -186,7 +188,7 @@ namespace MyGUI
 		{
 			if (mHScroll != nullptr)
 			{
-				if (mHScroll->isVisible())
+				if (mHScroll->getVisible())
 				{
 					mHScroll->setVisible(false);
 					mClient->setSize(mClient->getWidth(), mClient->getHeight() + mHScroll->getHeight());
@@ -205,7 +207,7 @@ namespace MyGUI
 
 						// если скрыли горизонтальный скрол бар, увеличилось вью по вертикали,
 						// пересчитываем вертикальный скрол на предмет скрытия
-						if ((contentSize.height <= viewSize.height) && (mVScroll->isVisible()))
+						if ((contentSize.height <= viewSize.height) && (mVScroll->getVisible()))
 						{
 							mVScroll->setVisible(false);
 							mClient->setSize(mClient->getWidth() + mVScroll->getWidth(), mClient->getHeight());
@@ -322,6 +324,44 @@ namespace MyGUI
 			if (nullptr != mHScroll) mHScroll->setScrollPosition(offset.left);
 			setContentPosition(offset);
 		}
+	}
+
+	IntSize ScrollViewBase::getContentSize()
+	{
+		return IntSize();
+	}
+
+	IntPoint ScrollViewBase::getContentPosition()
+	{
+		return IntPoint();
+	}
+
+	void ScrollViewBase::setContentPosition(const IntPoint& _value)
+	{
+	}
+
+	IntSize ScrollViewBase::getViewSize()
+	{
+		return IntSize();
+	}
+
+	size_t ScrollViewBase::getHScrollPage()
+	{
+		return 1;
+	}
+
+	size_t ScrollViewBase::getVScrollPage()
+	{
+		return 1;
+	}
+
+	Align ScrollViewBase::getContentAlign()
+	{
+		return Align::Center;
+	}
+
+	void ScrollViewBase::eraseContent()
+	{
 	}
 
 } // namespace MyGUI

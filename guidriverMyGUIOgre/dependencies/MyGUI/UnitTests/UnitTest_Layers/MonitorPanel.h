@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 #ifndef __MONITOR_PANEL_H__
 #define __MONITOR_PANEL_H__
@@ -26,17 +25,17 @@ namespace demo
 
 	private:
 		ATTRIBUTE_FIELD_WIDGET_NAME(MonitorPanel, mShipImage, "Ship");
-		MyGUI::StaticImage* mShipImage;
+		MyGUI::ImageBox* mShipImage;
 		ATTRIBUTE_FIELD_WIDGET_NAME(MonitorPanel, mDescription, "Description");
-		MyGUI::StaticText* mDescription;
+		MyGUI::TextBox* mDescription;
 		ATTRIBUTE_FIELD_WIDGET_NAME(MonitorPanel, mEnergy, "Energy");
-		MyGUI::Progress* mEnergy;
+		MyGUI::ProgressBar* mEnergy;
 		ATTRIBUTE_FIELD_WIDGET_NAME(MonitorPanel, mExplosion, "Explosion");
-		MyGUI::Progress* mExplosion;
+		MyGUI::ProgressBar* mExplosion;
 		ATTRIBUTE_FIELD_WIDGET_NAME(MonitorPanel, mTarget, "Target");
-		MyGUI::Progress* mTarget;
+		MyGUI::ProgressBar* mTarget;
 		ATTRIBUTE_FIELD_WIDGET_NAME(MonitorPanel, mHP, "HP");
-		MyGUI::Progress* mHP;
+		MyGUI::ProgressBar* mHP;
 	};
 
 } // namespace demo

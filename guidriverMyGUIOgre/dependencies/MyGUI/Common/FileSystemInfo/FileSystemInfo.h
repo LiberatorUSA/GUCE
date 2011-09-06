@@ -33,7 +33,7 @@ namespace common
 	inline bool isAbsolutePath(const wchar_t* path)
 	{
 	#if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
-		if (isalpha(path[0]) && path[1] == ':')
+		if (IsCharAlphaW(path[0]) && path[1] == ':')
 			return true;
 	#endif
 		return path[0] == '/' || path[0] == '\\';
@@ -51,7 +51,7 @@ namespace common
 #endif
 	}
 
-	inline bool isReservedDir (const wchar_t *_fn)
+	inline bool isReservedDir (const wchar_t* _fn)
 	{
 		// if "." /*or ".."*/
 		return (_fn [0] == '.' && (_fn [1] == 0 /*|| (_fn [1] == '.' && _fn [2] == 0)*/));
@@ -89,13 +89,14 @@ namespace common
 			res = _wfindnext( lHandle, &tagData );
 		}
 		// Close if we found any files
-		if(lHandle != -1)
+		if (lHandle != -1)
 			_findclose(lHandle);
 #else
-		DIR *dir = opendir(MyGUI::UString(_folder).asUTF8_c_str());
-		struct dirent *dp;
+		DIR* dir = opendir(MyGUI::UString(_folder).asUTF8_c_str());
+		struct dirent* dp;
 
-		if (dir == NULL) {
+		if (dir == NULL)
+		{
 			/* opendir() failed */
 		}
 
@@ -106,6 +107,8 @@ namespace common
 			if (!isReservedDir (MyGUI::UString(dp->d_name).asWStr_c_str()))
 				_result.push_back(FileInfo(MyGUI::UString(dp->d_name).asWStr(), (dp->d_type == DT_DIR)));
 		}
+
+		closedir(dir);
 #endif
 	}
 
@@ -131,7 +134,7 @@ namespace common
 		VectorFileInfo result;
 		getSystemFileList(result, folder, _mask);
 
-		for (VectorFileInfo::const_iterator item=result.begin(); item!=result.end(); ++item)
+		for (VectorFileInfo::const_iterator item = result.begin(); item != result.end(); ++item)
 		{
 			if (item->folder) continue;
 
@@ -145,7 +148,7 @@ namespace common
 		{
 			getSystemFileList(result, folder, L"*");
 
-			for (VectorFileInfo::const_iterator item=result.begin(); item!=result.end(); ++item)
+			for (VectorFileInfo::const_iterator item = result.begin(); item != result.end(); ++item)
 			{
 				if (!item->folder
 					|| item->name == L".."

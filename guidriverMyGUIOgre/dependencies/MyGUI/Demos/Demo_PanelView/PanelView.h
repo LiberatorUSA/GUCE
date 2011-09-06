@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		01/2009
-	@module
 */
 #ifndef __PANEL_VIEW_H__
 #define __PANEL_VIEW_H__
@@ -13,11 +12,14 @@
 namespace demo
 {
 
-	class PanelView : public wraps::BasePanelView<PanelViewCell>
+	class PanelView :
+		public wraps::BasePanelView<PanelViewCell>
 	{
 	public:
-		PanelView(MyGUI::Widget* _parent) : wraps::BasePanelView<PanelViewCell>("", _parent) { }
-
+		PanelView(MyGUI::Widget* _parent) :
+			wraps::BasePanelView<PanelViewCell>("", _parent)
+		{
+		}
 	};
 
 } // namespace demo

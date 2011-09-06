@@ -2,7 +2,6 @@
 	@file
 	@author		Losev Vasiliy aka bool
 	@date		06/2009
-	@module
 */
 
 #ifndef __MYGUI_DIRECTX_VERTEX_BUFFER_H__
@@ -21,11 +20,11 @@ namespace MyGUI
 	class DirectXVertexBuffer : public IVertexBuffer
 	{
 	public:
-		DirectXVertexBuffer(IDirect3DDevice9 *_device, DirectXRenderManager *_pRenderManager);
+		DirectXVertexBuffer(IDirect3DDevice9* _device, DirectXRenderManager* _pRenderManager);
 		virtual ~DirectXVertexBuffer();
 
-		virtual void setVertextCount(size_t _count);
-		virtual size_t getVertextCount();
+		virtual void setVertexCount(size_t _count);
+		virtual size_t getVertexCount();
 
 		virtual Vertex* lock();
 		virtual void unlock();
@@ -39,9 +38,9 @@ namespace MyGUI
 		void resize();
 
 	private:
-		IDirect3DDevice9 *mpD3DDevice;
-		IDirect3DVertexBuffer9 *mpBuffer;
-	    DirectXRenderManager *pRenderManager;
+		IDirect3DDevice9* mpD3DDevice;
+		IDirect3DVertexBuffer9* mpBuffer;
+		DirectXRenderManager* pRenderManager;
 
 		size_t mVertexCount;
 		size_t mNeedVertexCount;

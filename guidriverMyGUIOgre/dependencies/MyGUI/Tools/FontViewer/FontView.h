@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		09/2008
-	@module
 */
 #ifndef __FONT_VIEW_H__
 #define __FONT_VIEW_H__
@@ -13,7 +12,8 @@
 namespace demo
 {
 
-	class FontView : public wraps::BaseLayout
+	class FontView :
+		public wraps::BaseLayout
 	{
 	public:
 		FontView();
@@ -21,7 +21,7 @@ namespace demo
 		void setFontName(const std::string& _value);
 
 	private:
-		MyGUI::Edit* mEditView;
+		MyGUI::EditBox* mEditView;
 	};
 
 } // namespace demo

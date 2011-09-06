@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2009
-	@module
 */
 
 #ifndef __PLUGIN_H__
@@ -17,9 +16,9 @@
 namespace plugin
 {
 
-	class Plugin : public MyGUI::IPlugin
+	class Plugin :
+		public MyGUI::IPlugin
 	{
-
 	public:
 		Plugin();
 		~Plugin();
@@ -33,14 +32,17 @@ namespace plugin
 
 		//!	Shut down
 		virtual void shutdown();
-		
+
 		//!	Uninstall
 		virtual void uninstall();
 
 		//! Get name
 		virtual const std::string& getName() const;
 
-		static HMODULE getLibHandle() { return msFlashLib; }
+		static HMODULE getLibHandle()
+		{
+			return msFlashLib;
+		}
 
 	public:
 		static const std::string LogSection;

@@ -2,12 +2,11 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2008
-	@module
 */
 #ifndef __DEMO_KEEPER_H__
 #define __DEMO_KEEPER_H__
 
-#include "Base/BaseManager.h"
+#include "BaseManager.h"
 #include "GraphView.h"
 #include "AnimationGraph.h"
 #include "AnimationGraphFactory.h"
@@ -19,7 +18,8 @@
 namespace demo
 {
 
-	class DemoKeeper : public base::BaseManager
+	class DemoKeeper :
+		public base::BaseManager
 	{
 	public:
 		DemoKeeper();
@@ -35,7 +35,7 @@ namespace demo
 		void notifyConnectPoint(wraps::BaseGraphView* _sender, wraps::BaseGraphConnection* _from, wraps::BaseGraphConnection* _to);
 		void notifyDisconnectPoint(wraps::BaseGraphView* _sender, wraps::BaseGraphConnection* _from, wraps::BaseGraphConnection* _to);
 		void notifyInvalidateNode(BaseAnimationNode* _sender);
-		void notifyMouseButtonReleased(MyGUI::WidgetPtr _sender, int _left, int _top, MyGUI::MouseButton _id);
+		void notifyMouseButtonReleased(MyGUI::Widget* _sender, int _left, int _top, MyGUI::MouseButton _id);
 		void notifyMenuCtrlAccept(wraps::ContextMenu* _sender, const std::string& _id);
 
 		void SaveGraph();
@@ -64,6 +64,11 @@ namespace demo
 		common::OpenSaveFileDialog* mFileDialog;
 		bool mFileDialogSave;
 		wraps::ContextMenu* mContextMenu;
+
+		typedef std::vector<BaseAnimationNode*> VectorBaseAnimationNode;
+		VectorBaseAnimationNode mNodes;
+
+		MyGUI::IntPoint mClickPosition;
 	};
 
 } // namespace demo

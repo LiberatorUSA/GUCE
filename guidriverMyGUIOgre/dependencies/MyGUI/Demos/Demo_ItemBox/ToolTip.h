@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		07/2008
-	@module
 */
 #ifndef __TOOL_TIP_H__
 #define __TOOL_TIP_H__
@@ -14,20 +13,21 @@
 namespace demo
 {
 
-	class ToolTip : public wraps::BaseLayout
+	class ToolTip :
+		public wraps::BaseLayout
 	{
 	public:
 		ToolTip();
 
-		void show(ItemData * _data, const MyGUI::IntPoint & _point);
+		void show(ItemData* _data);
 		void hide();
+		void move(const MyGUI::IntPoint& _point);
 
 	private:
-
-		MyGUI::StaticText* mTextName;
-		MyGUI::StaticText* mTextCount;
-		MyGUI::Edit* mTextDesc;
-		MyGUI::StaticImage* mImageInfo;
+		MyGUI::TextBox* mTextName;
+		MyGUI::TextBox* mTextCount;
+		MyGUI::EditBox* mTextDesc;
+		MyGUI::ImageBox* mImageInfo;
 
 		int mOffsetHeight;
 	};

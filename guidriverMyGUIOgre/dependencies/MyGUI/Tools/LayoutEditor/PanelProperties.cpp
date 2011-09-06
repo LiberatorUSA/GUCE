@@ -2,117 +2,138 @@
 	@file
 	@author		Georgiy Evmenov
 	@date		09/2008
-	@module
 */
 
-#include "precompiled.h"
-#include "Common.h"
+#include "Precompiled.h"
+#include "Localise.h"
 #include "PanelProperties.h"
 #include "EditorWidgets.h"
+#include "PropertyFieldManager.h"
+#include "UndoManager.h"
 
-PanelProperties::PanelProperties() : BasePanelViewItem("PanelProperties.layout")
+namespace tools
 {
-}
-
-void PanelProperties::initialise()
-{
-	mPanelCell->setCaption(localise("Widget_type_propertes"));
-}
-
-void PanelProperties::shutdown()
-{
-}
-
-size_t PanelProperties::AddParametrs(WidgetStyle * widgetType, WidgetContainer * widgetContainer, int& y)
-{
-	size_t count = widgetType->parameter.size();
-
-	for (StringPairs::iterator iter = widgetType->parameter.begin(); iter != widgetType->parameter.end(); ++iter)
+	PanelProperties::PanelProperties() :
+		BasePanelViewItem("PanelProperties.layout"),
+		mDeep(0),
+		mCurrentWidget(nullptr)
 	{
-		std::string value = "";
-		for (StringPairs::iterator iterProperty = widgetContainer->mProperty.begin(); iterProperty != widgetContainer->mProperty.end(); ++iterProperty)
-		{
-			if (iterProperty->first == iter->first)
-			{
-				value = iterProperty->second;
-				break;
-			}
-		}
-		eventCreatePair(mWidgetClient, iter->first, value, iter->second, y);
-		y += PropertyItemHeight;
 	}
 
-	if (widgetType->base != "Widget")
+	void PanelProperties::initialise()
 	{
-		widgetType = WidgetTypes::getInstance().find(widgetType->base);
-		count += AddParametrs(widgetType, widgetContainer, y);
+		mPanelCell->setCaption(replaceTags("Widget_type_propertes"));
 	}
 
-	return count;
-}
-
-void PanelProperties::update(MyGUI::Widget* _current_widget, PropertiesGroup _group)
-{
-	int y = 0;
-
-	WidgetStyle * widgetType = WidgetTypes::getInstance().find(_current_widget->getTypeName());
-	WidgetContainer * widgetContainer = EditorWidgets::getInstance().find(_current_widget);
-
-	if (_group == TYPE_PROPERTIES)
+	void PanelProperties::shutdown()
 	{
-		MyGUI::LanguageManager::getInstance().addUserTag("widget_type", _current_widget->getTypeName());
-		if (widgetType->name == "Widget")
-		{
-			if (_current_widget->getTypeName() != "Widget")
-			{
-				mPanelCell->setCaption(MyGUI::LanguageManager::getInstance().replaceTags(localise("Properties_not_available")));
-				y += PropertyItemHeight;
-			}
-			else
-			{
-				setVisible(false);
-			}
-		}
-		else
-		{
-			mPanelCell->setCaption(MyGUI::LanguageManager::getInstance().replaceTags(localise("Widget_type_propertes")));
-
-			size_t count = AddParametrs(widgetType, widgetContainer, y);
-
-			setVisible( count > 0 );
-		}
+		destroyPropertyFields();
 	}
-	else if (_group == WIDGET_PROPERTIES)
-	{
-		mPanelCell->setCaption(localise("Other_properties"));
 
-		if (_current_widget->getTypeName() != "TabItem" &&
-			_current_widget->getTypeName() != MyGUI::TabItem::getClassTypeName())
+	void PanelProperties::setDeep(size_t _value)
+	{
+		mDeep = _value;
+	}
+
+	size_t PanelProperties::getDeep() const
+	{
+		return mDeep;
+	}
+
+	void PanelProperties::AddParametrs(WidgetStyle* widgetType, WidgetContainer* widgetContainer, MyGUI::Widget* _currentWidget)
+	{
+		for (MyGUI::VectorStringPairs::iterator iter = widgetType->parameter.begin(); iter != widgetType->parameter.end(); ++iter)
 		{
-			setVisible(true);
-			//base properties (from Widget)
-			WidgetStyle * baseType = WidgetTypes::getInstance().find("Widget");
-			for (StringPairs::iterator iter = baseType->parameter.begin(); iter != baseType->parameter.end(); ++iter)
+			std::string value = "";
+			for (MyGUI::VectorStringPairs::iterator iterProperty = widgetContainer->mProperty.begin(); iterProperty != widgetContainer->mProperty.end(); ++iterProperty)
 			{
-				std::string value = "";
-				for (StringPairs::iterator iterProperty = widgetContainer->mProperty.begin(); iterProperty != widgetContainer->mProperty.end(); ++iterProperty)
+				if (iterProperty->first == iter->first)
 				{
-					if (iterProperty->first == iter->first)
-					{
-						value = iterProperty->second;
-						break;
-					}
+					value = iterProperty->second;
+					break;
 				}
-
-				eventCreatePair(mWidgetClient, iter->first, value, iter->second, y);
-				y += PropertyItemHeight;
 			}
-		}
-		else
-		{
-			setVisible(false);
+
+			IPropertyField* field = PropertyFieldManager::getInstance().createPropertyField(mWidgetClient, iter->second, _currentWidget);
+			field->setName(iter->first);
+			field->setValue(value);
+			field->eventAction = MyGUI::newDelegate(this, &PanelProperties::notifyAction);
+			mFields.push_back(field);
 		}
 	}
 
-	mPanelCell->setClientHeight(y);
-}
+	void PanelProperties::update(MyGUI::Widget* _currentWidget, WidgetStyle* _widgetType)
+	{
+		destroyPropertyFields();
+
+		mCurrentWidget = _currentWidget;
+		if (mCurrentWidget == nullptr)
+			return;
+
+		WidgetContainer* widgetContainer = EditorWidgets::getInstance().find(_currentWidget);
+
+		MyGUI::LanguageManager::getInstance().addUserTag("widget_type", _widgetType->name);
+
+		mPanelCell->setCaption(replaceTags("Widget_type_propertes"));
+
+		AddParametrs(_widgetType, widgetContainer, mCurrentWidget);
+
+		bool visible = mFields.size() > 0;
+		setVisible(visible);
+
+		updateSize();
+	}
+
+	void PanelProperties::updateSize()
+	{
+		int height = 0;
+
+		for (VectorPropertyField::iterator item = mFields.begin(); item != mFields.end(); ++ item)
+		{
+			MyGUI::IntSize size = (*item)->getContentSize();
+			(*item)->setCoord(MyGUI::IntCoord(0, height, mMainWidget->getWidth(), size.height));
+			height += size.height;
+		}
+
+		mPanelCell->setClientHeight(height);
+	}
+
+	void PanelProperties::destroyPropertyFields()
+	{
+		for (VectorPropertyField::iterator item = mFields.begin(); item != mFields.end(); ++ item)
+			delete (*item);
+		mFields.clear();
+	}
+
+	void PanelProperties::notifyAction(const std::string& _name, const std::string& _value, bool _final)
+	{
+		WidgetContainer* widgetContainer = EditorWidgets::getInstance().find(mCurrentWidget);
+
+		EditorWidgets::getInstance().tryToApplyProperty(widgetContainer->widget, _name, _value);
+
+		if (_final)
+		{
+			bool found = false;
+			// если такое св-во было, то заменим (или удалим если стерли) значение
+			for (MyGUI::VectorStringPairs::iterator iterProperty = widgetContainer->mProperty.begin(); iterProperty != widgetContainer->mProperty.end(); ++iterProperty)
+			{
+				if (iterProperty->first == _name)
+				{
+					found = true;
+					if (_value.empty())
+						widgetContainer->mProperty.erase(iterProperty);
+					else
+						iterProperty->second = _value;
+					break;
+				}
+			}
+
+			// если такого свойства не было раньше, то сохраняем
+			if (!_value.empty() && !found)
+				widgetContainer->mProperty.push_back(MyGUI::PairString(_name, _value));
+
+			UndoManager::getInstance().addValue(PR_PROPERTIES);
+		}
+	}
+
+} // namespace tools

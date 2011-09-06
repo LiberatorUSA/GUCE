@@ -2,15 +2,15 @@
 	@file
 	@author		Albert Semenov
 	@date		10/2008
-	@module
 */
-#include "precompiled.h"
+#include "Precompiled.h"
 #include "InformationWindow.h"
 
 namespace demo
 {
 
-	InformationWindow::InformationWindow(MyGUI::Widget* _parent) : BaseLayout("InformationWindow.layout", _parent),
+	InformationWindow::InformationWindow(MyGUI::Widget* _parent) :
+		BaseLayout("InformationWindow.layout", _parent),
 		mFocus(nullptr)
 	{
 		assignWidget(mInfo, "Info");
@@ -23,7 +23,6 @@ namespace demo
 			const MyGUI::IntSize& size = mMainWidget->getSize();
 			mMainWidget->setPosition(MyGUI::IntPoint(getRand(0, coord.width - size.width), getRand(0, coord.height - size.height)));
 		}
-
 	}
 
 	InformationWindow::~InformationWindow()
@@ -33,18 +32,22 @@ namespace demo
 
 	int InformationWindow::getRand(int _min, int _max)
 	{
-		if (_max < _min) std::swap(_max, _min);
+		if (_max < _min)
+			std::swap(_max, _min);
 		int range = _max - _min;
-		if (range == 0) return 0;
+		if (range == 0)
+			return 0;
 		int result = ::rand() % range;
-		if (result < 0) result = -result;
+		if (result < 0)
+			result = -result;
 		return _min + result;
 	}
 
 	void InformationWindow::notifyFrameStart(float _time)
 	{
 		MyGUI::Widget* focus = MyGUI::InputManager::getInstance().getMouseFocusWidget();
-		if (focus == mFocus) return;
+		if (focus == mFocus)
+			return;
 		mFocus = focus;
 
 		const std::string tag = "Info";

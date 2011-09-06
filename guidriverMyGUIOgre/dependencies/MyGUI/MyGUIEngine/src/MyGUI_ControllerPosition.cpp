@@ -2,7 +2,6 @@
 	@file
 	@author		Evmenov Georgiy
 	@date		03/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -36,6 +35,10 @@ namespace MyGUI
 		mElapsedTime(0),
 		mCalcPosition(false),
 		mCalcSize(false)
+	{
+	}
+
+	ControllerPosition::~ControllerPosition()
 	{
 	}
 
@@ -79,7 +82,7 @@ namespace MyGUI
 		if (mElapsedTime < mTime)
 		{
 			IntCoord coord;
-			eventFrameAction(mStartCoord, mDestCoord, coord, mElapsedTime/mTime);
+			eventFrameAction(mStartCoord, mDestCoord, coord, mElapsedTime / mTime);
 			if (mCalcPosition)
 			{
 				if (mCalcSize) _widget->setCoord(coord);
@@ -114,19 +117,38 @@ namespace MyGUI
 
 	void ControllerPosition::setProperty(const std::string& _key, const std::string& _value)
 	{
-		if (_key == "Time") setTime(utility::parseValue<float>(_value));
-		else if (_key == "Coord") setCoord(utility::parseValue<IntCoord>(_value));
-		else if (_key == "Size") setSize(utility::parseValue<IntSize>(_value));
-		else if (_key == "Position") setPosition(utility::parseValue<IntPoint>(_value));
-		else if (_key == "Function") setFunction(_value);
+		if (_key == "Time")
+			setTime(utility::parseValue<float>(_value));
+		else if (_key == "Coord")
+			setCoord(utility::parseValue<IntCoord>(_value));
+		else if (_key == "Size")
+			setSize(utility::parseValue<IntSize>(_value));
+		else if (_key == "Position")
+			setPosition(utility::parseValue<IntPoint>(_value));
+		else if (_key == "Function")
+			setFunction(_value);
 	}
 
 	void ControllerPosition::setFunction(const std::string& _value)
 	{
-		if (_value == "Inertional") setAction(MyGUI::newDelegate(action::inertionalMoveFunction));
-		else if (_value == "Accelerated") setAction(MyGUI::newDelegate(action::acceleratedMoveFunction<30>));
-		else if (_value == "Slowed") setAction(MyGUI::newDelegate(action::acceleratedMoveFunction<4>));
-		else if (_value == "Jump") setAction(MyGUI::newDelegate(action::jumpMoveFunction<5>));
+		if (_value == "Inertional")
+			setAction(MyGUI::newDelegate(action::inertionalMoveFunction));
+		else if (_value == "Accelerated")
+			setAction(MyGUI::newDelegate(action::acceleratedMoveFunction<30>));
+		else if (_value == "Slowed")
+			setAction(MyGUI::newDelegate(action::acceleratedMoveFunction<4>));
+		else if (_value == "Jump")
+			setAction(MyGUI::newDelegate(action::jumpMoveFunction<5>));
+	}
+
+	void ControllerPosition::setTime(float _value)
+	{
+		mTime = _value;
+	}
+
+	void ControllerPosition::setAction(FrameAction::IDelegate* _value)
+	{
+		eventFrameAction = _value;
 	}
 
 } // namespace MyGUI

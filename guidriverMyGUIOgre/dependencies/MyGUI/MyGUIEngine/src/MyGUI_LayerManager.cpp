@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		02/2008
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -36,12 +35,18 @@ namespace MyGUI
 
 	const std::string XML_TYPE("Layer");
 
-	MYGUI_INSTANCE_IMPLEMENT( LayerManager )
+	template <> LayerManager* Singleton<LayerManager>::msInstance = nullptr;
+	template <> const char* Singleton<LayerManager>::mClassTypeName("LayerManager");
+
+	LayerManager::LayerManager() :
+		mIsInitialise(false)
+	{
+	}
 
 	void LayerManager::initialise()
 	{
-		MYGUI_ASSERT(!mIsInitialise, INSTANCE_TYPE_NAME << " initialised twice");
-		MYGUI_LOG(Info, "* Initialise: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
+		MYGUI_LOG(Info, "* Initialise: " << getClassTypeName());
 
 		WidgetManager::getInstance().registerUnlinker(this);
 		ResourceManager::getInstance().registerLoadXmlDelegate(XML_TYPE) = newDelegate(this, &LayerManager::_load);
@@ -49,14 +54,14 @@ namespace MyGUI
 		FactoryManager::getInstance().registerFactory<SharedLayer>(XML_TYPE);
 		FactoryManager::getInstance().registerFactory<OverlappedLayer>(XML_TYPE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully initialized");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully initialized");
 		mIsInitialise = true;
 	}
 
 	void LayerManager::shutdown()
 	{
-		if (!mIsInitialise) return;
-		MYGUI_LOG(Info, "* Shutdown: " << INSTANCE_TYPE_NAME);
+		MYGUI_ASSERT(mIsInitialise, getClassTypeName() << " is not initialised");
+		MYGUI_LOG(Info, "* Shutdown: " << getClassTypeName());
 
 		FactoryManager::getInstance().unregisterFactory<SharedLayer>(XML_TYPE);
 		FactoryManager::getInstance().unregisterFactory<OverlappedLayer>(XML_TYPE);
@@ -67,22 +72,17 @@ namespace MyGUI
 		WidgetManager::getInstance().unregisterUnlinker(this);
 		ResourceManager::getInstance().unregisterLoadXmlDelegate(XML_TYPE);
 
-		MYGUI_LOG(Info, INSTANCE_TYPE_NAME << " successfully shutdown");
+		MYGUI_LOG(Info, getClassTypeName() << " successfully shutdown");
 		mIsInitialise = false;
 	}
 
 	void LayerManager::clear()
 	{
-		for (VectorLayer::iterator iter=mLayerNodes.begin(); iter!=mLayerNodes.end(); ++iter)
+		for (VectorLayer::iterator iter = mLayerNodes.begin(); iter != mLayerNodes.end(); ++iter)
 		{
 			destroy(*iter);
 		}
 		mLayerNodes.clear();
-	}
-
-	bool LayerManager::load(const std::string& _file)
-	{
-		return ResourceManager::getInstance()._loadImplement(_file, true, XML_TYPE, INSTANCE_TYPE_NAME);
 	}
 
 	void LayerManager::_load(xml::ElementPtr _node, const std::string& _file, Version _version)
@@ -101,7 +101,7 @@ namespace MyGUI
 				continue;
 			}
 
-			for (VectorLayer::iterator iter=layers.begin(); iter!=layers.end(); ++iter)
+			for (VectorLayer::iterator iter = layers.begin(); iter != layers.end(); ++iter)
 			{
 				MYGUI_ASSERT((*iter)->getName() != name, "Layer '" << name << "' already exist (file : " << _file << ")");
 			}
@@ -141,7 +141,7 @@ namespace MyGUI
 		_item->detachFromLayer();
 
 		// а теперь аттачим
-		for (VectorLayer::iterator iter=mLayerNodes.begin(); iter!=mLayerNodes.end(); ++iter)
+		for (VectorLayer::iterator iter = mLayerNodes.begin(); iter != mLayerNodes.end(); ++iter)
 		{
 			if (_name == (*iter)->getName())
 			{
@@ -174,12 +174,12 @@ namespace MyGUI
 
 	void LayerManager::merge(VectorLayer& _layers)
 	{
-		for (VectorLayer::iterator iter=mLayerNodes.begin(); iter!=mLayerNodes.end(); ++iter)
+		for (VectorLayer::iterator iter = mLayerNodes.begin(); iter != mLayerNodes.end(); ++iter)
 		{
 			if ((*iter) == nullptr) continue;
 			bool find = false;
 			std::string name = (*iter)->getName();
-			for (VectorLayer::iterator iter2=_layers.begin(); iter2!=_layers.end(); ++iter2)
+			for (VectorLayer::iterator iter2 = _layers.begin(); iter2 != _layers.end(); ++iter2)
 			{
 				if (name == (*iter2)->getName())
 				{
@@ -212,7 +212,7 @@ namespace MyGUI
 		VectorLayer::reverse_iterator iter = mLayerNodes.rbegin();
 		while (iter != mLayerNodes.rend())
 		{
-			ILayerItem * item = (*iter)->getLayerItemByPoint(_left, _top);
+			ILayerItem* item = (*iter)->getLayerItemByPoint(_left, _top);
 			if (item != nullptr) return static_cast<Widget*>(item);
 			++iter;
 		}
@@ -221,7 +221,7 @@ namespace MyGUI
 
 	void LayerManager::renderToTarget(IRenderTarget* _target, bool _update)
 	{
-		for (VectorLayer::iterator iter=mLayerNodes.begin(); iter!=mLayerNodes.end(); ++iter)
+		for (VectorLayer::iterator iter = mLayerNodes.begin(); iter != mLayerNodes.end(); ++iter)
 		{
 			(*iter)->renderToTarget(_target, _update);
 		}
@@ -229,7 +229,7 @@ namespace MyGUI
 
 	ILayer* LayerManager::getByName(const std::string& _name, bool _throw) const
 	{
-		for (VectorLayer::const_iterator iter=mLayerNodes.begin(); iter!=mLayerNodes.end(); ++iter)
+		for (VectorLayer::const_iterator iter = mLayerNodes.begin(); iter != mLayerNodes.end(); ++iter)
 		{
 			if (_name == (*iter)->getName())
 				return (*iter);
@@ -238,18 +238,9 @@ namespace MyGUI
 		return nullptr;
 	}
 
-	void LayerManager::dumpStatisticToLog()
+	LayerManager::EnumeratorLayer LayerManager::getEnumerator() const
 	{
-		static const char* spacer = "                                                                                                                        ";
-		MYGUI_LOG(Info, spacer);
-		MYGUI_LOG(Info, "---------- Statistic for layers start ----------" << spacer);
-		for (VectorLayer::iterator iter=mLayerNodes.begin(); iter!=mLayerNodes.end(); ++iter)
-		{
-			(*iter)->dumpStatisticToLog();
-		}
-		MYGUI_LOG(Info, spacer);
-		MYGUI_LOG(Info, "---------- Statistic for layers end ----------" << spacer);
-		MYGUI_LOG(Info, spacer);
+		return EnumeratorLayer(mLayerNodes);
 	}
 
 } // namespace MyGUI

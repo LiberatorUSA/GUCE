@@ -3,7 +3,6 @@
 	@author		Denis Koronchik
 	@author		Georgiy Evmenov
 	@date		09/2007
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -83,7 +82,7 @@ namespace MyGUI
 		#endif
 	}
 
-	std::string DynLib::dynlibError( void )
+	std::string DynLib::dynlibError() const
 	{
 #if MYGUI_PLATFORM == MYGUI_PLATFORM_WIN32
 		LPVOID lpMsgBuf;
@@ -97,7 +96,7 @@ namespace MyGUI
 			(LPTSTR) &lpMsgBuf,
 			0,
 			NULL
-			);
+		);
 		std::string ret = (char*)lpMsgBuf;
 		// Free the buffer.
 		LocalFree( lpMsgBuf );
@@ -105,6 +104,11 @@ namespace MyGUI
 #else
 		return "no unix error function defined yet";
 #endif
+	}
+
+	std::string DynLib::getName(void) const
+	{
+		return mName;
 	}
 
 } // namespace MyGUI

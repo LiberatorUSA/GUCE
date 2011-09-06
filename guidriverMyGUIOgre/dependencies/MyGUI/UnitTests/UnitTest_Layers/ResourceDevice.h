@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		11/2009
-	@module
 */
 #ifndef __DEMO_RESOURCE_DEVICE_H__
 #define __DEMO_RESOURCE_DEVICE_H__
@@ -50,12 +49,30 @@ namespace demo
 		}
 
 	public:
-		const std::string& getDeviceName() { return mDeviceName; }
-		const std::string& getDeviceDescription() { return mDeviceDescription; }
-		size_t getValueEnergy() { return mValueEnergy; }
-		size_t getValueExplosion() { return mValueExplosion; }
-		size_t getValueTarget() { return mValueTarget; }
-		size_t getValueHP() { return mValueHP; }
+		const std::string& getDeviceName()
+		{
+			return mDeviceName;
+		}
+		const std::string& getDeviceDescription()
+		{
+			return mDeviceDescription;
+		}
+		size_t getValueEnergy()
+		{
+			return mValueEnergy;
+		}
+		size_t getValueExplosion()
+		{
+			return mValueExplosion;
+		}
+		size_t getValueTarget()
+		{
+			return mValueTarget;
+		}
+		size_t getValueHP()
+		{
+			return mValueHP;
+		}
 
 	private:
 		std::string mDeviceName;

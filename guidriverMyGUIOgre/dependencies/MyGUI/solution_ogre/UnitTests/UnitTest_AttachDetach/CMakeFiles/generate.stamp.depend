@@ -1,4 +1,0 @@
-# CMake generation dependency list for this directory.
-../../../../UnitTests/UnitTest_AttachDetach/CMakeLists.txt
-../../../../UnitTests/UnitTest_AttachDetach/UnitTest_AttachDetach.list
-../../../../CMake/Templates/VisualStudioUserFile.vcproj.user.in

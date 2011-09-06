@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		08/2009
-	@module
 */
 #ifndef __GRAPH_NODE_FADE_CONTROLLER_H__
 #define __GRAPH_NODE_FADE_CONTROLLER_H__
@@ -13,7 +12,8 @@
 namespace demo
 {
 
-	class GraphNodeFadeController : public BaseAnimationNode
+	class GraphNodeFadeController :
+		public BaseAnimationNode
 	{
 	public:
 		GraphNodeFadeController(const std::string& _name) :
@@ -29,7 +29,7 @@ namespace demo
 	private:
 		virtual void initialise()
 		{
-			mMainWidget->setCaption(getName());
+			mMainWidget->castType<MyGUI::Window>()->setCaption(getName());
 
 			assignBase(mStartIn, "StartIn");
 			assignBase(mStopIn, "StopIn");

@@ -2,7 +2,6 @@
 	@file
 	@author		Albert Semenov
 	@date		06/2009
-	@module
 */
 /*
 	This file is part of MyGUI.
@@ -22,18 +21,24 @@
 */
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_ResourceManualPointer.h"
-#include "MyGUI_StaticImage.h"
+#include "MyGUI_ImageBox.h"
 #include "MyGUI_CoordConverter.h"
 #include "MyGUI_TextureUtility.h"
 
 namespace MyGUI
 {
 
+	ResourceManualPointer::ResourceManualPointer()
+	{
+	}
+
+	ResourceManualPointer::~ResourceManualPointer()
+	{
+	}
+
 	void ResourceManualPointer::deserialization(xml::ElementPtr _node, Version _version)
 	{
 		Base::deserialization(_node, _version);
-
-		IntCoord coord;
 
 		// берем детей и крутимся, основной цикл
 		xml::ElementEnumerator info = _node->getElementEnumerator();
@@ -45,22 +50,17 @@ namespace MyGUI
 			if (key == "Point") mPoint = IntPoint::parse(value);
 			else if (key == "Size") mSize = IntSize::parse(value);
 			else if (key == "Texture") mTexture = value;
-			else if (key == "Coord") coord = IntCoord::parse(value);
+			else if (key == "Coord") mTextureCoord = IntCoord::parse(value);
 		}
-
-		mOffset = CoordConverter::convertTextureCoord(
-			coord,
-			texture_utility::getTextureSize(mTexture));
 	}
 
-	void ResourceManualPointer::setImage(StaticImage* _image)
+	void ResourceManualPointer::setImage(ImageBox* _image)
 	{
 		_image->deleteAllItems();
-		_image->_setTextureName(mTexture);
-		_image->_setUVSet(mOffset);
+		_image->setImageInfo(mTexture, mTextureCoord, mTextureCoord.size());
 	}
 
-	void ResourceManualPointer::setPosition(StaticImage* _image, const IntPoint& _point)
+	void ResourceManualPointer::setPosition(ImageBox* _image, const IntPoint& _point)
 	{
 		_image->setCoord(_point.left - mPoint.left, _point.top - mPoint.top, mSize.width, mSize.height);
 	}
