@@ -12,6 +12,7 @@
 # Configuration for module: pcre
 
 set( HEADER_FILES 
+  config.h
   pcre.h
   pcrecpp.h
   pcreposix.h
@@ -22,12 +23,9 @@ set( HEADER_FILES
 )
 
 set( SOURCE_FILES 
-  chartables.c
-  dftables.c
   pcrecpp.cc
-  pcrecpp_unittest.cc
-  pcregrep.c
   pcreposix.c
+  pcre_chartables.c
   pcre_compile.c
   pcre_config.c
   pcre_dfa_exec.c
@@ -41,9 +39,7 @@ set( SOURCE_FILES
   pcre_ord2utf8.c
   pcre_refcount.c
   pcre_scanner.cc
-  pcre_scanner_unittest.cc
   pcre_stringpiece.cc
-  pcre_stringpiece_unittest.cc
   pcre_study.c
   pcre_tables.c
   pcre_try_flipped.c
@@ -65,7 +61,7 @@ set( ALL_FILES ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFO
 
 set( MODULE_NAME "pcre" )
 add_library( ${MODULE_NAME} ${ALL_FILES} )
-set_target_properties( ${MODULE_NAME} PROPERTIES COMPILE_DEFINITIONS "PCRE_DEFINITION;DLL_EXPORT" )
+set_target_properties( ${MODULE_NAME} PROPERTIES COMPILE_DEFINITIONS "DLL_EXPORT" )
 
 
 

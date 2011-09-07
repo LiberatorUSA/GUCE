@@ -19,18 +19,18 @@ REM -----------------------------------------------------
 
 :FIND_GUCE_CMAKE_SLN_DEBUG_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\common\bin\MVC9\bin\Debug
+SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\common\bin\MVC10\bin\Debug
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST="%GENERATORPATH%\%GENERATOREXE%"
 
 ECHO Test path = %EXETEST%
 IF EXIST %EXETEST% (
-  ECHO Warning: Using GUCE CMake debug MVC9 development version of the ProjectGenerator
+  ECHO Warning: Using GUCE CMake debug MVC10 development version of the ProjectGenerator
   GOTO RUN_PROJECTGENERATOR
 )
 
 IF NOT EXIST %EXETEST% (
-  ECHO Cannot locate GUCE CMake MVC9 debug development version of the ProjectGenerator, trying GUCEF
+  ECHO Cannot locate GUCE CMake MVC10 debug development version of the ProjectGenerator, trying GUCEF
   GOTO FIND_GUCEF_CMAKE_SLN_DEBUG_PROJECTGENERATOR
 )
 
@@ -41,18 +41,18 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_CMAKE_SLN_DEBUG_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCEF_HOME%\common\bin\MVC9\bin\Debug
+SET GENERATORPATH=%GUCEF_HOME%\common\bin\MVC10\bin\Debug
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
 ECHO Test path = %EXETEST%
 IF EXIST %EXETEST% (
-  ECHO Warning: Using GUCEF CMake debug MVC9 development version of the ProjectGenerator
+  ECHO Warning: Using GUCEF CMake debug MVC10 development version of the ProjectGenerator
   GOTO RUN_PROJECTGENERATOR
 )
 
 IF NOT EXIST %EXETEST% (
-  ECHO Cannot locate GUCEF CMake MVC9 debug development version of the ProjectGenerator, trying GUCE
+  ECHO Cannot locate GUCEF CMake MVC10 debug development version of the ProjectGenerator, trying GUCE
   GOTO FIND_GUCE_CMAKE_SLN_DEBUG_PROJECTGENERATOR
 )
 
@@ -63,18 +63,18 @@ REM -----------------------------------------------------
 
 :FIND_GUCE_CMAKE_SLN_DEBUG_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCE_HOME%\common\bin\MVC9\bin\Debug
+SET GENERATORPATH=%GUCE_HOME%\common\bin\MVC10\bin\Debug
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
 ECHO Test path = %EXETEST%
 IF EXIST %EXETEST% (
-  ECHO Warning: Using GUCE CMake debug MVC9 development version of the ProjectGenerator
+  ECHO Warning: Using GUCE CMake debug MVC10 development version of the ProjectGenerator
   GOTO RUN_PROJECTGENERATOR
 )
 
 IF NOT EXIST %EXETEST% (
-  ECHO Cannot locate GUCE CMake MVC9 debug development version of the ProjectGenerator, trying release version
+  ECHO Cannot locate GUCE CMake MVC10 debug development version of the ProjectGenerator, trying release version
   GOTO FIND_GUCEF_RELEASE_PROJECTGENERATOR
 )
 
@@ -86,13 +86,13 @@ REM -----------------------------------------------------
 
 :FIND_GUCEF_RELEASE_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCEF_HOME%\tools\ProjectGenerator\bin\ReleasedBins\Win32\5April2011
+SET GENERATORPATH=%GUCEF_HOME%\tools\ProjectGenerator\bin\ReleasedBins\Win32\6September2011
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
 ECHO Test path = %EXETEST%
 IF EXIST %EXETEST% (
-  ECHO Using released version of ProjectGenerator dated 5'th April 2011
+  ECHO Using released version of ProjectGenerator dated 6'th September 2011
   GOTO RUN_PROJECTGENERATOR
 )
 
@@ -109,7 +109,7 @@ REM -----------------------------------------------------
 
 :FIND_GUCE_RELEASE_PROJECTGENERATOR
 
-SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\tools\ProjectGenerator\bin\ReleasedBins\Win32\5April2011
+SET GENERATORPATH=%GUCE_THEBATCHDIR%\..\..\tools\ProjectGenerator\bin\ReleasedBins\Win32\6September2011
 SET GENERATOREXE=ProjectGenerator.exe
 SET EXETEST=%GENERATORPATH%\%GENERATOREXE%
 
