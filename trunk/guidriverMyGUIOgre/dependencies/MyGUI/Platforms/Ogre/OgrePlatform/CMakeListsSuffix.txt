@@ -1,6 +1,0 @@
-
-add_library( MyGUI.OgrePlatform STATIC ${ALL_FILES} )
-add_dependencies( MyGUI.OgrePlatform MyGUIEngine OgreMain )
-target_link_libraries( MyGUI.OgrePlatform MyGUIEngine OgreMain )
-set_target_properties( MyGUI.OgrePlatform PROPERTIES COMPILE_DEFINITIONS "-DMYGUI_BUILD;MYGUI_USE_FREETYPE")
-GUCE_config_lib( MyGUI.OgrePlatform )
