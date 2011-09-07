@@ -1,4 +1,0 @@
-DirectX
-OpenGL
-Main.h
-Main.cpp
