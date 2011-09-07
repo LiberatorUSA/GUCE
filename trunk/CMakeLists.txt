@@ -290,12 +290,12 @@ add_subdirectory( guceCORE )
 add_subdirectory( guceGUI )
 
 # Setup GUCE guidriverMyGUIOgre Plugin dependencies
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Common )
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Tools/FontViewer )
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Tools/ImageSetViewer )
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Tools/LayoutEditor )
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
-#add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform )
+add_subdirectory( dependencies/MyGui/Common )
+add_subdirectory( dependencies/MyGui/Tools/FontViewer )
+add_subdirectory( dependencies/MyGui/Tools/ImageSetViewer )
+add_subdirectory( dependencies/MyGui/Tools/LayoutEditor )
+add_subdirectory( dependencies/MyGui/MyGUIEngine )
+add_subdirectory( dependencies/MyGui/Platforms/OpenGL/OpenGLPlatform )
 
 # Setup GUCE guidriverMyGUIOgre Plugin module
 add_subdirectory( guidriverMyGUIOgre )
