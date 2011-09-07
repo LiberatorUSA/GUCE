@@ -52,8 +52,8 @@ set( ALL_FILES ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFO
 
 
 add_library( MyGUIOpenGLPlatform ${ALL_FILES} )
-add_dependencies( MyGUIOpenGLPlatform MyGUIEngine )
-target_link_libraries( MyGUIOpenGLPlatform MyGUIEngine )
+add_dependencies( MyGUIOpenGLPlatform MyGUIEngine MyGUI.Common )
+target_link_libraries( MyGUIOpenGLPlatform MyGUIEngine MyGUI.Common )
 set_target_properties( MyGUIOpenGLPlatform PROPERTIES COMPILE_DEFINITIONS "MYGUI_BUILD;MYGUI_BUILD_DLL;MYGUI_USE_FREETYPE")
 GUCE_config_lib( MyGUIOpenGLPlatform )
 
@@ -62,4 +62,8 @@ GUCE_config_lib( MyGUIOpenGLPlatform )
 
 
 
-include_directories( ../../../../freetype/include ../../../../freetype/include/freetype ../../../../freetype/include/freetype/config ../../../../freetype/include/freetype/internal ../../../../freetype/include/freetype/internal/services ../../../../freetype/src/winfonts ../../../MyGUIEngine/include include include/GL )
+include_directories( ../../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ../../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ../../../../Ogre/OgreMain/include ../../../../Ogre/OgreMain/src ../../../../Ogre/OgreMain/src/nedmalloc ../../../../freetype/include ../../../../freetype/include/freetype ../../../../freetype/include/freetype/config ../../../../freetype/include/freetype/internal ../../../../freetype/include/freetype/internal/services ../../../../freetype/src/winfonts ../../../Common ../../../Common/Base ../../../Common/Base/DirectX ../../../Common/Base/Ogre ../../../Common/Base/OpenGL ../../../Common/BaseLayout ../../../Common/FileSystemInfo ../../../Common/Input ../../../Common/Input/OIS ../../../Common/Input/Win32_OIS ../../../Common/ItemBox ../../../Common/MessageBox ../../../Common/Ogre/RenderBox ../../../Common/PanelView ../../../Common/Tools ../../../MyGUIEngine/include include include/GL )
+
+if ( WIN32 )
+  include_directories( ../../../../../../../GUCEF/trunk/gucefINPUT/plugins/inputdriverOIS/dependency/OIS/includes ../../../../../../../GUCEF/trunk/gucefINPUT/plugins/inputdriverOIS/dependency/OIS/includes/win32 ../../../../../../../GUCEF/trunk/gucefINPUT/plugins/inputdriverOIS/dependency/OIS/src/extras/LIRC ../../../../Ogre/OgreMain/include/WIN32 ../../../../Ogre/OgreMain/src/WIN32 ../../../Common/Input/Win32 )
+endif( WIN32 )
