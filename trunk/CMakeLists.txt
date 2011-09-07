@@ -210,13 +210,16 @@ add_subdirectory( ${ENV_GUCEF_HOME}/gucefMULTIPLAY ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefDRN ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefSMDRN ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefPATCHER ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/gucefLOADER ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/gucefPRODMAN ${GUCE_BINARY_DIR} )
+
 
 # Setup GUCEF plugin dependencies
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefCORE/plugins/dstorepluginPARSIFALXML/dependancy/libparsifal ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefINPUT/plugins/inputdriverOIS/dependency/OIS ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefIMAGE/plugins/imgpluginFreeImage/dependencies/FreeImage ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefVFS/plugins/vfspluginZIP/dependencies/zlib ${GUCE_BINARY_DIR} )
-add_subdirectory( ${ENV_GUCEF_HOME}/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ${GUCE_BINARY_DIR} )
+add_subdirectory( ${ENV_GUCEF_HOME}/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/gucefVFS/plugins/vfspluginDVP/dependencies/DVPACKSYS ${GUCE_BINARY_DIR} )
 
 # Setup GUCEF Plugin modules
@@ -249,7 +252,6 @@ add_subdirectory( ${ENV_GUCEF_HOME}/tools/DuplicateFileFinder ${GUCE_BINARY_DIR}
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/DVPPackTool ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/FileReplacer ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/HDFiller ${GUCE_BINARY_DIR} )
-add_subdirectory( ${ENV_GUCEF_HOME}/tools/PatcherGUI ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/PatchSetGenerator ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/ServerPortExtender ${GUCE_BINARY_DIR} )
 add_subdirectory( ${ENV_GUCEF_HOME}/tools/CMakeListGenerator ${GUCE_BINARY_DIR} )
@@ -293,13 +295,13 @@ add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Tools/FontViewer )
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Tools/ImageSetViewer )
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Tools/LayoutEditor )
 add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/MyGUIEngine )
-add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform )
+#add_subdirectory( guidriverMyGUIOgre/dependencies/MyGUI/Platforms/Ogre/OgrePlatform )
 
 # Setup GUCE guidriverMyGUIOgre Plugin module
 add_subdirectory( guidriverMyGUIOgre )
 
 # Setup GUCE guidriverCEGUIOgre Plugin module
-add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI/dependencies/pcre )
+add_subdirectory( dependencies/pcre )
 add_subdirectory( guidriverCEGUIOgre/dependency/CEGUI )
 add_subdirectory( guidriverCEGUIOgre )
 
