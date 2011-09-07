@@ -3,6 +3,7 @@ Version numbers of the supported dependencies are as follows:
 - Ogre 3D: > 1.7.3 (1.8 HEAD)
 - Freetype2 2.6.3
 - PCRE 7.0
+- MyGUI 3.2.0 RC1
 
 Note dependencies can have dependencies of their own.
 The dependency requirements for those dependancies are dictated by those libraries and should be taken 

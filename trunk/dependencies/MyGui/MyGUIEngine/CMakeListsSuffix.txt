@@ -1,0 +1,6 @@
+
+add_library( MyGUIEngine ${ALL_FILES} )
+add_dependencies( MyGUIEngine freetype )
+target_link_libraries( MyGUIEngine freetype )
+set_target_properties( MyGUIEngine PROPERTIES COMPILE_DEFINITIONS "MYGUI_BUILD;MYGUI_BUILD_DLL;MYGUI_USE_FREETYPE")
+GUCE_config_lib( MyGUIEngine )
