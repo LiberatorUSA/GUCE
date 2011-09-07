@@ -1,1 +1,0 @@
-MyGUI version used is 3.2.0 RC1
