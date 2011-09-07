@@ -22,7 +22,6 @@ set( HEADER_FILES
   include/MyGUI_Bitwise.h
   include/MyGUI_Button.h
   include/MyGUI_Canvas.h
-  include/MyGUI_CastWidget.h
   include/MyGUI_ChildSkinInfo.h
   include/MyGUI_ClipboardManager.h
   include/MyGUI_Colour.h
@@ -50,7 +49,6 @@ set( HEADER_FILES
   include/MyGUI_Diagnostic.h
   include/MyGUI_DynLib.h
   include/MyGUI_DynLibManager.h
-  include/MyGUI_Edit.h
   include/MyGUI_EditBox.h
   include/MyGUI_EditText.h
   include/MyGUI_Enumerator.h
@@ -64,8 +62,6 @@ set( HEADER_FILES
   include/MyGUI_GenericFactory.h
   include/MyGUI_GeometryUtility.h
   include/MyGUI_Gui.h
-  include/MyGUI_Guid.h
-  include/MyGUI_HScroll.h
   include/MyGUI_IBItemInfo.h
   include/MyGUI_ICroppedRectangle.h
   include/MyGUI_IDataStream.h
@@ -79,9 +75,7 @@ set( HEADER_FILES
   include/MyGUI_ILogListener.h
   include/MyGUI_ImageBox.h
   include/MyGUI_ImageInfo.h
-  include/MyGUI_InputDefine.h
   include/MyGUI_InputManager.h
-  include/MyGUI_Instance.h
   include/MyGUI_IObject.h
   include/MyGUI_IPointer.h
   include/MyGUI_IRenderTarget.h
@@ -95,8 +89,6 @@ set( HEADER_FILES
   include/MyGUI_ITexture.h
   include/MyGUI_IUnlinkWidget.h
   include/MyGUI_IVertexBuffer.h
-  include/MyGUI_IWidgetCreator.h
-  include/MyGUI_IWidgetFactory.h
   include/MyGUI_KeyCode.h
   include/MyGUI_LanguageManager.h
   include/MyGUI_LayerItem.h
@@ -105,9 +97,7 @@ set( HEADER_FILES
   include/MyGUI_LayoutData.h
   include/MyGUI_LayoutManager.h
   include/MyGUI_LevelLogFilter.h
-  include/MyGUI_List.h
   include/MyGUI_ListBox.h
-  include/MyGUI_ListCtrl.h
   include/MyGUI_LogLevel.h
   include/MyGUI_LogManager.h
   include/MyGUI_LogSource.h
@@ -117,13 +107,9 @@ set( HEADER_FILES
   include/MyGUI_MaskPickInfo.h
   include/MyGUI_MenuBar.h
   include/MyGUI_MenuControl.h
-  include/MyGUI_MenuCtrl.h
   include/MyGUI_MenuItem.h
   include/MyGUI_MenuItemType.h
-  include/MyGUI_Message.h
-  include/MyGUI_MessageStyle.h
   include/MyGUI_MouseButton.h
-  include/MyGUI_MultiList.h
   include/MyGUI_MultiListBox.h
   include/MyGUI_MultiListItem.h
   include/MyGUI_OverlappedLayer.h
@@ -135,16 +121,13 @@ set( HEADER_FILES
   include/MyGUI_PopupMenu.h
   include/MyGUI_Precompiled.h
   include/MyGUI_Prerequest.h
-  include/MyGUI_Progress.h
   include/MyGUI_ProgressBar.h
   include/MyGUI_RawRect.h
   include/MyGUI_RenderFormat.h
   include/MyGUI_RenderItem.h
   include/MyGUI_RenderManager.h
-  include/MyGUI_RenderOut.h
   include/MyGUI_RenderTargetInfo.h
   include/MyGUI_ResizingPolicy.h
-  include/MyGUI_ResourceHolder.h
   include/MyGUI_ResourceImageSet.h
   include/MyGUI_ResourceImageSetData.h
   include/MyGUI_ResourceImageSetPointer.h
@@ -165,14 +148,11 @@ set( HEADER_FILES
   include/MyGUI_Singleton.h
   include/MyGUI_SkinItem.h
   include/MyGUI_SkinManager.h
-  include/MyGUI_StaticImage.h
-  include/MyGUI_StaticText.h
   include/MyGUI_StringUtility.h
   include/MyGUI_SubSkin.h
   include/MyGUI_SubWidgetBinding.h
   include/MyGUI_SubWidgetInfo.h
   include/MyGUI_SubWidgetManager.h
-  include/MyGUI_Tab.h
   include/MyGUI_TabControl.h
   include/MyGUI_TabItem.h
   include/MyGUI_TCoord.h
@@ -190,13 +170,10 @@ set( HEADER_FILES
   include/MyGUI_TSize.h
   include/MyGUI_Types.h
   include/MyGUI_UString.h
-  include/MyGUI_Utility.h
   include/MyGUI_Version.h
   include/MyGUI_VertexData.h
-  include/MyGUI_VScroll.h
   include/MyGUI_Widget.h
   include/MyGUI_WidgetDefines.h
-  include/MyGUI_WidgetEvent.h
   include/MyGUI_WidgetInput.h
   include/MyGUI_WidgetManager.h
   include/MyGUI_WidgetStyle.h
@@ -228,11 +205,8 @@ set( SOURCE_FILES
   src/MyGUI_DataManager.cpp
   src/MyGUI_DataStream.cpp
   src/MyGUI_DDContainer.cpp
-  src/MyGUI_DocArray.cpp
-  src/MyGUI_DocType.cpp
   src/MyGUI_DynLib.cpp
   src/MyGUI_DynLibManager.cpp
-  src/MyGUI_Edit.cpp
   src/MyGUI_EditBox.cpp
   src/MyGUI_EditText.cpp
   src/MyGUI_Exception.cpp
@@ -241,32 +215,23 @@ set( SOURCE_FILES
   src/MyGUI_FontManager.cpp
   src/MyGUI_GeometryUtility.cpp
   src/MyGUI_Gui.cpp
-  src/MyGUI_Guid.cpp
-  src/MyGUI_HScroll.cpp
   src/MyGUI_ImageBox.cpp
   src/MyGUI_InputManager.cpp
   src/MyGUI_ItemBox.cpp
-  src/MyGUI_IWidgetCreator.cpp
   src/MyGUI_LanguageManager.cpp
   src/MyGUI_LayerItem.cpp
   src/MyGUI_LayerManager.cpp
   src/MyGUI_LayerNode.cpp
   src/MyGUI_LayoutManager.cpp
   src/MyGUI_LevelLogFilter.cpp
-  src/MyGUI_List.cpp
   src/MyGUI_ListBox.cpp
-  src/MyGUI_ListCtrl.cpp
   src/MyGUI_LogManager.cpp
   src/MyGUI_LogSource.cpp
-  src/MyGUI_LogStream.cpp
   src/MyGUI_MainSkin.cpp
   src/MyGUI_MaskPickInfo.cpp
   src/MyGUI_MenuBar.cpp
   src/MyGUI_MenuControl.cpp
-  src/MyGUI_MenuCtrl.cpp
   src/MyGUI_MenuItem.cpp
-  src/MyGUI_Message.cpp
-  src/MyGUI_MultiList.cpp
   src/MyGUI_MultiListBox.cpp
   src/MyGUI_MultiListItem.cpp
   src/MyGUI_OverlappedLayer.cpp
@@ -275,12 +240,9 @@ set( SOURCE_FILES
   src/MyGUI_PolygonalSkin.cpp
   src/MyGUI_PopupMenu.cpp
   src/MyGUI_Precompiled.cpp
-  src/MyGUI_Progress.cpp
   src/MyGUI_ProgressBar.cpp
-  src/MyGUI_RawRect.cpp
   src/MyGUI_RenderItem.cpp
   src/MyGUI_RenderManager.cpp
-  src/MyGUI_RenderOut.cpp
   src/MyGUI_ResourceImageSet.cpp
   src/MyGUI_ResourceImageSetPointer.cpp
   src/MyGUI_ResourceLayout.cpp
@@ -298,12 +260,9 @@ set( SOURCE_FILES
   src/MyGUI_SimpleText.cpp
   src/MyGUI_SkinItem.cpp
   src/MyGUI_SkinManager.cpp
-  src/MyGUI_StaticImage.cpp
-  src/MyGUI_StaticText.cpp
   src/MyGUI_SubSkin.cpp
   src/MyGUI_SubWidgetBinding.cpp
   src/MyGUI_SubWidgetManager.cpp
-  src/MyGUI_Tab.cpp
   src/MyGUI_TabControl.cpp
   src/MyGUI_TabItem.cpp
   src/MyGUI_TextBox.cpp
@@ -314,7 +273,6 @@ set( SOURCE_FILES
   src/MyGUI_Timer.cpp
   src/MyGUI_ToolTipManager.cpp
   src/MyGUI_UString.cpp
-  src/MyGUI_VScroll.cpp
   src/MyGUI_Widget.cpp
   src/MyGUI_WidgetInput.cpp
   src/MyGUI_WidgetManager.cpp
