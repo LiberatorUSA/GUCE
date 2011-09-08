@@ -6,3 +6,10 @@ ltmain.sh
 pcrecpp_unittest.cc
 pcre_scanner_unittest.cc
 pcre_stringpiece_unittest.cc
+pcre_stringpiece.cc
+pcre_stringpiece.h
+pcrecpparg.h
+pcrecpp.cc
+pcrecpp.h
+pcre_scanner.h
+pcre_scanner.cc
