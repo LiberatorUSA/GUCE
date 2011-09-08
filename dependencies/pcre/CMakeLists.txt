@@ -14,16 +14,13 @@
 set( HEADER_FILES 
   config.h
   pcre.h
-  pcrecpp.h
   pcreposix.h
   pcre_internal.h
-  pcre_scanner.h
   ucp.h
   ucpinternal.h
 )
 
 set( SOURCE_FILES 
-  pcrecpp.cc
   pcreposix.c
   pcre_chartables.c
   pcre_compile.c
@@ -38,8 +35,6 @@ set( SOURCE_FILES
   pcre_newline.c
   pcre_ord2utf8.c
   pcre_refcount.c
-  pcre_scanner.cc
-  pcre_stringpiece.cc
   pcre_study.c
   pcre_tables.c
   pcre_try_flipped.c
