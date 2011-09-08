@@ -1,6 +1,0 @@
-
-add_library( MyGUIOpenGLPlatform ${ALL_FILES} )
-add_dependencies( MyGUIOpenGLPlatform MyGUIEngine MyGUI.Common )
-target_link_libraries( MyGUIOpenGLPlatform MyGUIEngine MyGUI.Common )
-set_target_properties( MyGUIOpenGLPlatform PROPERTIES COMPILE_DEFINITIONS "MYGUI_BUILD;MYGUI_BUILD_DLL;MYGUI_USE_FREETYPE")
-GUCE_config_lib( MyGUIOpenGLPlatform )
