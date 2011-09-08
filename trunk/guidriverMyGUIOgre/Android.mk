@@ -86,16 +86,18 @@ LOCAL_C_INCLUDES := \
   $(MY_MODULE_PATH)/../dependencies/freetype/include/freetype/internal/services \
   $(MY_MODULE_PATH)/../dependencies/freetype/src/winfonts \
   $(MY_MODULE_PATH)/../guceCORE/include \
-  $(MY_MODULE_PATH)/../guceGUI/include \
-  $(MY_MODULE_PATH)/dependencies/MyGUI/MyGUIEngine/include
+  $(MY_MODULE_PATH)/../guceGUI/include
 
 
 LOCAL_SHARED_LIBRARIES := \
-  MyGUIEngine \
   guceCORE \
   guceGUI \
   gucefCORE \
   gucefMT
+
+
+LOCAL_LDLIBS := \
+  -lMyGUIEngine
 
 include $(BUILD_SHARED_LIBRARY)
 

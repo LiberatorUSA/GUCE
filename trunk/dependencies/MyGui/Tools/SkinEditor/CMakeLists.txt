@@ -9,192 +9,585 @@
 #-------------------------------------------------------------------
 #
 
-# Configuration for module: MyGUISkinEditor
+# Configuration for module: MyGUI.SkinEditor
 
-set( HEADER_FILES 
-  ActionManager.h
-  Application.h
-  AreaSelectorControl.h
-  BackgroundControl.h
-  Binary.h
-  ColourManager.h
-  ColourPanel.h
-  CommandManager.h
-  EditorState.h
-  ExportManager.h
-  HorizontalSelectorBlackControl.h
-  HorizontalSelectorControl.h
-  HotKeyCommand.h
-  HotKeyManager.h
-  ItemHolder.h
-  Localise.h
-  MainMenuControl.h
-  MainPane.h
-  MessageBoxFadeControl.h
-  MessageBoxManager.h
-  MyGUI_FilterNoneSkin.h
-  PositionSelectorBlackControl.h
-  PositionSelectorControl.h
-  Property.h
-  PropertyAdvisor.h
-  PropertyAlignControl.h
-  PropertyBoolControl.h
-  PropertyColourControl.h
-  PropertyControl.h
-  PropertyInt2Control.h
-  PropertyInt4Control.h
-  PropertyIntControl.h
-  PropertyRegionTypeControl.h
-  PropertySet.h
-  PropertyTexturesControl.h
-  RecentFilesManager.h
-  RegionControl.h
-  RegionItem.h
-  RegionListControl.h
-  RegionPropertyControl.h
-  RegionTextureControl.h
-  SelectorControl.h
-  SeparatorControl.h
-  SeparatorItem.h
-  SeparatorListControl.h
-  SeparatorPropertyControl.h
-  SeparatorTextureControl.h
-  SettingsGeneralControl.h
-  SettingsManager.h
-  SettingsResourcePathsControl.h
-  SettingsResourcesControl.h
-  SettingsSector.h
-  SettingsWindow.h
-  SkinControl.h
-  SkinItem.h
-  SkinListControl.h
-  SkinManager.h
-  SkinPropertyControl.h
-  SkinTextureControl.h
-  StateControl.h
-  StateController.h
-  StateItem.h
-  StateListControl.h
-  StateManager.h
-  StatePropertyControl.h
-  StateTextureControl.h
-  TestState.h
-  TestWindow.h
-  TextFieldControl.h
-  TextureBrowseCell.h
-  TextureBrowseControl.h
-  TextureBrowseItemBox.h
-  TextureControl.h
-  TextureToolControl.h
-  VerticalSelectorBlackControl.h
-  VerticalSelectorControl.h
-)
 
-set( SOURCE_FILES 
-  ActionManager.cpp
-  Application.cpp
-  AreaSelectorControl.cpp
-  BackgroundControl.cpp
-  ColourManager.cpp
-  ColourPanel.cpp
-  CommandManager.cpp
-  EditorState.cpp
-  ExportManager.cpp
-  HorizontalSelectorBlackControl.cpp
-  HorizontalSelectorControl.cpp
-  HotKeyManager.cpp
-  MainMenuControl.cpp
-  MainPane.cpp
-  MessageBoxFadeControl.cpp
-  MessageBoxManager.cpp
-  MyGUI_FilterNoneSkin.cpp
-  PositionSelectorBlackControl.cpp
-  PositionSelectorControl.cpp
-  Property.cpp
-  PropertyAlignControl.cpp
-  PropertyBoolControl.cpp
-  PropertyColourControl.cpp
-  PropertyControl.cpp
-  PropertyInt2Control.cpp
-  PropertyInt4Control.cpp
-  PropertyIntControl.cpp
-  PropertyRegionTypeControl.cpp
-  PropertySet.cpp
-  PropertyTexturesControl.cpp
-  RecentFilesManager.cpp
-  RegionControl.cpp
-  RegionItem.cpp
-  RegionListControl.cpp
-  RegionPropertyControl.cpp
-  RegionTextureControl.cpp
-  SelectorControl.cpp
-  SeparatorControl.cpp
-  SeparatorItem.cpp
-  SeparatorListControl.cpp
-  SeparatorPropertyControl.cpp
-  SeparatorTextureControl.cpp
-  SettingsGeneralControl.cpp
-  SettingsManager.cpp
-  SettingsResourcePathsControl.cpp
-  SettingsResourcesControl.cpp
-  SettingsSector.cpp
-  SettingsWindow.cpp
-  SkinControl.cpp
-  SkinItem.cpp
-  SkinListControl.cpp
-  SkinManager.cpp
-  SkinPropertyControl.cpp
-  SkinTextureControl.cpp
-  StateControl.cpp
-  StateItem.cpp
-  StateListControl.cpp
-  StateManager.cpp
-  StatePropertyControl.cpp
-  StateTextureControl.cpp
-  TestState.cpp
-  TestWindow.cpp
-  TextFieldControl.cpp
-  TextureBrowseCell.cpp
-  TextureBrowseControl.cpp
-  TextureBrowseItemBox.cpp
-  TextureControl.cpp
-  TextureToolControl.cpp
-  VerticalSelectorBlackControl.cpp
-  VerticalSelectorControl.cpp
-)
 
-# Make sure the PLATFORM_HEADER_FILES variable is always defined
- set( PLATFORM_HEADER_FILES "" )
+if (LINUX)
+  set( PLATFORM_HEADER_FILES 
+    ActionManager.h
+    Application.h
+    AreaSelectorControl.h
+    BackgroundControl.h
+    Binary.h
+    ColourManager.h
+    ColourPanel.h
+    CommandManager.h
+    EditorState.h
+    ExportManager.h
+    HorizontalSelectorBlackControl.h
+    HorizontalSelectorControl.h
+    HotKeyCommand.h
+    HotKeyManager.h
+    ItemHolder.h
+    Localise.h
+    MainMenuControl.h
+    MainPane.h
+    MessageBoxFadeControl.h
+    MessageBoxManager.h
+    MyGUI_FilterNoneSkin.h
+    PositionSelectorBlackControl.h
+    PositionSelectorControl.h
+    Property.h
+    PropertyAdvisor.h
+    PropertyAlignControl.h
+    PropertyBoolControl.h
+    PropertyColourControl.h
+    PropertyControl.h
+    PropertyInt2Control.h
+    PropertyInt4Control.h
+    PropertyIntControl.h
+    PropertyRegionTypeControl.h
+    PropertySet.h
+    PropertyTexturesControl.h
+    RecentFilesManager.h
+    RegionControl.h
+    RegionItem.h
+    RegionListControl.h
+    RegionPropertyControl.h
+    RegionTextureControl.h
+    SelectorControl.h
+    SeparatorControl.h
+    SeparatorItem.h
+    SeparatorListControl.h
+    SeparatorPropertyControl.h
+    SeparatorTextureControl.h
+    SettingsGeneralControl.h
+    SettingsManager.h
+    SettingsResourcePathsControl.h
+    SettingsResourcesControl.h
+    SettingsSector.h
+    SettingsWindow.h
+    SkinControl.h
+    SkinItem.h
+    SkinListControl.h
+    SkinManager.h
+    SkinPropertyControl.h
+    SkinTextureControl.h
+    StateControl.h
+    StateController.h
+    StateItem.h
+    StateListControl.h
+    StateManager.h
+    StatePropertyControl.h
+    StateTextureControl.h
+    TestState.h
+    TestWindow.h
+    TextFieldControl.h
+    TextureBrowseCell.h
+    TextureBrowseControl.h
+    TextureBrowseItemBox.h
+    TextureControl.h
+    TextureToolControl.h
+    VerticalSelectorBlackControl.h
+    VerticalSelectorControl.h
+    ../../Common/Precompiled.h
+    ../../Common/Base/InputFocusInfo.h
+    ../../Common/Base/Main.h
+    ../../Common/Base/StatisticInfo.h
+    ../../Common/Base/OpenGL/BaseManager.h
+    ../../Common/Input/InputConverter.h
+    ../../Common/Input/OIS/InputManager.h
+    ../../Common/Input/OIS/PointerManager.h
+  )
 
-# Make sure the PLATFORM_SOURCE_FILES variable is always defined
- set( PLATFORM_SOURCE_FILES "" )
+  set( PLATFORM_HEADER_INSTALL "LINUX" )
+  source_group( "Platform Header Files" FILES ${PLATFORM_HEADER_FILES} )
+
+  set( PLATFORM_SOURCE_FILES 
+    ActionManager.cpp
+    Application.cpp
+    AreaSelectorControl.cpp
+    BackgroundControl.cpp
+    ColourManager.cpp
+    ColourPanel.cpp
+    CommandManager.cpp
+    EditorState.cpp
+    ExportManager.cpp
+    HorizontalSelectorBlackControl.cpp
+    HorizontalSelectorControl.cpp
+    HotKeyManager.cpp
+    MainMenuControl.cpp
+    MainPane.cpp
+    MessageBoxFadeControl.cpp
+    MessageBoxManager.cpp
+    MyGUI_FilterNoneSkin.cpp
+    PositionSelectorBlackControl.cpp
+    PositionSelectorControl.cpp
+    Property.cpp
+    PropertyAlignControl.cpp
+    PropertyBoolControl.cpp
+    PropertyColourControl.cpp
+    PropertyControl.cpp
+    PropertyInt2Control.cpp
+    PropertyInt4Control.cpp
+    PropertyIntControl.cpp
+    PropertyRegionTypeControl.cpp
+    PropertySet.cpp
+    PropertyTexturesControl.cpp
+    RecentFilesManager.cpp
+    RegionControl.cpp
+    RegionItem.cpp
+    RegionListControl.cpp
+    RegionPropertyControl.cpp
+    RegionTextureControl.cpp
+    SelectorControl.cpp
+    SeparatorControl.cpp
+    SeparatorItem.cpp
+    SeparatorListControl.cpp
+    SeparatorPropertyControl.cpp
+    SeparatorTextureControl.cpp
+    SettingsGeneralControl.cpp
+    SettingsManager.cpp
+    SettingsResourcePathsControl.cpp
+    SettingsResourcesControl.cpp
+    SettingsSector.cpp
+    SettingsWindow.cpp
+    SkinControl.cpp
+    SkinItem.cpp
+    SkinListControl.cpp
+    SkinManager.cpp
+    SkinPropertyControl.cpp
+    SkinTextureControl.cpp
+    StateControl.cpp
+    StateItem.cpp
+    StateListControl.cpp
+    StateManager.cpp
+    StatePropertyControl.cpp
+    StateTextureControl.cpp
+    TestState.cpp
+    TestWindow.cpp
+    TextFieldControl.cpp
+    TextureBrowseCell.cpp
+    TextureBrowseControl.cpp
+    TextureBrowseItemBox.cpp
+    TextureControl.cpp
+    TextureToolControl.cpp
+    VerticalSelectorBlackControl.cpp
+    VerticalSelectorControl.cpp
+    ../../Common/Precompiled.cpp
+    ../../Common/Base/OpenGL/BaseManager.cpp
+    ../../Common/Input/OIS/InputManager.cpp
+    ../../Common/Input/OIS/PointerManager.cpp
+  )
+
+  set( PLATFORM_SOURCE_INSTALL "LINUX" )
+  source_group( "Platform Source Files" FILES ${PLATFORM_SOURCE_FILES} )
+
+elseif (WIN32)
+  set( PLATFORM_HEADER_FILES 
+    ActionManager.h
+    Application.h
+    AreaSelectorControl.h
+    BackgroundControl.h
+    Binary.h
+    ColourManager.h
+    ColourPanel.h
+    CommandManager.h
+    EditorState.h
+    ExportManager.h
+    HorizontalSelectorBlackControl.h
+    HorizontalSelectorControl.h
+    HotKeyCommand.h
+    HotKeyManager.h
+    ItemHolder.h
+    Localise.h
+    MainMenuControl.h
+    MainPane.h
+    MessageBoxFadeControl.h
+    MessageBoxManager.h
+    MyGUI_FilterNoneSkin.h
+    PositionSelectorBlackControl.h
+    PositionSelectorControl.h
+    Property.h
+    PropertyAdvisor.h
+    PropertyAlignControl.h
+    PropertyBoolControl.h
+    PropertyColourControl.h
+    PropertyControl.h
+    PropertyInt2Control.h
+    PropertyInt4Control.h
+    PropertyIntControl.h
+    PropertyRegionTypeControl.h
+    PropertySet.h
+    PropertyTexturesControl.h
+    RecentFilesManager.h
+    RegionControl.h
+    RegionItem.h
+    RegionListControl.h
+    RegionPropertyControl.h
+    RegionTextureControl.h
+    SelectorControl.h
+    SeparatorControl.h
+    SeparatorItem.h
+    SeparatorListControl.h
+    SeparatorPropertyControl.h
+    SeparatorTextureControl.h
+    SettingsGeneralControl.h
+    SettingsManager.h
+    SettingsResourcePathsControl.h
+    SettingsResourcesControl.h
+    SettingsSector.h
+    SettingsWindow.h
+    SkinControl.h
+    SkinItem.h
+    SkinListControl.h
+    SkinManager.h
+    SkinPropertyControl.h
+    SkinTextureControl.h
+    StateControl.h
+    StateController.h
+    StateItem.h
+    StateListControl.h
+    StateManager.h
+    StatePropertyControl.h
+    StateTextureControl.h
+    TestState.h
+    TestWindow.h
+    TextFieldControl.h
+    TextureBrowseCell.h
+    TextureBrowseControl.h
+    TextureBrowseItemBox.h
+    TextureControl.h
+    TextureToolControl.h
+    VerticalSelectorBlackControl.h
+    VerticalSelectorControl.h
+    ../../Common/Precompiled.h
+    ../../Common/Base/InputFocusInfo.h
+    ../../Common/Base/Main.h
+    ../../Common/Base/StatisticInfo.h
+    ../../Common/Base/OpenGL/BaseManager.h
+    ../../Common/Input/InputConverter.h
+  )
+
+  set( PLATFORM_HEADER_INSTALL "WIN32" )
+  source_group( "Platform Header Files" FILES ${PLATFORM_HEADER_FILES} )
+
+  set( PLATFORM_SOURCE_FILES 
+    ActionManager.cpp
+    Application.cpp
+    AreaSelectorControl.cpp
+    BackgroundControl.cpp
+    ColourManager.cpp
+    ColourPanel.cpp
+    CommandManager.cpp
+    EditorState.cpp
+    ExportManager.cpp
+    HorizontalSelectorBlackControl.cpp
+    HorizontalSelectorControl.cpp
+    HotKeyManager.cpp
+    MainMenuControl.cpp
+    MainPane.cpp
+    MessageBoxFadeControl.cpp
+    MessageBoxManager.cpp
+    MyGUI_FilterNoneSkin.cpp
+    PositionSelectorBlackControl.cpp
+    PositionSelectorControl.cpp
+    Property.cpp
+    PropertyAlignControl.cpp
+    PropertyBoolControl.cpp
+    PropertyColourControl.cpp
+    PropertyControl.cpp
+    PropertyInt2Control.cpp
+    PropertyInt4Control.cpp
+    PropertyIntControl.cpp
+    PropertyRegionTypeControl.cpp
+    PropertySet.cpp
+    PropertyTexturesControl.cpp
+    RecentFilesManager.cpp
+    RegionControl.cpp
+    RegionItem.cpp
+    RegionListControl.cpp
+    RegionPropertyControl.cpp
+    RegionTextureControl.cpp
+    SelectorControl.cpp
+    SeparatorControl.cpp
+    SeparatorItem.cpp
+    SeparatorListControl.cpp
+    SeparatorPropertyControl.cpp
+    SeparatorTextureControl.cpp
+    SettingsGeneralControl.cpp
+    SettingsManager.cpp
+    SettingsResourcePathsControl.cpp
+    SettingsResourcesControl.cpp
+    SettingsSector.cpp
+    SettingsWindow.cpp
+    SkinControl.cpp
+    SkinItem.cpp
+    SkinListControl.cpp
+    SkinManager.cpp
+    SkinPropertyControl.cpp
+    SkinTextureControl.cpp
+    StateControl.cpp
+    StateItem.cpp
+    StateListControl.cpp
+    StateManager.cpp
+    StatePropertyControl.cpp
+    StateTextureControl.cpp
+    TestState.cpp
+    TestWindow.cpp
+    TextFieldControl.cpp
+    TextureBrowseCell.cpp
+    TextureBrowseControl.cpp
+    TextureBrowseItemBox.cpp
+    TextureControl.cpp
+    TextureToolControl.cpp
+    VerticalSelectorBlackControl.cpp
+    VerticalSelectorControl.cpp
+    ../../Common/Precompiled.cpp
+    ../../Common/Base/OpenGL/BaseManager.cpp
+  )
+
+  set( PLATFORM_SOURCE_INSTALL "WIN32" )
+  source_group( "Platform Source Files" FILES ${PLATFORM_SOURCE_FILES} )
+
+elseif (WIN64)
+  set( PLATFORM_HEADER_FILES 
+    ActionManager.h
+    Application.h
+    AreaSelectorControl.h
+    BackgroundControl.h
+    Binary.h
+    ColourManager.h
+    ColourPanel.h
+    CommandManager.h
+    EditorState.h
+    ExportManager.h
+    HorizontalSelectorBlackControl.h
+    HorizontalSelectorControl.h
+    HotKeyCommand.h
+    HotKeyManager.h
+    ItemHolder.h
+    Localise.h
+    MainMenuControl.h
+    MainPane.h
+    MessageBoxFadeControl.h
+    MessageBoxManager.h
+    MyGUI_FilterNoneSkin.h
+    PositionSelectorBlackControl.h
+    PositionSelectorControl.h
+    Property.h
+    PropertyAdvisor.h
+    PropertyAlignControl.h
+    PropertyBoolControl.h
+    PropertyColourControl.h
+    PropertyControl.h
+    PropertyInt2Control.h
+    PropertyInt4Control.h
+    PropertyIntControl.h
+    PropertyRegionTypeControl.h
+    PropertySet.h
+    PropertyTexturesControl.h
+    RecentFilesManager.h
+    RegionControl.h
+    RegionItem.h
+    RegionListControl.h
+    RegionPropertyControl.h
+    RegionTextureControl.h
+    SelectorControl.h
+    SeparatorControl.h
+    SeparatorItem.h
+    SeparatorListControl.h
+    SeparatorPropertyControl.h
+    SeparatorTextureControl.h
+    SettingsGeneralControl.h
+    SettingsManager.h
+    SettingsResourcePathsControl.h
+    SettingsResourcesControl.h
+    SettingsSector.h
+    SettingsWindow.h
+    SkinControl.h
+    SkinItem.h
+    SkinListControl.h
+    SkinManager.h
+    SkinPropertyControl.h
+    SkinTextureControl.h
+    StateControl.h
+    StateController.h
+    StateItem.h
+    StateListControl.h
+    StateManager.h
+    StatePropertyControl.h
+    StateTextureControl.h
+    TestState.h
+    TestWindow.h
+    TextFieldControl.h
+    TextureBrowseCell.h
+    TextureBrowseControl.h
+    TextureBrowseItemBox.h
+    TextureControl.h
+    TextureToolControl.h
+    VerticalSelectorBlackControl.h
+    VerticalSelectorControl.h
+    ../../Common/Precompiled.h
+    ../../Common/Base/InputFocusInfo.h
+    ../../Common/Base/Main.h
+    ../../Common/Base/StatisticInfo.h
+    ../../Common/Base/OpenGL/BaseManager.h
+    ../../Common/Input/InputConverter.h
+  )
+
+  set( PLATFORM_HEADER_INSTALL "WIN64" )
+  source_group( "Platform Header Files" FILES ${PLATFORM_HEADER_FILES} )
+
+  set( PLATFORM_SOURCE_FILES 
+    ActionManager.cpp
+    Application.cpp
+    AreaSelectorControl.cpp
+    BackgroundControl.cpp
+    ColourManager.cpp
+    ColourPanel.cpp
+    CommandManager.cpp
+    EditorState.cpp
+    ExportManager.cpp
+    HorizontalSelectorBlackControl.cpp
+    HorizontalSelectorControl.cpp
+    HotKeyManager.cpp
+    MainMenuControl.cpp
+    MainPane.cpp
+    MessageBoxFadeControl.cpp
+    MessageBoxManager.cpp
+    MyGUI_FilterNoneSkin.cpp
+    PositionSelectorBlackControl.cpp
+    PositionSelectorControl.cpp
+    Property.cpp
+    PropertyAlignControl.cpp
+    PropertyBoolControl.cpp
+    PropertyColourControl.cpp
+    PropertyControl.cpp
+    PropertyInt2Control.cpp
+    PropertyInt4Control.cpp
+    PropertyIntControl.cpp
+    PropertyRegionTypeControl.cpp
+    PropertySet.cpp
+    PropertyTexturesControl.cpp
+    RecentFilesManager.cpp
+    RegionControl.cpp
+    RegionItem.cpp
+    RegionListControl.cpp
+    RegionPropertyControl.cpp
+    RegionTextureControl.cpp
+    SelectorControl.cpp
+    SeparatorControl.cpp
+    SeparatorItem.cpp
+    SeparatorListControl.cpp
+    SeparatorPropertyControl.cpp
+    SeparatorTextureControl.cpp
+    SettingsGeneralControl.cpp
+    SettingsManager.cpp
+    SettingsResourcePathsControl.cpp
+    SettingsResourcesControl.cpp
+    SettingsSector.cpp
+    SettingsWindow.cpp
+    SkinControl.cpp
+    SkinItem.cpp
+    SkinListControl.cpp
+    SkinManager.cpp
+    SkinPropertyControl.cpp
+    SkinTextureControl.cpp
+    StateControl.cpp
+    StateItem.cpp
+    StateListControl.cpp
+    StateManager.cpp
+    StatePropertyControl.cpp
+    StateTextureControl.cpp
+    TestState.cpp
+    TestWindow.cpp
+    TextFieldControl.cpp
+    TextureBrowseCell.cpp
+    TextureBrowseControl.cpp
+    TextureBrowseItemBox.cpp
+    TextureControl.cpp
+    TextureToolControl.cpp
+    VerticalSelectorBlackControl.cpp
+    VerticalSelectorControl.cpp
+    ../../Common/Precompiled.cpp
+    ../../Common/Base/OpenGL/BaseManager.cpp
+  )
+
+  set( PLATFORM_SOURCE_INSTALL "WIN64" )
+  source_group( "Platform Source Files" FILES ${PLATFORM_SOURCE_FILES} )
+
+endif ()
 
 # For ease of use make a variable that has all files for this module
 set( ALL_FILES ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES} )
 
 
+if( LINUX )
+  set( MODULE_NAME "MyGUI.SkinEditor" )
+elseif( WIN32 )
+  set( MODULE_NAME "MyGUI.SkinEditor" )
+elseif( WIN64 )
+  set( MODULE_NAME "MyGUI.SkinEditor" )
+endif()
+if( LINUX )
+  add_executable( ${MODULE_NAME} ${ALL_FILES} )
+elseif( WIN32 )
+  add_executable( ${MODULE_NAME} WIN32 ${ALL_FILES} )
+elseif( WIN64 )
+  add_executable( ${MODULE_NAME} WIN32 ${ALL_FILES} )
+endif()
 
-
-#******** END OF AUTOGENERATED CONTENT ********
-
-
-if (WIN32)
-  add_executable( MyGUISkinEditor WIN32 ${ALL_FILES} )
-else()
-  add_executable( MyGUISkinEditor ${ALL_FILES} )
-endif()
-add_dependencies( MyGUISkinEditor MyGUIEngine MyGUI.Common freetype )
-target_link_libraries( MyGUISkinEditor MyGUIEngine MyGUI.Common freetype )
-set_target_properties( MyGUISkinEditor PROPERTIES COMPILE_DEFINITIONS "MYGUI_USE_FREETYPE")
-GUCE_config_lib( MyGUISkinEditor )
-
-
-#******** START OF AUTOGENERATED CONTENT ********
-
-
-
-include_directories( ../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib ../../../../../../GUCEF/trunk/gucefVFS/plugins/vfspluginZIP/dependencies/zziplib/zzip ../../../Ogre/OgreMain/include ../../../Ogre/OgreMain/src ../../../Ogre/OgreMain/src/nedmalloc ../../../freetype/include ../../../freetype/include/freetype ../../../freetype/include/freetype/config ../../../freetype/include/freetype/internal ../../../freetype/include/freetype/internal/services ../../../freetype/src/winfonts ../../Common ../../Common/Base ../../Common/Base/DirectX ../../Common/Base/Ogre ../../Common/Base/OpenGL ../../Common/BaseLayout ../../Common/FileSystemInfo ../../Common/Input ../../Common/Input/OIS ../../Common/Input/Win32_OIS ../../Common/ItemBox ../../Common/MessageBox ../../Common/Ogre/RenderBox ../../Common/PanelView ../../Common/Tools ../../MyGUIEngine/include )
+if ( LINUX )
+  add_dependencies( ${MODULE_NAME} MyGUI.Engine MyGUI.OpenGLPlatform freetype )
+  target_link_libraries( ${MODULE_NAME} MyGUI.Engine MyGUI.OpenGLPlatform freetype )
+  set_target_properties( ${MODULE_NAME} PROPERTIES COMPILE_DEFINITIONS "MYGUI_USE_FREETYPE" )
+endif( LINUX )
 
 if ( WIN32 )
-  include_directories( ../../../../../../GUCEF/trunk/gucefINPUT/plugins/inputdriverOIS/dependency/OIS/includes ../../../../../../GUCEF/trunk/gucefINPUT/plugins/inputdriverOIS/dependency/OIS/includes/win32 ../../../../../../GUCEF/trunk/gucefINPUT/plugins/inputdriverOIS/dependency/OIS/src/extras/LIRC ../../../Ogre/OgreMain/include/WIN32 ../../../Ogre/OgreMain/src/WIN32 ../../Common/Input/Win32 )
+  add_dependencies( ${MODULE_NAME} MyGUI.Engine MyGUI.OpenGLPlatform freetype )
+  target_link_libraries( ${MODULE_NAME} MyGUI.Engine MyGUI.OpenGLPlatform freetype )
+  set_target_properties( ${MODULE_NAME} PROPERTIES COMPILE_DEFINITIONS "MYGUI_USE_FREETYPE" )
 endif( WIN32 )
+
+if ( WIN64 )
+  add_dependencies( ${MODULE_NAME} MyGUI.Engine MyGUI.OpenGLPlatform freetype )
+  target_link_libraries( ${MODULE_NAME} MyGUI.Engine MyGUI.OpenGLPlatform freetype )
+  set_target_properties( ${MODULE_NAME} PROPERTIES COMPILE_DEFINITIONS "MYGUI_USE_FREETYPE" )
+endif( WIN64 )
+
+include_directories( ../../../freetype/include ../../../freetype/include/freetype ../../../freetype/include/freetype/config ../../../freetype/include/freetype/internal ../../../freetype/include/freetype/internal/services ../../../freetype/src/winfonts ../../Common/FileSystemInfo ../../MyGUIEngine/include ../../Platforms/OpenGL/OpenGLPlatform/include ../../Platforms/OpenGL/OpenGLPlatform/include/GL )
+
+if ( LINUX )
+  include_directories( ../SkinEditor ../../Common ../../Common/Base ../../Common/Base/OpenGL ../../Common/Input ../../Common/Input/OIS )
+endif( LINUX )
+
+if ( WIN32 )
+  include_directories( ../SkinEditor ../../Common ../../Common/Base ../../Common/Base/OpenGL ../../Common/Input )
+endif( WIN32 )
+
+if ( WIN64 )
+  include_directories( ../SkinEditor ../../Common ../../Common/Base ../../Common/Base/OpenGL ../../Common/Input )
+endif( WIN64 )
+
+
+
+#******** START OF AUTOGENERATED TEMPLATED ADDITION CONTENT ********
+
+
+
+
+if (LINUX)
+GUCEF_config_tool( ${MODULE_NAME} )
+elseif (WIN32)
+GUCEF_config_tool( ${MODULE_NAME} )
+elseif (WIN64)
+GUCEF_config_tool( ${MODULE_NAME} )
+endif()
+
+
+
+#******** END OF AUTOGENERATED TEMPLATED ADDITION CONTENT ********
+
+
